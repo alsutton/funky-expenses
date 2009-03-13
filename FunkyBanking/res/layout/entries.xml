@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    
+<!--  <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+    <ImageButton	
+    	android:id="@+id/accountsButton"
+    	android:background="@drawable/accounts_icon"
+    	android:layout_width="48px"
+    	android:layout_height="48px"
+    	android:layout_margin="2px"
+    	/>	    		
+    <ImageButton	
+    	android:id="@+id/chartsButton"
+    	android:background="@drawable/charts_icon"
+    	android:layout_width="48px"
+    	android:layout_height="48px"
+    	android:layout_margin="2px"
+    	/>		
+    <ImageButton	
+    	android:id="@+id/recurringButton"
+    	android:background="@drawable/recurring_icon"
+    	android:layout_width="48px"
+    	android:layout_height="48px"
+    	android:layout_margin="2px"
+    	/>	
+</LinearLayout> -->
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    >
+
+<TextView  
+	android:id="@+id/title"
+	android:text="@string/titleEntries"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+	android:textSize="18sp"
+    android:gravity="center"
+    android:textStyle="bold"/>
+
+<TextView  
+	android:id="@+id/balance"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:gravity="center"
+    android:textStyle="bold"/>
+
+<ListView  
+	android:id="@+id/informationList"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:choiceMode="singleChoice"
+    android:cacheColorHint="#00000000"
+    />
+</LinearLayout>
+</LinearLayout>

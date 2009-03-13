@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="titleAbout">About</string>
+    <string name="titleAccounts">Accounts</string>
+    <string name="titleEntries">Account Entries</string>
+    <string name="titleCharts">Charts</string>
+    <string name="titleRecurring">Repeating Transactions</string>
+    <string name="app_name">Funky Expenses</string>
+    <string name="accountAddButtonText">Add new account</string>
+    <string name="newAccount">Add Account</string>
+    <string name="newEntry">Add Entry</string>
+    <string name="entriesAddButtonText">Add new transaction</string>
+    <string name="accountNameText">Account Name</string>
+    <string name="accountOpeningBalanceText">Opening Balance</string>
+    <string name="accountTitleText">Account Details</string>
+    <string name="accountCurrencyText">Currency</string>
+    <string name="entryAmountText">Amount</string>        
+    <string name="entryDateText">Date</string>
+    <string name="entryPayeeText">Payee</string>        
+    <string name="entryTitleText">Transaction Details</string>
+    <string name="entryTypeText">Type</string>
+    <string name="okButtonText">Save</string>        
+    <string name="cancelButtonText">Discard</string>        
+    <string name="updateButtonText">Update</string>        
+    <string name="deleteButtonText">Delete</string>        
+</resources>

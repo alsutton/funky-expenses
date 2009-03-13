@@ -23,4 +23,13 @@
     <string name="cancelButtonText">Discard</string>        
     <string name="updateButtonText">Update</string>        
     <string name="deleteButtonText">Delete</string>        
+    <string name="settings">Settings</string>
+    <string name="enterPassword">Enter Password</string>        
+    <string name="incorrectPassword">** Password Incorrect **\n\nEnter Password</string>        
+    <string name="ok">OK</string>        
+    <string name="cancel">Cancel</string>   
+    <string name="setPassword">Set Password</string>     
+    <string name="newPassword">New Password</string>     
+    <string name="newPasswordConfirm">Confirm New Password</string>
+    <string name="newPasswordRemove">Leave both these boxes empty if you do not wish to have a password</string>     
 </resources>

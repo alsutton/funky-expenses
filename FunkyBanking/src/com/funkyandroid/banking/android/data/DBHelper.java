@@ -49,7 +49,8 @@ public class DBHelper
 	private static final String ENTRIES_TABLE_CREATE_SQL = 
 		"CREATE TABLE IF NOT EXISTS " + ENTRIES_TABLE_NAME + 
 		" (_id  integer primary key autoincrement, account_id INT, "+
-		"  timestamp INT(8), category_id INT, payee_id INT, type INT, amount INT(8));";
+		"  timestamp INT(8), category_id INT, payee_id INT, recipient_account_id INT, " +
+		"  type INT, amount INT(8));";
 
 	/**
 	 * The payee table name.
@@ -79,12 +80,25 @@ public class DBHelper
 		"CREATE TABLE IF NOT EXISTS " + ENTRIES_TABLE_NAME + 
 		" (account_id INT, next_due INT(8), category_id INT, payee_id INT, type INT, amount INT(8), repaeat_count INT, repeat_unit INT);";	
 	
+	/**
+	 * The recurring transactions table name.
+	 */
+	
+	public static final String SETTINGS_TABLE_NAME = "settings";
+	
+	/**
+	 * The SQL to create the chart table.
+	 */
+
+	private static final String SETTINGS_TABLE_CREATE_SQL = 
+		"CREATE TABLE IF NOT EXISTS " + SETTINGS_TABLE_NAME + " (name TEXT, VALUE TEXT);";	
+	
 	 /**
 	  * Constructor.
 	  */
 	
 	 public DBHelper(final Context context) {
-		 super(context, "FunkyBanking", null, 1);
+		 super(context, "FunkyBanking", null, 2);
 	 }
 	 
 	@Override
@@ -94,10 +108,15 @@ public class DBHelper
 		db.execSQL(DBHelper.ENTRIES_TABLE_CREATE_SQL);
 		db.execSQL(DBHelper.PAYEE_TABLE_CREATE_SQL);
 		db.execSQL(DBHelper.RECURRING_TABLE_CREATE_SQL);
+		db.execSQL(DBHelper.SETTINGS_TABLE_CREATE_SQL);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// Upgrades not possible. This is the first version.		
+		if(oldVersion == 1) {
+			db.execSQL(DBHelper.SETTINGS_TABLE_CREATE_SQL);
+			db.execSQL("ALTER TABLE "+DBHelper.ENTRIES_TABLE_NAME+" ADD COLMN recipient_account_id INT");
+		}
+				
 	}
 }

@@ -59,6 +59,14 @@ public class EditAccountActivity extends Activity {
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
+        					if( fetched ) {        				    	
+        				    	SQLiteDatabase db = (new DBHelper(EditAccountActivity.this)).getWritableDatabase();
+        						try {    	
+       					    		AccountManager.delete(db, account);	    		
+        						} finally {
+        							db.close();
+        						}
+        					}
         					EditAccountActivity.this.finish();
         				}
         		});
@@ -145,6 +153,11 @@ public class EditAccountActivity extends Activity {
 	    	editText.setText(Long.toString(account.getOpeningBalance()/100));	    	
 	    	editText = (EditText) findViewById(R.id.amountMinor);
 	    	editText.setText(Long.toString(account.getOpeningBalance()%100));    	
+
+	    	Button button = (Button) findViewById(R.id.okButton);
+ 	    	button.setText(R.string.updateButtonText);
+ 	    	button = (Button) findViewById(R.id.cancelButton);
+ 	    	button.setText(R.string.deleteButtonText);
     	}
 	    	
     	updateCurrencyInformation(account.getCurrency());

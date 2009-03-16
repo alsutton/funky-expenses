@@ -124,6 +124,21 @@ public class AccountManager {
 		return balance;
 	}
 
+	
+	/**
+	 * Get the list of accounts from the database.
+	 * 
+	 * @param db database to query.
+	 */
+	
+	public static void delete(final SQLiteDatabase db, final Account account) {
+		String[] whereValues = { Integer.toString(account.getId()) };
+		db.delete(	DBHelper.ACCOUNTS_TABLE_NAME,  
+					AccountManager.GET_BY_ID_SQL, 
+					whereValues);
+		TransactionManager.deleteAllForAccount(db, account);
+	}
+	
 	/**
 	 * Exception thrown when updating an account if the original account
 	 * is not found.

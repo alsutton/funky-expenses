@@ -26,6 +26,12 @@ public class TransactionManager {
 	 */
 	
 	private static final String GET_BY_ID_SQL = "_id = ?";
+
+	/**
+	 * The where clause for fetching an individual transaction.
+	 */
+	
+	private static final String DELETE_FOR_ACCOUNT_SQL = "account_id = ?";
 	
 	/**
 	 * Get the list of transactions for an account.
@@ -131,5 +137,16 @@ public class TransactionManager {
 		db.delete(DBHelper.ENTRIES_TABLE_NAME, TransactionManager.GET_BY_ID_SQL, whereArgs);
 		
 		AccountManager.adjustBalance(db, transaction.getAccountId(), 0-transaction.getAmount());
+	}
+
+	/**
+	 * Get the list of accounts from the database.
+	 * 
+	 * @param db database to query.
+	 */
+	
+	public static void deleteAllForAccount(final SQLiteDatabase db, final Account account) {
+		String[] whereArgs = { Integer.toString(account.getId()) };
+		db.delete(DBHelper.ENTRIES_TABLE_NAME, TransactionManager.DELETE_FOR_ACCOUNT_SQL, whereArgs);
 	}
 }

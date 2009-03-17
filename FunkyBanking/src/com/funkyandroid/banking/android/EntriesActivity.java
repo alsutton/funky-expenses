@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -82,7 +83,19 @@ public class EntriesActivity extends Activity {
     	    	
 		TextView titleView = (TextView) findViewById(R.id.title);
 		titleView.setText(account.getName());
-		
+
+		Button button = (Button) findViewById(R.id.add);
+        button.setOnClickListener(
+        		new View.OnClickListener() {
+        				public void onClick(final View view) {
+        					Context context = EntriesActivity.this;
+        					Intent intent = new Intent(context, EditEntryActivity.class);
+        					intent.putExtra("com.funkyandroid.banking.account_id", account.getId());
+        					intent.putExtra("com.funkyandroid.banking.account_currency", currencySymbol);
+        					context.startActivity(intent);    				
+        				}
+        		});
+
         Cursor entryCursor = TransactionManager.getForAccount(database, accountId);
     	startManagingCursor(entryCursor);
     	

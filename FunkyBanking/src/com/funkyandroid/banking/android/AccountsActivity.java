@@ -63,6 +63,15 @@ public class AccountsActivity extends Activity {
         list.setAdapter(adapter);
         list.setOnItemClickListener(adapter);
         list.setOnItemLongClickListener(adapter);
+
+        Button button = (Button) findViewById(R.id.add);
+        button.setOnClickListener(
+        		new View.OnClickListener() {
+        				public void onClick(final View view) {
+        					Intent viewIntent = new Intent(AccountsActivity.this, EditAccountActivity.class);
+        					AccountsActivity.this.startActivity(viewIntent);    				    	
+        				}
+        		});
     }
 
     /**

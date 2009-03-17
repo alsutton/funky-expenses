@@ -9,10 +9,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,7 +21,8 @@ import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.Crypto;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
-public class AccountsActivity extends Activity {
+public class AccountsActivity extends Activity 
+	implements KeypadHandler.OnOKListener {
 	
 	/**
 	 * The list adapter holding the accounts list.
@@ -32,17 +31,17 @@ public class AccountsActivity extends Activity {
 	private AccountsListAdapter adapter;
 
 	/**
-	 * The password setting dialog
+	 * The handler for showing keypads.
 	 */
 	
-	private AlertDialog setPasswordDialog;
+	private KeypadHandler keypadHandler;
 	
 	/**
-	 * The view in the password window.
+	 * The first password entered in the change password box.
 	 */
 	
-	private View passwordEntryView;
-
+	private String password1;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +71,8 @@ public class AccountsActivity extends Activity {
         					AccountsActivity.this.startActivity(viewIntent);    				    	
         				}
         		});
+        
+        keypadHandler = new KeypadHandler(this);
     }
 
     /**
@@ -124,53 +125,27 @@ public class AccountsActivity extends Activity {
      */
     
     private void showSetPassword() {
-    	AlertDialog.Builder builder = new AlertDialog.Builder(this);    	
-    	setPasswordDialog = builder.create();
-    	passwordEntryView = setPasswordDialog.getLayoutInflater().inflate(R.layout.set_password, null);
-    	setPasswordDialog.setView(passwordEntryView);    	
-    	setPasswordDialog.show();
-        
-    	WindowManager.LayoutParams layout = setPasswordDialog.getWindow().getAttributes();
-    	layout.width = WindowManager.LayoutParams.FILL_PARENT;
-    	setPasswordDialog.getWindow().setAttributes(layout);
-    	    	
-    	Button button = (Button) passwordEntryView.findViewById(R.id.cancelButton);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				public void onClick(final View view) {
-        					setPasswordDialog.dismiss();
-        				}
-        		});
-    	
-    	button = (Button) passwordEntryView.findViewById(R.id.okButton);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				public void onClick(final View view) {
-        					EditText passwordBox = 
-        						(EditText) passwordEntryView.findViewById(R.id.newPasswordEntry);
-        					String password = passwordBox.getText().toString();
-        					passwordBox = 
-        						(EditText) passwordEntryView.findViewById(R.id.newPasswordConfirmEntry);
-        					String passwordConfirm = passwordBox.getText().toString();
-        					setPasswordDialog.dismiss();
-        					changePassword(password, passwordConfirm);
-        				}
-        		});
-    	
+    	keypadHandler.display(1, R.string.setPassword, this);
     }
     
     /**
      * Handle a password change.
      */
     
-    private void changePassword(final String password1, final String password2) {
+    public void onOK(final int id, final String password) {
+    	if( id == 1 ) {
+    		password1 = password;
+        	keypadHandler.display(2, R.string.newPasswordConfirm, this);
+        	return;
+    	}
+    	
 		boolean match;
-		if			( password1 == null && password2 == null) {
+		if			( password1 == null && password == null) {
 			match = true;
-		} else if	( password1 == null || password2 == null ) {
+		} else if	( password1 == null || password == null ) {
 			match = false;
 		} else {
-			match = password1.equals(password2);
+			match = password1.equals(password);
 		}
 
 		if( !match ) {
@@ -193,8 +168,7 @@ public class AccountsActivity extends Activity {
             .setMessage("Your password could not be updated at the current time")
             .setPositiveButton("OK", null)
             .show();		
-	        return;
-    		
+	        return;    		
     	} finally {
     		db.close();
     	}

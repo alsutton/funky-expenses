@@ -1,23 +1,23 @@
 package com.funkyandroid.banking.android.expenses.demo;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.util.Log;
+
 import com.funkyandroid.banking.android.AccountsActivity;
+import com.funkyandroid.banking.android.KeypadHandler;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
 import com.funkyandroid.banking.android.utils.Crypto;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
-public class DemoLauncher extends Activity {
+public class DemoLauncher extends Activity 
+	implements KeypadHandler.OnOKListener {
+	
 	/**
 	 * The shared preferences.
 	 */
@@ -25,16 +25,10 @@ public class DemoLauncher extends Activity {
 	private String passwordHash;	
 
 	/**
-	 * The password dialog
+	 * The handler for showing keypads.
 	 */
 	
-	private AlertDialog passwordDialog;
-	
-	/**
-	 * The view in the password window.
-	 */
-	
-	private View passwordEntryView;
+	private KeypadHandler keypadHandler;
 	
     /** Called when the activity is first created. */
     @Override
@@ -54,54 +48,15 @@ public class DemoLauncher extends Activity {
     	}    		
 
     	setContentView(R.layout.password_background);
-    	showPasswordEntry(R.string.enterPassword);
-    }
-    
-    /**
-     * Show the password entry dialog
-     */
-    
-    private void showPasswordEntry(int messageId) {
-    	AlertDialog.Builder builder = new AlertDialog.Builder(this);    	
-    	passwordDialog = builder.create();
-    	passwordEntryView = passwordDialog.getLayoutInflater().inflate(R.layout.password, null);
-    	passwordDialog.setView(passwordEntryView);    	
-        passwordDialog.show();
-        
-    	WindowManager.LayoutParams layout = passwordDialog.getWindow().getAttributes();
-    	layout.width = WindowManager.LayoutParams.FILL_PARENT;
-    	passwordDialog.getWindow().setAttributes(layout);
-    	    	
-    	TextView text = (TextView) passwordEntryView.findViewById(R.id.passwordEntryTitle);
-    	text.setText(messageId);
-    	
-    	Button button = (Button) passwordEntryView.findViewById(R.id.cancelButton);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				public void onClick(final View view) {
-        					passwordDialog.dismiss();
-        					DemoLauncher.this.finish();
-        				}
-        		});
-    	
-    	button = (Button) passwordEntryView.findViewById(R.id.okButton);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				public void onClick(final View view) {
-        					EditText passwordBox = 
-        						(EditText) passwordEntryView.findViewById(R.id.password);
-        					String password = passwordBox.getText().toString();
-        					passwordDialog.dismiss();
-        					checkPassword(password);
-        				}
-        		});
+    	keypadHandler = new KeypadHandler(this);    	
+    	keypadHandler.display(1, R.string.enterPassword, this);
     }
     
     /**
      * Check the entered password
      */
     
-    public void checkPassword(final String password) {
+    public void onOK(final int id, final String password) {
     	if( password != null && password.length() > 0 ) {
 	    	boolean passwordOK = false;
 	    	try {
@@ -114,8 +69,16 @@ public class DemoLauncher extends Activity {
 	    		return;
 	    	}
     	}
-    	
-    	showPasswordEntry(R.string.incorrectPassword);
+        new AlertDialog.Builder(this).setTitle("Password Incorrect")
+        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setMessage("The password you entered was not correct.")
+        .setPositiveButton("OK", new OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+		    	keypadHandler.display(1, R.string.enterPassword, DemoLauncher.this);
+			}        	
+        })
+        .show();		
+        return;
     }
     
     /**
@@ -127,5 +90,4 @@ public class DemoLauncher extends Activity {
 		startActivity(intent);
 		finish();
     }
-
 }

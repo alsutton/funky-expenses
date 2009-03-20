@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +35,7 @@ public class AccountsActivity extends Activity
 	 * The handler for showing keypads.
 	 */
 	
-	private KeypadHandler keypadHandler;
+	private KeypadHandler keypadHandler = null;
 	
 	/**
 	 * The first password entered in the change password box.
@@ -42,21 +43,28 @@ public class AccountsActivity extends Activity
 	
 	private String password1;
 	
+	/**
+	 * The database connection
+	 */
+	
+	private SQLiteDatabase db;
+	
+	/**
+	 * The handler for the post onCreate stuff.
+	 */
+	
+	private Handler handler = new Handler();
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.accounts);
 
-        Cursor accounts = AccountManager.getAll((new DBHelper(this)).getReadableDatabase());
-        if( accounts.getCount() == 0 ) {
-        	Toast.makeText(this, "Press menu to add an account", Toast.LENGTH_LONG).show();
-        } else {
-        	Toast.makeText(this, "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
-        	
-        }
+        db = (new DBHelper(this)).getWritableDatabase();        
+        Cursor accounts = AccountManager.getAll(db);
         startManagingCursor(accounts);
-		adapter = new AccountsListAdapter(this, accounts);
+		adapter = new AccountsListAdapter(AccountsActivity.this, accounts);
 		
         ListView list = (ListView)findViewById(R.id.informationList);
         list.setAdapter(adapter);
@@ -71,10 +79,19 @@ public class AccountsActivity extends Activity
         					AccountsActivity.this.startActivity(viewIntent);    				    	
         				}
         		});
-        
-        keypadHandler = new KeypadHandler(this);
+        handler.post(new PostCreateThread());
     }
 
+    /**
+     * Close the database connection.
+     */
+    
+    @Override
+    public void onDestroy() {
+    	db.close();
+    	super.onDestroy();    	
+    }
+    
     /**
      * Called whenever the activity becomes visible.
      */
@@ -125,7 +142,12 @@ public class AccountsActivity extends Activity
      */
     
     private void showSetPassword() {
-    	keypadHandler.display(1, R.string.setPassword, this);
+    	synchronized(this) {
+	    	if( keypadHandler == null ) {         
+	    		keypadHandler = new KeypadHandler(this);
+	    	}
+    	}
+	    keypadHandler.display(1, R.string.setPassword, "", this);
     }
     
     /**
@@ -135,7 +157,7 @@ public class AccountsActivity extends Activity
     public void onOK(final int id, final String password) {
     	if( id == 1 ) {
     		password1 = password;
-        	keypadHandler.display(2, R.string.newPasswordConfirm, this);
+        	keypadHandler.display(2, R.string.newPasswordConfirm, "", this);
         	return;
     	}
     	
@@ -157,7 +179,6 @@ public class AccountsActivity extends Activity
 			return;
 		}
     	
-    	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
     	try {
 			SettingsManager.set(db, 
 								SettingsManager.PASSWORD_SETTING, 
@@ -169,8 +190,6 @@ public class AccountsActivity extends Activity
             .setPositiveButton("OK", null)
             .show();		
 	        return;    		
-    	} finally {
-    		db.close();
     	}
     	
     	if( password1 == null || password1.length() == 0 ) {
@@ -185,6 +204,22 @@ public class AccountsActivity extends Activity
 	        .setMessage("Your password has been updated")
 	        .setPositiveButton("OK", null)
 	        .show();		
+    	}
+    }
+    
+    
+    /**
+     * A post onCreate initialisation thread.
+     */
+    
+    private class PostCreateThread implements Runnable {
+    	public void run() {            
+            if( AccountsActivity.this.adapter.isEmpty() ) {
+            	Toast.makeText(AccountsActivity.this, "Press menu to add an account", Toast.LENGTH_LONG).show();
+            } else {
+            	Toast.makeText(AccountsActivity.this, "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
+            	
+            }
     	}
     }
 }

@@ -92,7 +92,8 @@ public class KeypadHandler {
 		this.context = context;
 	}
 	
-	public void display(final int id, final int titleResource, final OnOKListener listener) {
+	public void display(final int id, final int titleResource, 
+			final CharSequence startText, final OnOKListener listener) {
 		displayId = id;
 		this.listener = listener;
 		
@@ -110,6 +111,7 @@ public class KeypadHandler {
     	titleView.setText(titleResource);
     	
     	editText = (EditText) keypadView.findViewById(R.id.typedText);
+    	editText.setText(startText);
     	    	
     	KeyPressHandler handler = new KeyPressHandler();
 		for(int i = 0  ; i != 26 ; i++) {
@@ -135,7 +137,16 @@ public class KeypadHandler {
         					if(text == null || text.length() == 0) {
         						return;
         					}
-        					text.delete(text.length()-1, text.length());
+        					
+        					int selStart = editText.getSelectionStart();
+        					int selEnd = editText.getSelectionEnd();
+        					
+        					if( selStart != selEnd ) {
+            					text.delete(selStart, selEnd);        						
+        					} else if( selStart > 0 ) {
+    							text.delete(selStart-1, selStart);        							
+        					}
+        					
         				}
         		});
 		
@@ -246,7 +257,8 @@ public class KeypadHandler {
 	private class KeyPressHandler implements OnClickListener {
 		public void onClick(final View v) {
 			Editable currentText = KeypadHandler.this.editText.getText();
-			currentText.append(((Button)v).getText());
+			int position = KeypadHandler.this.editText.getSelectionStart();
+			currentText.insert(position, ((Button)v).getText());
 		}
 	}
 

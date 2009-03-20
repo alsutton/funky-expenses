@@ -12,19 +12,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
-import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
-import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class EditAccountActivity extends Activity {
@@ -46,6 +42,31 @@ public class EditAccountActivity extends Activity {
 	 */
 	
 	private boolean fetched;
+
+	/**
+	 * The button holding the account name
+	 */
+	
+	private Button nameButton;
+	
+	/**
+	 * The button holding the account name
+	 */
+	
+	private Button amountButton;
+	
+	
+	/**
+	 * The text keypad handler.
+	 */
+	
+	private KeypadHandler kh;
+	
+	/**
+	 * The amount keypad helper.
+	 */
+	
+	private NumericKeypadHandler nkh;
 	
     /** Called when the activity is first created. */
     @Override
@@ -86,35 +107,23 @@ public class EditAccountActivity extends Activity {
         				}
         		});
         
-        EditText editText = (EditText) findViewById(R.id.amountMinor);
-        MinorAmountEventListener minorAmountEventListener = 
-        	new MinorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.addTextChangedListener(minorAmountEventListener);
-        editText.setOnFocusChangeListener(minorAmountEventListener);
+        nameButton = (Button) findViewById(R.id.accountName);
+        nameButton.setOnClickListener(
+        		new View.OnClickListener() {
+        				public void onClick(final View view) {
+        					EditAccountActivity.this.editName();
+        				}
+        		});
+		
+        amountButton = (Button) findViewById(R.id.amount);
+        amountButton.setOnClickListener(
+        		new View.OnClickListener() {
+        				public void onClick(final View view) {
+        					EditAccountActivity.this.editAmount();
+        				}
+        		});
         
-        editText = (EditText) findViewById(R.id.amountMajor);
-        MajorAmountEventListener majorAmountEventListener = 
-        	new MajorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.setOnFocusChangeListener(majorAmountEventListener);
-        
-        List<String> currencyList = new ArrayList<String>(); 
-        for(Locale locale : Locale.getAvailableLocales()) {
-        	try {
-	        	Currency currency = Currency.getInstance(locale);
-	        	if(currency == null) {
-	        		continue;
-	        	}
-	        	String code = currency.getCurrencyCode();
-	        	if( ! currencyList.contains(code) ) {
-	        		currencyList.add(code);
-	        	}
-        	} catch(IllegalArgumentException iae) {
-        		; // Do nothing. This is thrown for unsupported locales.
-        	}
-        }
-        Collections.sort(currencyList);
-        currencies = new String[currencyList.size()];
-        currencyList.toArray(currencies);
+        new Thread(new PostCreateThread()).start();
     }
         
     /**
@@ -147,12 +156,19 @@ public class EditAccountActivity extends Activity {
     		return;
     	} else {	    	
 	    	fetched = true;	    	
-	    	EditText editText = (EditText) findViewById(R.id.accountName);
-	    	editText.setText(account.getName());	    	
-	    	editText = (EditText) findViewById(R.id.amountMajor);
-	    	editText.setText(Long.toString(account.getOpeningBalance()/100));	    	
-	    	editText = (EditText) findViewById(R.id.amountMinor);
-	    	editText.setText(Long.toString(account.getOpeningBalance()%100));    	
+	    	
+    		nameButton.setText(account.getName());
+
+    		long amount = account.getOpeningBalance();
+ 			StringBuilder builder = new StringBuilder(16);
+ 			builder.append(Long.toString(amount/100));
+ 			builder.append('.');
+ 			long remainder = amount%100;
+ 			if(remainder < 10) {
+ 				builder.append('0');
+ 			}
+ 			builder.append(remainder);
+ 			amountButton.setText(builder.toString());
 
 	    	Button button = (Button) findViewById(R.id.okButton);
  	    	button.setText(R.string.updateButtonText);
@@ -164,6 +180,21 @@ public class EditAccountActivity extends Activity {
     }
 
     /**
+     * Check that the keypads have been disposed of.
+     */
+    
+    @Override
+    public void onDestroy() {
+    	if( nkh != null ) {
+    		nkh.dismiss();
+    	}
+    	if( kh != null ) {
+    		kh.dismiss();
+    	}
+    	super.onDestroy();
+    }
+    
+    /**
      * Creates a new empty account
      */
     
@@ -172,28 +203,7 @@ public class EditAccountActivity extends Activity {
     	Currency currency = Currency.getInstance(Locale.getDefault());
 		account.setCurrency(currency.getCurrencyCode());
     	updateCurrencyInformation(account.getCurrency());    	
-    }
-    
-    /**
-     * Store the account details.
-     */
-    
-    
-    /**
-     * Check to see if the . key has been pressed, if so move to the minor currency area
-     */
-    
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-    	if( event.getKeyCode() == KeyEvent.KEYCODE_PERIOD ) {
-    		EditText minor = ((EditText)findViewById(R.id.amountMinor));
-    		if(Integer.parseInt(minor.getText().toString()) == 0) {
-    			minor.setText("");
-    		}
-    		minor.requestFocus();
-    		return true;
-    	}
-    	return super.onKeyDown(keyCode, event);
+		amountButton.setText("0.00");
     }
     
     /**
@@ -213,16 +223,21 @@ public class EditAccountActivity extends Activity {
      */
     
     public void storeAccountDetails() {
-    	EditText editText = (EditText) findViewById(R.id.accountName);
-    	account.setName(editText.getText().toString());
+    	account.setName(nameButton.getText().toString());
 
-    	long oldOpeningBalance = account.getOpeningBalance();
-    	
+    	long oldOpeningBalance = account.getOpeningBalance();    	
+
     	long openingBalance = 0;
-    	editText = (EditText) findViewById(R.id.amountMajor);
-    	openingBalance += Long.parseLong(editText.getText().toString()) * 100;
-    	editText = (EditText) findViewById(R.id.amountMinor);
-    	openingBalance += Long.parseLong(editText.getText().toString());    	
+    	String amountText = amountButton.getText().toString();
+    	int dotIdx = amountText.indexOf('.');
+    	String amountString = amountText.substring(0, dotIdx);
+    	if(amountString != null && amountString.length() > 0) {
+    		openingBalance += Long.parseLong(amountString) * 100;
+    	}
+    	amountString = amountText.substring(dotIdx+1);
+    	if(amountString != null && amountString.length() > 0) {
+    		openingBalance += Long.parseLong(amountString);
+    	}
     	account.setOpeningBalance(openingBalance);
     	
     	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
@@ -237,6 +252,44 @@ public class EditAccountActivity extends Activity {
 		}
     }
     
+
+    /**
+     * Edit the payee.
+     */
+    
+    private void editName() {
+    	synchronized(this) {
+    		if(kh == null) {
+    			kh = new KeypadHandler(this);
+    		}
+    	}
+    	
+    	kh.display(-1, R.string.entryAmountText, nameButton.getText(),
+    			new KeypadHandler.OnOKListener() {
+    		public void onOK(final int id, final String text) {
+    			nameButton.setText(text);
+    		}    		
+    	});
+    }
+
+    /**
+     * Edit the amount.
+     */
+    
+    private void editAmount() {
+    	synchronized(this) {
+    		if(nkh == null) {
+    			nkh = new NumericKeypadHandler(this);
+    		}
+    	}
+    	
+    	nkh.display(-1, R.string.entryAmountText, amountButton.getText(),
+    			new NumericKeypadHandler.OnOKListener() {
+    		public void onOK(final int id, final String text) {    				
+				amountButton.setText(text);
+    		}    		
+    	});
+    }
  
     /**
      * Edit the currency the account is in.
@@ -269,4 +322,32 @@ public class EditAccountActivity extends Activity {
     	currencyButton.setText(currency.getCurrencyCode());   	
     }
     
+    
+    /**
+     * A post onCreate initialisation thread.
+     */
+    
+    private class PostCreateThread implements Runnable {
+    	public void run() {            
+            
+            List<String> currencyList = new ArrayList<String>(); 
+            for(Locale locale : Locale.getAvailableLocales()) {
+            	try {
+    	        	Currency currency = Currency.getInstance(locale);
+    	        	if(currency == null) {
+    	        		continue;
+    	        	}
+    	        	String code = currency.getCurrencyCode();
+    	        	if( ! currencyList.contains(code) ) {
+    	        		currencyList.add(code);
+    	        	}
+            	} catch(IllegalArgumentException iae) {
+            		; // Do nothing. This is thrown for unsupported locales.
+            	}
+            }
+            Collections.sort(currencyList);
+            currencies = new String[currencyList.size()];
+            currencyList.toArray(currencies);
+    	}
+    }
 }

@@ -10,12 +10,10 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -24,8 +22,6 @@ import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.Transaction;
 import com.funkyandroid.banking.android.data.TransactionManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
-import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
-import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class EditEntryActivity extends Activity {
@@ -41,6 +37,30 @@ public class EditEntryActivity extends Activity {
 	 */
 	
 	private boolean fetched = false;
+	
+	/**
+	 * The payee button.
+	 */
+	
+	private Button payeeButton;
+	
+	/**
+	 * The amount button.
+	 */
+	
+	private Button amountButton;
+		
+	/**
+	 * The text keypad handler.
+	 */
+	
+	private KeypadHandler kh;
+	
+	/**
+	 * The amount keypad helper.
+	 */
+	
+	private NumericKeypadHandler nkh;
 	
     /** Called when the activity is first created. */
     @Override
@@ -90,17 +110,21 @@ public class EditEntryActivity extends Activity {
         				}
         		});
         
-        EditText editText = (EditText) findViewById(R.id.amountMinor);
-        MinorAmountEventListener minorAmountEventListener = 
-        	new MinorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.addTextChangedListener(minorAmountEventListener);
-        editText.setOnFocusChangeListener(minorAmountEventListener);
-        
-        editText = (EditText) findViewById(R.id.amountMajor);
-        MajorAmountEventListener majorAmountEventListener = 
-        	new MajorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.setOnFocusChangeListener(majorAmountEventListener);
-        
+        amountButton = (Button) findViewById(R.id.amount);
+        amountButton.setOnClickListener(
+        		new View.OnClickListener() {
+        				public void onClick(final View view) {
+        					EditEntryActivity.this.editAmount();
+        				}
+        		});
+
+		payeeButton = (Button) findViewById(R.id.payee);
+		payeeButton.setOnClickListener(
+        		new View.OnClickListener() {
+        				public void onClick(final View view) {
+        					EditEntryActivity.this.editPayee();
+        				}
+        		});
     }
         
     /**
@@ -130,8 +154,8 @@ public class EditEntryActivity extends Activity {
     		transaction.setAccountId(accountId);
     		transaction.setTimestamp(System.currentTimeMillis());
 
-    		RadioButton button = (RadioButton) findViewById(R.id.debitButton);
-			button.setSelected(true);
+    		amountButton.setText("0.00");
+    		((RadioButton) findViewById(R.id.debitButton)).setSelected(true);
 			
     		fetched = false;
     	} else {	
@@ -161,20 +185,23 @@ public class EditEntryActivity extends Activity {
 					break;
 				}
 			}
- 			
- 			EditText editText = (EditText) findViewById(R.id.payee);
- 			editText.setText(transaction.getPayee());
+
+ 			payeeButton.setText(transaction.getPayee());
  			
  			long amount = transaction.getAmount();
  			if( amount < 0 ) {
  				amount = 0 - amount;
  			}
- 			
- 	    	editText = (EditText) findViewById(R.id.amountMajor);
- 	    	editText.setText(Long.toString(amount/100));
- 	    	
- 	    	editText = (EditText) findViewById(R.id.amountMinor);
- 	    	editText.setText(Long.toString(amount%100));
+
+ 			StringBuilder builder = new StringBuilder(16);
+ 			builder.append(Long.toString(amount/100));
+ 			builder.append('.');
+ 			long remainder = amount%100;
+ 			if(remainder < 10) {
+ 				builder.append('0');
+ 			}
+ 			builder.append(remainder);
+ 			amountButton.setText(builder.toString());
  	    	
  	    	Button button = (Button) findViewById(R.id.okButton);
  	    	button.setText(R.string.updateButtonText);
@@ -187,20 +214,18 @@ public class EditEntryActivity extends Activity {
     }
 
     /**
-     * Check to see if the . key has been pressed, if so move to the minor currency area
+     * Check that the keypads have been disposed of.
      */
     
     @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-    	if( event.getKeyCode() == KeyEvent.KEYCODE_PERIOD ) {
-    		EditText minor = ((EditText)findViewById(R.id.amountMinor));
-    		if(Integer.parseInt(minor.getText().toString()) == 0) {
-    			minor.setText("");
-    		}
-    		minor.requestFocus();
-    		return true;
+    public void onDestroy() {
+    	if( nkh != null ) {
+    		nkh.dismiss();
     	}
-    	return super.onKeyDown(keyCode, event);
+    	if( kh != null ) {
+    		kh.dismiss();
+    	}
+    	super.onDestroy();
     }
     
     /**
@@ -239,12 +264,49 @@ public class EditEntryActivity extends Activity {
     }
 
     /**
+     * Edit the payee.
+     */
+    
+    private void editPayee() {
+    	synchronized(this) {
+    		if(kh == null) {
+    			kh = new KeypadHandler(this);
+    		}
+    	}
+    	
+    	kh.display(-1, R.string.entryAmountText, payeeButton.getText(),
+    			new KeypadHandler.OnOKListener() {
+    		public void onOK(final int id, final String text) {
+    			payeeButton.setText(text);
+    		}    		
+    	});
+    }
+
+    /**
+     * Edit the amount.
+     */
+    
+    private void editAmount() {
+    	synchronized(this) {
+    		if(nkh == null) {
+    			nkh = new NumericKeypadHandler(this);
+    		}
+    	}
+    	
+    	nkh.display(-1, R.string.entryAmountText, amountButton.getText(),
+    			new NumericKeypadHandler.OnOKListener() {
+    		public void onOK(final int id, final String text) {
+				amountButton.setText(text);
+    		}    		
+    	});
+    }
+
+    /**
      * Store the account details into the database.
      */
     
     public void storeEntryDetails() {
-    	EditText editText = (EditText) findViewById(R.id.payee);
-    	transaction.setPayee(editText.getText().toString());
+    	transaction.setPayee(payeeButton.getText().toString());
 
     	RadioGroup transactionType = (RadioGroup) findViewById(R.id.type);
     	
@@ -263,15 +325,14 @@ public class EditEntryActivity extends Activity {
 
     	long oldAmount = transaction.getAmount();
     	long amount = 0;
-    	editText = (EditText) findViewById(R.id.amountMajor);
-    	String amountString = editText.getText().toString();
+    	String amountText = amountButton.getText().toString();
+    	int dotIdx = amountText.indexOf('.');
+    	String amountString = amountText.substring(0, dotIdx);
     	if(amountString != null && amountString.length() > 0) {
     		amount += Long.parseLong(amountString) * 100;
     	}
-    	
-    	editText = (EditText) findViewById(R.id.amountMinor);
+    	amountString = amountText.substring(dotIdx+1);
     	if(amountString != null && amountString.length() > 0) {
-    		amountString = editText.getText().toString();
         	amount += Long.parseLong(amountString);
     	}
     	if( type == Transaction.TYPE_DEBIT ) {

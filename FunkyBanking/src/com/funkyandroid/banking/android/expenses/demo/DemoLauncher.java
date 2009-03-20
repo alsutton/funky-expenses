@@ -34,22 +34,33 @@ public class DemoLauncher extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-    	
-    	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
     	try {
-    		passwordHash = SettingsManager.get(db, SettingsManager.PASSWORD_SETTING);
-    	} finally {
-    		db.close();
+	    	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
+	    	try {
+	    		passwordHash = SettingsManager.get(db, SettingsManager.PASSWORD_SETTING);
+	    	} finally {
+	    		db.close();
+	    	}
+	
+	    	if( passwordHash == null ) {
+				startAccountsActivity();
+				return;
+	    	}    		
+	
+	    	setContentView(R.layout.password_background);
+	    	keypadHandler = new KeypadHandler(this);    	
+	    	keypadHandler.display(1, R.string.enterPassword, "", this);
+    	} catch( Exception ex ) {
+            new AlertDialog.Builder(this).setTitle("Problem during startup")
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setMessage("Please report the following to support@funkyandroid.com : "+ex.getMessage())
+            .setPositiveButton("OK", new OnClickListener() {
+    			public void onClick(DialogInterface dialog, int which) {
+    		    	DemoLauncher.this.finish();
+    			}        	
+            })
+            .show();		    		
     	}
-
-    	if( passwordHash == null ) {
-			startAccountsActivity();
-			return;
-    	}    		
-
-    	setContentView(R.layout.password_background);
-    	keypadHandler = new KeypadHandler(this);    	
-    	keypadHandler.display(1, R.string.enterPassword, this);
     }
     
     /**
@@ -74,7 +85,7 @@ public class DemoLauncher extends Activity
         .setMessage("The password you entered was not correct.")
         .setPositiveButton("OK", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-		    	keypadHandler.display(1, R.string.enterPassword, DemoLauncher.this);
+		    	keypadHandler.display(1, R.string.enterPassword, "", DemoLauncher.this);
 			}        	
         })
         .show();		

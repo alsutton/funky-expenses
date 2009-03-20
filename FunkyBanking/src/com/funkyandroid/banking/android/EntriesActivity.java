@@ -119,11 +119,20 @@ public class EntriesActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
-		adapter.notifyDataSetChanged();
     	account = AccountManager.getById(database, account.getId());
     	updateBalance(account.getBalance());
+		adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Close database connection onDestroy.
+     */
+    
+    public void onDestroy() {
+    	database.close();
+    	super.onDestroy();
+    }
+    
     /**
      * Set up the menu for the application
      */

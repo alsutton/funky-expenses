@@ -84,7 +84,9 @@ public class NumericKeypadHandler {
     	titleView.setText(titleResource);
     	
     	editText = (EditText) keypadView.findViewById(R.id.typedText);
-    	editText.setText(startText);
+    	if(!startText.equals("0.00")) {
+    		editText.setText(startText);
+    	}
     	    	
     	KeyPressHandler handler = new KeyPressHandler();
 		for(int i = 0  ; i != 11 ; i++) {

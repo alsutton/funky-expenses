@@ -117,14 +117,25 @@ public class KeypadHandler {
 			button.setOnClickListener(handler);
 		}
 
+		
 		Button button = (Button)keypadView.findViewById(R.id.okButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
         					dismiss();
-        					if(listener != null) {
-        						listener.onOK(displayId, editText.getText().toString());
+        					notifyListener();
+        				}
+        		});
+        
+		button = (Button)keypadView.findViewById(R.id.delButton);
+        button.setOnClickListener(
+        		new View.OnClickListener() {
+        				public void onClick(final View view) {
+        					Editable text = editText.getText();
+        					if(text == null || text.length() == 0) {
+        						return;
         					}
+        					text.delete(text.length()-1, text.length());
         				}
         		});
 		
@@ -147,7 +158,7 @@ public class KeypadHandler {
 	
 	private void setToLowerCase() {
 		Button button = (Button)keypadView.findViewById(R.id.buttonSwitch1);
-		button.setText("ABC...");
+		button.setText(R.string.keypadSwitchUpper);
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
@@ -155,7 +166,7 @@ public class KeypadHandler {
         				}
         		});
 		button = (Button)keypadView.findViewById(R.id.buttonSwitch2);
-		button.setText("123...");
+		button.setText(R.string.keypadSwitchNumbers);
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
@@ -176,7 +187,7 @@ public class KeypadHandler {
 	
 	private void setToUpperCase() {
 		Button button = (Button)keypadView.findViewById(R.id.buttonSwitch1);
-		button.setText("abc...");
+		button.setText(R.string.keypadSwitchLower);
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
@@ -184,7 +195,7 @@ public class KeypadHandler {
         				}
         		});
 		button = (Button)keypadView.findViewById(R.id.buttonSwitch2);
-		button.setText("123...");
+		button.setText(R.string.keypadSwitchNumbers);
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
@@ -205,7 +216,7 @@ public class KeypadHandler {
 	
 	private void setToNumerics() {
 		Button button = (Button)keypadView.findViewById(R.id.buttonSwitch1);
-		button.setText("abc...");
+		button.setText(R.string.keypadSwitchLower);
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
@@ -213,7 +224,7 @@ public class KeypadHandler {
         				}
         		});
 		button = (Button)keypadView.findViewById(R.id.buttonSwitch2);
-		button.setText("ABC...");
+		button.setText(R.string.keypadSwitchUpper);
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
@@ -236,6 +247,16 @@ public class KeypadHandler {
 		public void onClick(final View v) {
 			Editable currentText = KeypadHandler.this.editText.getText();
 			currentText.append(((Button)v).getText());
+		}
+	}
+
+	/**
+	 * Notify the listener that OK has been pressed.
+	 */
+	
+	private void notifyListener() {
+		if(listener != null) {
+			listener.onOK(displayId, editText.getText().toString());
 		}
 	}
 	

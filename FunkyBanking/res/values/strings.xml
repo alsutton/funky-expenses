@@ -32,4 +32,7 @@
     <string name="newPassword">New Password</string>     
     <string name="newPasswordConfirm">Confirm New Password</string>
     <string name="newPasswordRemove">Leave both these boxes empty if you do not wish to have a password</string>     
+    <string name="keypadSwitchUpper">A..</string>     
+    <string name="keypadSwitchLower">a..</string>     
+    <string name="keypadSwitchNumbers">1..</string>     
 </resources>

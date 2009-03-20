@@ -129,13 +129,15 @@
 		    android:layout_height="wrap_content"/>
 		    android:layout_height="wrap_content"/>
    	<Button android:id="@+id/buttonSwitch1"
-   			android:text="ABC..."
 		    android:layout_width="wrap_content" 
 		    android:layout_height="wrap_content"/>
    	<Button android:id="@+id/buttonSwitch2"
-   			android:text="123..."
 		    android:layout_width="wrap_content" 
 		    android:layout_height="wrap_content"/>
+	<Button android:id="@+id/delButton"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+    		android:text="DEL"/>			
 	<Button android:id="@+id/okButton"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"

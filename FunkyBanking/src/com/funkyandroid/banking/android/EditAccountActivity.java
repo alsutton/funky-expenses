@@ -145,6 +145,10 @@ public class EditAccountActivity extends Activity {
 
     	if( account == null ) {
     		createEmptyAccount();
+    		EditText editText = (EditText) findViewById(R.id.amountMajor);
+	    	editText.setText("0");	    	
+	    	editText = (EditText) findViewById(R.id.amountMinor);
+	    	editText.setText("00");    	
     		return;
     	} else {	    	
 	    	fetched = true;	    	
@@ -153,7 +157,13 @@ public class EditAccountActivity extends Activity {
 	    	editText = (EditText) findViewById(R.id.amountMajor);
 	    	editText.setText(Long.toString(account.getOpeningBalance()/100));	    	
 	    	editText = (EditText) findViewById(R.id.amountMinor);
-	    	editText.setText(Long.toString(account.getOpeningBalance()%100));    	
+	    	StringBuilder value = new StringBuilder(2);
+	    	long amountMinor = account.getOpeningBalance()%100;
+	    	if(amountMinor < 10) {
+	    		value.append('0');
+	    	}
+	    	value.append(amountMinor);
+	    	editText.setText(value.toString());    	
 
 	    	Button button = (Button) findViewById(R.id.okButton);
  	    	button.setText(R.string.updateButtonText);
@@ -221,9 +231,17 @@ public class EditAccountActivity extends Activity {
     	
     	long openingBalance = 0;
     	editText = (EditText) findViewById(R.id.amountMajor);
-    	openingBalance += Long.parseLong(editText.getText().toString()) * 100;
+    	String major = editText.getText().toString();
+    	if( major != null && major.length() > 0 ) {
+    		openingBalance += Long.parseLong(major) * 100;
+    	}
+    	
     	editText = (EditText) findViewById(R.id.amountMinor);
-    	openingBalance += Long.parseLong(editText.getText().toString());    	
+    	String minor = editText.getText().toString();
+    	if( minor != null && minor.length() > 0 ) {
+        	openingBalance += Long.parseLong(minor);    	
+    	}
+    	
     	account.setOpeningBalance(openingBalance);
     	
     	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();

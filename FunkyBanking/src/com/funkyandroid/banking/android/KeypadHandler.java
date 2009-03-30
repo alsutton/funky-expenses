@@ -93,13 +93,14 @@ public class KeypadHandler {
 	}
 	
 	public void display(final int id, final int titleResource, 
-			final CharSequence startText, final OnOKListener listener) {
+			final CharSequence startText, final OnOKListener listener,
+			final int keypadLayout) {
 		displayId = id;
 		this.listener = listener;
 		
     	AlertDialog.Builder builder = new AlertDialog.Builder(context);    	
     	dialog = builder.create();
-    	keypadView = dialog.getLayoutInflater().inflate(R.layout.keypad, null);
+    	keypadView = dialog.getLayoutInflater().inflate(keypadLayout, null);
     	dialog.setView(keypadView);    	
     	dialog.show();
         

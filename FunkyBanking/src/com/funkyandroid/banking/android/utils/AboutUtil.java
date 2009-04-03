@@ -8,13 +8,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 public class AboutUtil {
 
 	/**
-	 * The package name to look for the app details under.
-	 */
-	
-	private static final String PACKAGE_NAME =
-		"com.funkyandroid.banking.android.expenses.demo";
-	
-	/**
 	 * Private constructor to avoid instantiation.
 	 */
 	
@@ -31,7 +24,7 @@ public class AboutUtil {
 	public static final void showDialog(final Context context) {
 		PackageInfo pi = null;
 		try {
-			pi = context.getPackageManager().getPackageInfo(PACKAGE_NAME, 0);
+			pi = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
 		} catch (NameNotFoundException e) {
 			// Ignore not found exceptions
 		}

@@ -34,7 +34,7 @@ public class AboutUtil {
 			message.append(pi.versionName);
 			message.append("\n\n");
 		}
-		message.append("Copyright 2009 Funky Android Limited, All Rights Reserved.\n\nSee www.funkyandroid.com for more information.");
+		message.append("Copyright 2009 Funky Android Limited, All Rights Reserved.\n\nSee www.funkyexpenses.com for more information.");
         new AlertDialog.Builder(context).setTitle(pi.applicationInfo.labelRes)
 	            .setMessage(message.toString())
 	            .setPositiveButton("OK", null)

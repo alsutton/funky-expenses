@@ -10,9 +10,10 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.funkyandroid.banking.android.AccountsActivity;
-import com.funkyandroid.banking.android.KeypadHandler;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
+import com.funkyandroid.banking.android.ui.keypad.KeypadFactory;
+import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.Crypto;
 
 public class DemoLauncher extends Activity 
@@ -48,7 +49,7 @@ public class DemoLauncher extends Activity
 	    	}    		
 	
 	    	setContentView(R.layout.password_background);
-	    	keypadHandler = new KeypadHandler(this);    	
+	    	keypadHandler = KeypadFactory.getKeypadHandler(this); 
 	    	keypadHandler.display(1, R.string.enterPassword, "", this, R.layout.password_keypad);
     	} catch( Exception ex ) {
             new AlertDialog.Builder(this).setTitle("Problem during startup")

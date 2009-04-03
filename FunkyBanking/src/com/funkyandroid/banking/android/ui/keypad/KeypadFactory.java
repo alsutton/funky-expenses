@@ -2,8 +2,6 @@ package com.funkyandroid.banking.android.ui.keypad;
 
 import android.content.Context;
 
-import com.funkyandroid.banking.android.KeypadHandler;
-
 /**
  * Factory to determine and return the correct keypad type for the
  * version of Android the app is being run on.

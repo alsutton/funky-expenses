@@ -1,4 +1,4 @@
-package com.funkyandroid.banking.android;
+package com.funkyandroid.banking.android.ui.keypad;
 
 import android.app.AlertDialog;
 import android.content.Context;

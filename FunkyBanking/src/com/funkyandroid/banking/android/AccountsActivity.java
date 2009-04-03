@@ -149,7 +149,7 @@ public class AccountsActivity extends Activity
 		    	keypadHandler = KeypadFactory.getKeypadHandler(this); 
 	    	}
     	}
-	    keypadHandler.display(1, R.string.setPassword, "", this, R.layout.keypad);
+	    keypadHandler.display(1, R.string.setPassword, "", this, false);
     }
     
     /**
@@ -159,7 +159,7 @@ public class AccountsActivity extends Activity
     public void onOK(final int id, final String password) {
     	if( id == 1 ) {
     		password1 = password;
-        	keypadHandler.display(2, R.string.newPasswordConfirm, "", this, R.layout.keypad);
+        	keypadHandler.display(2, R.string.newPasswordConfirm, "", this, false);
         	return;
     	}
     	

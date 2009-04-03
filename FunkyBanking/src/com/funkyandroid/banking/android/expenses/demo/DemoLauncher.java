@@ -50,7 +50,7 @@ public class DemoLauncher extends Activity
 	
 	    	setContentView(R.layout.password_background);
 	    	keypadHandler = KeypadFactory.getKeypadHandler(this); 
-	    	keypadHandler.display(1, R.string.enterPassword, "", this, R.layout.password_keypad);
+	    	keypadHandler.display(1, R.string.enterPassword, "", this, true);
     	} catch( Exception ex ) {
             new AlertDialog.Builder(this).setTitle("Problem during startup")
             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -86,7 +86,7 @@ public class DemoLauncher extends Activity
         .setMessage("The password you entered was not correct.")
         .setPositiveButton("OK", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-		    	keypadHandler.display(1, R.string.enterPassword, "", DemoLauncher.this, R.layout.password_keypad);
+		    	keypadHandler.display(1, R.string.enterPassword, "", DemoLauncher.this, true);
 			}        	
         })
         .show();		

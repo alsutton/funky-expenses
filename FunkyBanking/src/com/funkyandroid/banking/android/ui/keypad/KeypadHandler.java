@@ -76,7 +76,7 @@ public abstract class KeypadHandler {
 	 * @param keypadLayout The ID of the layout resource holdinf the keypad layout. 
 	 */
 	
-	public void display(final int id, final int titleResource, 
+	protected void display(final int id, final int titleResource, 
 			final CharSequence startText, final OnOKListener listener,
 			final int keypadLayout) {
 		displayId = id;
@@ -106,6 +106,7 @@ public abstract class KeypadHandler {
         					notifyListener();
         				}
         		});
+        editText.requestFocus();
 	}
 	
 	/**

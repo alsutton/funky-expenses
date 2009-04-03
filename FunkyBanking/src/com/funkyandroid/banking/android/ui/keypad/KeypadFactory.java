@@ -2,6 +2,8 @@ package com.funkyandroid.banking.android.ui.keypad;
 
 import android.content.Context;
 
+import android.os.Build.VERSION;
+
 /**
  * Factory to determine and return the correct keypad type for the
  * version of Android the app is being run on.
@@ -17,6 +19,13 @@ public final class KeypadFactory {
 	 */
 	
 	public static final KeypadHandler getKeypadHandler(final Context context) {
-		return new PreCupcakeKeypadHandler(context);
+		if(VERSION.RELEASE.equals("1")){
+			return new PreCupcakeKeypadHandler(context);
+		}
+		if(VERSION.SDK.equals("2")){
+			return new PreCupcakeKeypadHandler(context);
+		}
+		
+		return new CupcakeKeypadHandler(context);
 	}
 }

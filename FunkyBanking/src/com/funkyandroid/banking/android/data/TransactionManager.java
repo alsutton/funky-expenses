@@ -4,11 +4,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class TransactionManager {
+public final class TransactionManager {
 	 
 	private static final String[] COLUMNS = { 
 		"_id", "account_id", "timestamp", "category_id",
-		"payee_id", "type", "amount" };
+		"payee_id", "type", "amount", "recipient_account_id" };
 
 	/**
 	 * The SQL to select the transactions for an account.
@@ -133,9 +133,22 @@ public class TransactionManager {
 	 */
 	
 	public static void delete(final SQLiteDatabase db, final Transaction transaction) {
-		String[] whereArgs = { Integer.toString(transaction.getId()) };
-		db.delete(DBHelper.ENTRIES_TABLE_NAME, TransactionManager.GET_BY_ID_SQL, whereArgs);
+		Integer recipientTransaction = transaction.getReceipientAccountId();
+		if(recipientTransaction != null) {
+			Transaction recipient = TransactionManager.getById(db, recipientTransaction);
+			deleteFromDatabase(db, recipient);
+		}
+		deleteFromDatabase(db, transaction);
+	}
 		
+
+	/**
+	 * Delete a transaction.
+	 */
+		
+	private static void deleteFromDatabase(final SQLiteDatabase db, final Transaction transaction) {
+		String[] whereArgs = { Integer.toString(transaction.getId()) };
+		db.delete(DBHelper.ENTRIES_TABLE_NAME, TransactionManager.GET_BY_ID_SQL, whereArgs);		
 		AccountManager.adjustBalance(db, transaction.getAccountId(), 0-transaction.getAmount());
 	}
 

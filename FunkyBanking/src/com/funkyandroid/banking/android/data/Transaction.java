@@ -2,7 +2,7 @@ package com.funkyandroid.banking.android.data;
 
 import android.database.Cursor;
 
-public class Transaction {
+public final class Transaction {
 
 	/**
 	 * The transaction types.
@@ -68,6 +68,12 @@ public class Transaction {
 	private long amount;
 		
 	/**
+	 * The id of the transaction this matches with if it's a pair.
+	 */
+	
+	private Integer receipientAccountId;
+	
+	/**
 	 * Create a transaction with a specified account id.
 	 */
 	
@@ -88,6 +94,11 @@ public class Transaction {
 		this.payeeId = cursor.getInt(4);
 		this.type = cursor.getInt(5);
 		this.amount = cursor.getLong(6);
+		if(cursor.isNull(7)) {
+			this.receipientAccountId = null;
+		} else {
+			this.receipientAccountId = cursor.getInt(7);
+		}
 	}
 	
 	public int getId() {
@@ -110,7 +121,7 @@ public class Transaction {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(final long timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -118,7 +129,7 @@ public class Transaction {
 		return categoryId;
 	}
 
-	public void setCategoryId(int categoryId) {
+	public void setCategoryId(final int categoryId) {
 		this.categoryId = categoryId;
 	}
 
@@ -126,7 +137,7 @@ public class Transaction {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(final String category) {
 		this.category = category;
 	}
 
@@ -142,7 +153,7 @@ public class Transaction {
 		return payee;
 	}
 
-	public void setPayee(String payee) {
+	public void setPayee(final String payee) {
 		this.payee = payee;
 	}
 
@@ -150,7 +161,7 @@ public class Transaction {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(final int type) {
 		this.type = type;
 	}
 
@@ -158,7 +169,15 @@ public class Transaction {
 		return amount;
 	}
 
-	public void setAmount(long amount) {
+	public void setAmount(final long amount) {
 		this.amount = amount;
 	}
+
+	public Integer getReceipientAccountId() {
+		return receipientAccountId;
+	}
+
+	public void setReceipientAccountId(final Integer receipientAccountId) {
+		this.receipientAccountId = receipientAccountId;
+	}	
 }

@@ -98,7 +98,7 @@ public class DBHelper
 	  */
 	
 	 public DBHelper(final Context context) {
-		 super(context, "FunkyBanking", null, 2);
+		 super(context, "FunkyBanking", null, 3);
 	 }
 	 
 	@Override
@@ -113,9 +113,11 @@ public class DBHelper
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if(oldVersion == 1) {
+		if(oldVersion < 2) {
 			db.execSQL(DBHelper.SETTINGS_TABLE_CREATE_SQL);
-			db.execSQL("ALTER TABLE "+DBHelper.ENTRIES_TABLE_NAME+" ADD COLMN recipient_account_id INT");
+		}
+		if(oldVersion < 3) {
+			db.execSQL("ALTER TABLE "+DBHelper.ENTRIES_TABLE_NAME+" ADD recipient_account_id INT");
 		}
 				
 	}

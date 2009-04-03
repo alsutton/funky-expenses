@@ -142,7 +142,7 @@
 		        android:numeric="integer" 
 		        android:maxLength="3"
 		        android:text="00"
-		        android:width="20sp"
+		        android:minWidth="50sp"
 				android:nextFocusDown="@+id/okButton"/>
 		</LinearLayout>
 	

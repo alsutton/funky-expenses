@@ -8,7 +8,7 @@ public final class TransactionManager {
 	 
 	private static final String[] COLUMNS = { 
 		"_id", "account_id", "timestamp", "category_id",
-		"payee_id", "type", "amount", "recipient_account_id" };
+		"payee_id", "type", "amount" /*, "recipient_account_id"*/ };
 
 	/**
 	 * The SQL to select the transactions for an account.

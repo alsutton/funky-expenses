@@ -94,12 +94,12 @@ public final class Transaction {
 		this.payeeId = cursor.getInt(4);
 		this.type = cursor.getInt(5);
 		this.amount = cursor.getLong(6);
-		if(cursor.isNull(7)) {
+/*		if(cursor.isNull(7)) {
 			this.receipientAccountId = null;
 		} else {
 			this.receipientAccountId = cursor.getInt(7);
 		}
-	}
+*/	}
 	
 	public int getId() {
 		return id;

@@ -180,8 +180,13 @@ public class EditAccountActivity extends Activity {
     
     private void createEmptyAccount() {
 		account = new Account();
-    	Currency currency = Currency.getInstance(Locale.getDefault());
-		account.setCurrency(currency.getCurrencyCode());
+		Currency currency;
+		try {
+			currency = Currency.getInstance(Locale.getDefault());
+			account.setCurrency(currency.getCurrencyCode());
+		} catch(IllegalArgumentException iae) {
+			account.setCurrency("EUR");
+		}
     	updateCurrencyInformation(account.getCurrency());    	
     }
     

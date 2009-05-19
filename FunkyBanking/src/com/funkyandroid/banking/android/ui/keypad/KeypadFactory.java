@@ -19,7 +19,7 @@ public final class KeypadFactory {
 	 */
 	
 	public static final KeypadHandler getKeypadHandler(final Context context) {
-		if(VERSION.RELEASE.equals("1")){
+		if(VERSION.SDK.equals("1")){
 			return new PreCupcakeKeypadHandler(context);
 		}
 		if(VERSION.SDK.equals("2")){

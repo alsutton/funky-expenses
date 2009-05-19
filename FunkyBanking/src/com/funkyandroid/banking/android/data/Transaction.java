@@ -71,7 +71,7 @@ public final class Transaction {
 	 * The id of the transaction this matches with if it's a pair.
 	 */
 	
-	private Integer receipientAccountId;
+	private Integer linkId;
 	
 	/**
 	 * Create a transaction with a specified account id.
@@ -94,12 +94,12 @@ public final class Transaction {
 		this.payeeId = cursor.getInt(4);
 		this.type = cursor.getInt(5);
 		this.amount = cursor.getLong(6);
-/*		if(cursor.isNull(7)) {
-			this.receipientAccountId = null;
+		if(cursor.isNull(7)) {
+			this.linkId = null;
 		} else {
-			this.receipientAccountId = cursor.getInt(7);
+			this.linkId = cursor.getInt(7);
 		}
-*/	}
+	}
 	
 	public int getId() {
 		return id;
@@ -173,11 +173,11 @@ public final class Transaction {
 		this.amount = amount;
 	}
 
-	public Integer getReceipientAccountId() {
-		return receipientAccountId;
+	public Integer getLinkId() {
+		return linkId;
 	}
 
-	public void setReceipientAccountId(final Integer receipientAccountId) {
-		this.receipientAccountId = receipientAccountId;
+	public void setLinkId(final Integer linkId) {
+		this.linkId = linkId;
 	}	
 }

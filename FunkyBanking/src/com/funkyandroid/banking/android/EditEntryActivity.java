@@ -81,7 +81,7 @@ public class EditEntryActivity extends Activity {
         					if( fetched ) {        				    	
         				    	SQLiteDatabase db = (new DBHelper(EditEntryActivity.this)).getWritableDatabase();
         						try {    	
-       					    		TransactionManager.delete(db, transaction);	    		
+       					    		TransactionManager.delete(db, transaction, false);	    		
         						} finally {
         							db.close();
         						}

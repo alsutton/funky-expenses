@@ -108,6 +108,22 @@ public final class TransactionManager {
 		if( payeeId == null ) {
 			payeeId = PayeeManager.create(db, transaction.getPayee());
 		}
+
+		update(db, transaction);
+
+		AccountManager.adjustBalance(db, transaction.getAccountId(), 0-oldAmount);
+		return AccountManager.adjustBalance(db, transaction.getAccountId(), transaction.getAmount());		
+	}
+
+	/**
+	 * Create a new account with the given name
+	 */
+	
+	public static synchronized void update(final SQLiteDatabase db, final Transaction transaction) {
+		Integer payeeId = PayeeManager.getId(db, transaction.getPayee());
+		if( payeeId == null ) {
+			payeeId = PayeeManager.create(db, transaction.getPayee());
+		}
 		
 		String[] whereArgs= { Integer.toString(transaction.getId()) };
 		ContentValues values = new ContentValues();
@@ -121,9 +137,6 @@ public final class TransactionManager {
 					values, 
 					TransactionManager.GET_BY_ID_SQL, 
 					whereArgs);
-
-		AccountManager.adjustBalance(db, transaction.getAccountId(), 0-oldAmount);
-		return AccountManager.adjustBalance(db, transaction.getAccountId(), transaction.getAmount());		
 	}
 
 	/**
@@ -132,11 +145,16 @@ public final class TransactionManager {
 	 * @param db database to query.
 	 */
 	
-	public static void delete(final SQLiteDatabase db, final Transaction transaction) {
-		Integer recipientTransaction = transaction.getReceipientAccountId();
-		if(recipientTransaction != null) {
-			Transaction recipient = TransactionManager.getById(db, recipientTransaction);
-			deleteFromDatabase(db, recipient);
+	public static void delete(final SQLiteDatabase db, final Transaction transaction, boolean deleteLinked) {
+		Integer linkedTransaction = transaction.getLinkId();
+		if(linkedTransaction != null) {
+			Transaction otherTransaction = TransactionManager.getById(db, linkedTransaction);
+			if( deleteLinked ) {
+				deleteFromDatabase(db, otherTransaction);
+			} else {
+				otherTransaction.setLinkId(null);
+				update(db, otherTransaction);
+			}
 		}
 		deleteFromDatabase(db, transaction);
 	}

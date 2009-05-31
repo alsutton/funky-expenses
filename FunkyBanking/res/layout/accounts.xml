@@ -1,33 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:admobsdk="http://schemas.android.com/apk/res/com.funkyandroid.banking.android.expenses.demo"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<LinearLayout
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:orientation="horizontal">
-    <Button
-    	android:id="@+id/add"
-	    android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:background="@android:drawable/ic_menu_add"
-    	/>
-	<TextView  
-		android:text="@string/titleAccounts"
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content" 
-		android:textSize="18sp"
+	<com.admob.android.ads.AdView  
+	                        android:id="@+id/ad" 
+	                        android:layout_width="fill_parent" 
+	                        android:layout_height="wrap_content"
+	                        admobsdk:backgroundColor="#000000"
+	                        admobsdk:textColor="#FFFFFF"
+	                        admobsdk:keywords="Android application"
+	                        admobsdk:refreshInterval="60"
+	                        admobsdk:testing="true"
+	                />
+	                    
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
 	    android:gravity="center"
-	    android:textStyle="bold"/>
-</LinearLayout>
+	    android:orientation="horizontal">
+	    <Button
+	    	android:id="@+id/add"
+		    android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:background="@android:drawable/ic_menu_add"
+	    	/>
+		<TextView  
+			android:text="@string/titleAccounts"
+		    android:layout_width="fill_parent" 
+		    android:layout_height="wrap_content" 
+			android:textSize="18sp"
+		    android:gravity="center"
+		    android:textStyle="bold"/>
+	</LinearLayout>
+	
+	<ListView  
+		android:id="@+id/informationList"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="fill_parent"
+	    android:choiceMode="singleChoice"
+	    />    
 
-<ListView  
-	android:id="@+id/informationList"
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent"
-    android:choiceMode="singleChoice"
-    />    
 </LinearLayout>

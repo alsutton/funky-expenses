@@ -38,12 +38,6 @@ public final class Transaction {
 	private int categoryId;
 	
 	/**
-	 * The category for the entry
-	 */
-	
-	private String category;
-	
-	/**
 	 * The id of the payee.
 	 */
 	
@@ -131,14 +125,6 @@ public final class Transaction {
 
 	public void setCategoryId(final int categoryId) {
 		this.categoryId = categoryId;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(final String category) {
-		this.category = category;
 	}
 
 	public int getPayeeId() {

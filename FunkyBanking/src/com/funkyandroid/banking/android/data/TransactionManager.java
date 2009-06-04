@@ -90,7 +90,7 @@ public final class TransactionManager {
 		values.put("amount", transaction.getAmount());
 		values.put("account_id", transaction.getAccountId());
 		values.put("payee_id", payeeId);
-		values.put("category_id", 0);
+		values.put("category_id", transaction.getCategoryId());
 		values.put("timestamp", transaction.getTimestamp());
 		values.put("type", transaction.getType());
 		db.insert(DBHelper.ENTRIES_TABLE_NAME, null, values);
@@ -130,7 +130,7 @@ public final class TransactionManager {
 		values.put("amount", transaction.getAmount());
 		values.put("account_id", transaction.getAccountId());
 		values.put("payee_id", payeeId);
-		values.put("category_id", 0);
+		values.put("category_id", transaction.getCategoryId());
 		values.put("timestamp", transaction.getTimestamp());
 		values.put("type", transaction.getType());
 		db.update(	DBHelper.ENTRIES_TABLE_NAME,

@@ -7,19 +7,24 @@ import java.util.Date;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.funkyandroid.banking.android.data.CategoryManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.Transaction;
 import com.funkyandroid.banking.android.data.TransactionManager;
@@ -41,6 +46,12 @@ public class EditEntryActivity extends Activity {
 	 */
 	
 	private boolean fetched = false;
+
+	/**
+	 * The Database connection
+	 */
+	
+	private SQLiteDatabase db;
 	
     /** Called when the activity is first created. */
     @Override
@@ -101,8 +112,18 @@ public class EditEntryActivity extends Activity {
         	new MajorAmountEventListener(editText.getOnFocusChangeListener());
         editText.setOnFocusChangeListener(majorAmountEventListener);
         
+    	db = (new DBHelper(this)).getWritableDatabase();
     }
-        
+
+    /**
+     * Override onDestroy to close the database.
+     */
+    
+    public void onDestroy() {
+    	db.close();
+    	super.onDestroy();
+    }
+    
     /**
      * Get the account details when started. 
      */
@@ -119,6 +140,7 @@ public class EditEntryActivity extends Activity {
     	TextView cSymb = (TextView) findViewById(R.id.currencySymbol);
     	cSymb.setText(currencySymbol);
     	int transactionId = startingIntent.getIntExtra("com.funkyandroid.banking.transaction_id", -1);
+    	
     	if( transactionId == -1 ) {
 	    	int accountId = startingIntent.getIntExtra("com.funkyandroid.banking.account_id", -1);    	
 	    	if( accountId == -1 ) {		    	
@@ -135,16 +157,11 @@ public class EditEntryActivity extends Activity {
 			
     		fetched = false;
     	} else {	
-	    	SQLiteDatabase db = (new DBHelper(this)).getReadableDatabase();
-			try {    	
-				transaction = TransactionManager.getById(db, transactionId);
-		    	if( transaction == null ) {
-		    		finish();
-		    		return;    		
-		    	}
-			} finally {
-				db.close();
-			}
+			transaction = TransactionManager.getById(db, transactionId);
+	    	if( transaction == null ) {
+	    		finish();
+	    		return;    		
+	    	}
 			fetched = true;
 			
  			switch(transaction.getType()) {
@@ -179,10 +196,23 @@ public class EditEntryActivity extends Activity {
  	    	Button button = (Button) findViewById(R.id.okButton);
  	    	button.setText(R.string.updateButtonText);
  	    	button = (Button) findViewById(R.id.cancelButton);
- 	    	button.setText(R.string.deleteButtonText);
- 	    	
+ 	    	button.setText(R.string.deleteButtonText);	 	    	
     	}
-		
+    	
+    	CategorySuggestionsAdapter adapter = 
+    		new CategorySuggestionsAdapter(
+    					this, 
+    					android.R.layout.simple_dropdown_item_1line, 
+    					null, 
+    					CategoryManager.NAME_COL, 
+    					new int[] {android.R.id.text1} );
+
+    	
+    	AutoCompleteTextView categoryEntry =
+    		(AutoCompleteTextView) findViewById(R.id.category);
+    	categoryEntry.setText(CategoryManager.getById(db, transaction.getCategoryId()));
+    	categoryEntry.setAdapter(adapter);
+	    	
     	updateDate();
     }
 
@@ -279,16 +309,42 @@ public class EditEntryActivity extends Activity {
     	}
     	transaction.setAmount(amount);
     	
+    	AutoCompleteTextView categoryEntry =
+    		(AutoCompleteTextView) findViewById(R.id.category);
+    	String category = categoryEntry.getText().toString();
     	
-    	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
-		try {    	
-		   	if( fetched ) {
-		   		TransactionManager.update(db, transaction, oldAmount);
-	    	} else {
-	    		TransactionManager.create(db, transaction);	    		
-	    	}
-		} finally {
-			db.close();
-		}
+		int categoryId = CategoryManager.getByName(db, category);			
+		transaction.setCategoryId(categoryId);
+		
+	   	if( fetched ) {
+	   		TransactionManager.update(db, transaction, oldAmount);
+    	} else {
+    		TransactionManager.create(db, transaction);	    		
+    	}
+    }
+
+
+    private class CategorySuggestionsAdapter extends SimpleCursorAdapter {
+
+    	public CategorySuggestionsAdapter(final Context context, final int layout, final Cursor c,
+    			final String[] from, final int[] to) {
+    		super(context, layout, c, from, to);
+    	}
+
+    	@Override
+    	public String convertToString(final Cursor cursor)
+    	{
+    		return cursor.getString(0);
+    	}
+    	
+    	@Override
+    	public Cursor runQueryOnBackgroundThread(final CharSequence constraint)
+    	{
+    		if(constraint == null || constraint.length() == 0) {
+    			return super.runQueryOnBackgroundThread(constraint);
+    		}
+    		return CategoryManager.getMatchesFor(EditEntryActivity.this.db, constraint.toString());
+    	}
+
     }
 }

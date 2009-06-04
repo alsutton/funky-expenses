@@ -122,8 +122,8 @@ public class AccountsActivity extends Activity
 					}
 				}
 			);
-
-		menu.add(R.string.setPassword)
+	
+		menu.add(R.string.menuChangePassword)
 			.setIcon(android.R.drawable.ic_menu_view)
 			.setOnMenuItemClickListener(
 				new OnMenuItemClickListener() {

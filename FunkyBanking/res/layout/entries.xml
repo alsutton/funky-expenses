@@ -13,7 +13,7 @@
 	                        android:layout_height="wrap_content"
 	                        admobsdk:backgroundColor="#000000"
 	                        admobsdk:textColor="#FFFFFF"
-	                        admobsdk:keywords="Android application"
+	                        admobsdk:keywords="Android Banking Expenses Financial"
 	                        admobsdk:refreshInterval="60"
 	                        admobsdk:testing="true"
 	                />
@@ -52,5 +52,6 @@
 	    android:layout_height="fill_parent"
 	    android:choiceMode="singleChoice"
 	    android:cacheColorHint="#00000000"
+	    android:gravity="center_horizontal"
 	    />
 </LinearLayout>

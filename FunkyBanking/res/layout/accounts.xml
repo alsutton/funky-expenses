@@ -12,7 +12,7 @@
 	                        android:layout_height="wrap_content"
 	                        admobsdk:backgroundColor="#000000"
 	                        admobsdk:textColor="#FFFFFF"
-	                        admobsdk:keywords="Android application"
+	                        admobsdk:keywords="Android Banking Expenses Financial"
 	                        admobsdk:refreshInterval="60"
 	                        admobsdk:testing="true"
 	                />

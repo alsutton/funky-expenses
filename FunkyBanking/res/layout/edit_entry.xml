@@ -82,7 +82,8 @@
 			android:singleLine="true"
 	        android:scrollHorizontally="true"
 	        android:autoText="false"
-	        android:gravity="fill_horizontal"/>
+	        android:gravity="fill_horizontal"
+			android:nextFocusDown="@+id/okCategory"/>
 	        
 	    <TextView 
 	        android:layout_height="wrap_content"
@@ -105,7 +106,8 @@
 	        android:scrollHorizontally="true"
 	        android:autoText="false"
 	        android:completionThreshold="2"
-	        android:gravity="fill_horizontal"/>
+	        android:gravity="fill_horizontal"
+			android:nextFocusDown="@+id/amountMajor"/>
 	        
 	    <TextView 
 	        android:layout_height="wrap_content"
@@ -145,7 +147,8 @@
 		        android:maxLength="10" 
 		        android:width="150sp"
 		        android:text="0"
-		        android:nextFocusDown="@+id/okButton"/>
+		        android:nextFocusDown="@+id/amountMinor"/>
+		        
 		    <TextView 
 		        android:layout_height="wrap_content"
 		        android:layout_width="wrap_content"

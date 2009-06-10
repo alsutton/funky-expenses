@@ -153,12 +153,12 @@ public class EditAccountActivity extends Activity {
     	} else {	    	
 	    	fetched = true;	    	
 	    	EditText editText = (EditText) findViewById(R.id.accountName);
-	    	editText.setText(account.getName());	    	
+	    	editText.setText(account.name);	    	
 	    	editText = (EditText) findViewById(R.id.amountMajor);
-	    	editText.setText(Long.toString(account.getOpeningBalance()/100));	    	
+	    	editText.setText(Long.toString(account.openingBalance/100));	    	
 	    	editText = (EditText) findViewById(R.id.amountMinor);
 	    	StringBuilder value = new StringBuilder(2);
-	    	long amountMinor = account.getOpeningBalance()%100;
+	    	long amountMinor = account.openingBalance%100;
 	    	if(amountMinor < 10) {
 	    		value.append('0');
 	    	}
@@ -171,7 +171,7 @@ public class EditAccountActivity extends Activity {
  	    	button.setText(R.string.deleteButtonText);
     	}
 	    	
-    	updateCurrencyInformation(account.getCurrency());
+    	updateCurrencyInformation(account.currency);
     }
 
     /**
@@ -183,11 +183,11 @@ public class EditAccountActivity extends Activity {
 		Currency currency;
 		try {
 			currency = Currency.getInstance(Locale.getDefault());
-			account.setCurrency(currency.getCurrencyCode());
+			account.currency = currency.getCurrencyCode();
 		} catch(IllegalArgumentException iae) {
-			account.setCurrency("EUR");
+			account.currency = "EUR";
 		}
-    	updateCurrencyInformation(account.getCurrency());    	
+    	updateCurrencyInformation(account.currency);    	
     }
     
     /**
@@ -230,9 +230,9 @@ public class EditAccountActivity extends Activity {
     
     public void storeAccountDetails() {
     	EditText editText = (EditText) findViewById(R.id.accountName);
-    	account.setName(editText.getText().toString());
+    	account.name = editText.getText().toString();
 
-    	long oldOpeningBalance = account.getOpeningBalance();
+    	long oldOpeningBalance = account.openingBalance;
     	
     	long openingBalance = 0;
     	editText = (EditText) findViewById(R.id.amountMajor);
@@ -247,7 +247,7 @@ public class EditAccountActivity extends Activity {
         	openingBalance += Long.parseLong(minor);    	
     	}
     	
-    	account.setOpeningBalance(openingBalance);
+    	account.openingBalance = openingBalance;
     	
     	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
 		try {    	
@@ -283,8 +283,8 @@ public class EditAccountActivity extends Activity {
      */
     
     private void updateCurrencyInformation(final String currencyCode) {
-    	account.setCurrency(currencyCode);
-    	Currency currency = Currency.getInstance(account.getCurrency());
+    	account.currency = currencyCode;
+    	Currency currency = Currency.getInstance(currencyCode);
     	
     	TextView textView = (TextView) findViewById(R.id.currencySymbol);
     	textView.setText(currency.getSymbol());

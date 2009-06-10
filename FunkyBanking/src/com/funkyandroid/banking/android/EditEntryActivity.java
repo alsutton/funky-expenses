@@ -32,6 +32,7 @@ import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
 import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
+import com.funkyandroid.banking.android.utils.StringUtils;
 
 public class EditEntryActivity extends Activity {
 	
@@ -218,7 +219,12 @@ public class EditEntryActivity extends Activity {
     	
     	AutoCompleteTextView categoryEntry =
     		(AutoCompleteTextView) findViewById(R.id.category);
-    	categoryEntry.setText(CategoryManager.getById(db, transaction.getCategoryId()));
+    	
+    	String category = CategoryManager.getById(db, transaction.getCategoryId()); 
+    	if(CategoryManager.UNCAT_CAT.equals(category)) {
+    		category = "";
+    	}
+    	categoryEntry.setText(category);
     	categoryEntry.setAdapter(adapter);
 	    	
     	updateDate();
@@ -321,6 +327,9 @@ public class EditEntryActivity extends Activity {
     		(AutoCompleteTextView) findViewById(R.id.category);
     	String category = categoryEntry.getText().toString();
     	
+    	if(StringUtils.isEmpty(category)) {
+    		category = CategoryManager.UNCAT_CAT;
+    	}
 		int categoryId = CategoryManager.getByName(db, category);			
 		transaction.setCategoryId(categoryId);
 		

@@ -15,11 +15,22 @@ public final class TransactionManager {
 	 */
 	
 	private static final String TRANSACTIONS_FOR_ACCOUNT_SQL = 
-		"SELECT t._id, p.name, t.amount, t.timestamp FROM "
+		"SELECT t._id as _id, p.name, t.amount, t.timestamp FROM "
 		+ DBHelper.ENTRIES_TABLE_NAME
 		+ " t, "
 		+ DBHelper.PAYEE_TABLE_NAME
 		+ " p WHERE t.account_id = ? AND p._id = t.payee_id ORDER BY timestamp DESC";
+
+	/**
+	 * The SQL to select the transactions for an account.
+	 */
+	
+	private static final String ACCOUNT_AND_CAT_QUERY = 
+		"SELECT t._id as _id, p.name, t.amount, t.timestamp FROM "
+		+ DBHelper.ENTRIES_TABLE_NAME
+		+ " t, "
+		+ DBHelper.PAYEE_TABLE_NAME
+		+ " p WHERE t.account_id = ? AND t.category_id = ? AND p._id = t.payee_id ORDER BY timestamp DESC";
 
 	/**
 	 * The where clause for fetching an individual transaction.
@@ -41,10 +52,23 @@ public final class TransactionManager {
 	 */
 	
 	public static Cursor getForAccount(final SQLiteDatabase db, 
-			final Integer accountId) {
-		
-		String[] whereValues = { accountId.toString() };
+			final int accountId) {		
+		String[] whereValues = { Integer.toString(accountId) };
 		return db.rawQuery (TRANSACTIONS_FOR_ACCOUNT_SQL, whereValues);
+	}
+
+	/**
+	 * Get an cursor pointing to the entries with the given category ID in an account with the given ID.
+	 *  
+	 * @param accountId The account to get the entries from.
+	 * @param categoryId The ID of the category to get the entries for.
+	 * 
+	 * @return The cursor.
+	 */
+	public static Cursor getCursorForCategoryAndAccount(final SQLiteDatabase db, 
+			final int accountId, final int categoryId) {
+		String[] whereValues = { Integer.toString( accountId ), Integer.toString( categoryId ) };
+		return db.rawQuery (ACCOUNT_AND_CAT_QUERY, whereValues);
 	}
 	
 	/**
@@ -53,8 +77,8 @@ public final class TransactionManager {
 	 * @param db database to query.
 	 */
 	
-	public static Transaction getById(final SQLiteDatabase db,final Integer id) {
-		String[] whereValues = { id.toString() };
+	public static Transaction getById(final SQLiteDatabase db,final int id) {
+		String[] whereValues = { Integer.toString(id) };
 		Cursor cursor = db.query(DBHelper.ENTRIES_TABLE_NAME, TransactionManager.COLUMNS, 
 				TransactionManager.GET_BY_ID_SQL, whereValues, null, null, "timestamp DESC");
 		
@@ -177,7 +201,7 @@ public final class TransactionManager {
 	 */
 	
 	public static void deleteAllForAccount(final SQLiteDatabase db, final Account account) {
-		String[] whereArgs = { Integer.toString(account.getId()) };
+		String[] whereArgs = { Integer.toString(account.id) };
 		db.delete(DBHelper.ENTRIES_TABLE_NAME, TransactionManager.DELETE_FOR_ACCOUNT_SQL, whereArgs);
 	}
 }

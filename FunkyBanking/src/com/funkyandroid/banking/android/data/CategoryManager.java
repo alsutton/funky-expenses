@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class CategoryManager {
 
+	public  static final String UNCAT_CAT = "Uncategorized";
+		
 	private static final String EMPTY_CATEGORY = "";
 	
 	private static final String[] SUGGEST_COLS = { "name", "_id" }; 
@@ -20,6 +22,11 @@ public class CategoryManager {
 	
 	private static final String NAME_QUERY = "_id = ?";
 
+	private static final String ACCOUNT_CATS_QUERY = 
+		"SELECT c._id as _id, c.name, sum(t.amount), count(*) FROM " +
+			DBHelper.CATEGORIES_TABLE_NAME + " c, " +
+			DBHelper.ENTRIES_TABLE_NAME + " t WHERE t.account_id = ? AND t.category_id = c._id GROUP BY t.category_id";
+		
 	/**
 	 * Get the list of accounts from the database.
 	 * 
@@ -95,7 +102,7 @@ public class CategoryManager {
 		}
 	}
 
-	public static CharSequence getById(final SQLiteDatabase db, final int categoryId) {
+	public static String getById(final SQLiteDatabase db, final int categoryId) {
 		if(categoryId == Integer.MIN_VALUE) {
 			return EMPTY_CATEGORY;
 		}
@@ -137,5 +144,18 @@ public class CategoryManager {
 		return db.query(DBHelper.CATEGORIES_TABLE_NAME, SUGGEST_COLS, 
 				SUGGEST_QUERY, whereArgs, null, null, "name ASC");
 	}
-	
+
+	/**
+	 * Get a cursor for the categories and totals in those categories used in 
+	 * an account.
+	 * 
+	 * @param database The database being accessed.
+	 * @param accountId The ID of the account to get the data for.
+	 * 
+	 * @return A cursor pointing at the data.
+	 */
+	public static Cursor getForAccount(final SQLiteDatabase database, final int accountId) {
+		String[] whereValues = { Integer.toString(accountId) };
+		return database.rawQuery (CategoryManager.ACCOUNT_CATS_QUERY, whereValues);
+	}	
 }

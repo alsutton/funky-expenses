@@ -59,6 +59,7 @@ public class EntryView extends LinearLayout {
 		value = new TextView(context);
 		value.setLayoutParams(valueLayout);
 		value.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+		value.setTypeface(date.getTypeface(), Typeface.BOLD);
 		dateAndValue.addView(value);
 		
 		addView(dateAndValue);

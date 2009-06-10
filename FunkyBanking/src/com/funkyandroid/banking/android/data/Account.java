@@ -8,31 +8,31 @@ public class Account {
 	 * The account ID
 	 */
 	
-	private int id;
+	public int id;
 	
 	/**
 	 * The name of the account.
 	 */
 	
-	private String name;
+	public String name;
 	
 	/**
 	 * The currency for the account.
 	 */
 	
-	private String currency;
+	public String currency;
 	
 	/**
 	 * The value. This is multiplied by 100
 	 */
 	
-	private long openingBalance;
+	public long openingBalance;
 	
 	/**
 	 * The value. This is multiplied by 100
 	 */
 	
-	private long balance;
+	public long balance;
 
 	/**
 	 * Null constructor.
@@ -54,45 +54,5 @@ public class Account {
 		openingBalance = cursor.getLong(2);
 		balance = cursor.getLong(3);
 		currency = cursor.getString(4);
-	}
-	
-	public int getId() {
-		return id;
-	}
-
-	public void setId(final int id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public long getBalance() {
-		return balance;
-	}
-
-	public void setBalance(final long balance) {
-		this.balance = balance;
-	}
-
-	public String getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
-
-	public long getOpeningBalance() {
-		return openingBalance;
-	}
-
-	public void setOpeningBalance(long openingBalance) {
-		this.openingBalance = openingBalance;
 	}
 }

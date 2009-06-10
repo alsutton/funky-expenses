@@ -98,7 +98,7 @@ public class DBHelper
 	  */
 	
 	 public DBHelper(final Context context) {
-		 super(context, "FunkyBanking", null, 4);
+		 super(context, "FunkyBanking", null, 6);
 	 }
 	 
 	@Override
@@ -120,6 +120,10 @@ public class DBHelper
 		if(oldVersion < 4) {
 			db.execSQL("ALTER TABLE "+DBHelper.ENTRIES_TABLE_NAME+" ADD link_id INT");
 			db.execSQL(DBHelper.SETTINGS_TABLE_CREATE_SQL);
+		}
+		if(oldVersion < 6) {
+			int catId = CategoryManager.getByName(db, CategoryManager.UNCAT_CAT);
+			db.execSQL("UPDATE "+DBHelper.ENTRIES_TABLE_NAME+" SET category_id = "+catId+" WHERE category_id is null OR category_id = 0");
 		}
 	}
 }

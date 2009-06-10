@@ -10,6 +10,7 @@ public class AccountManager {
 	
 	private static final String[] BALANCE_UPDATE_COLUMNS = { "balance" }; 
 	
+	private static final String[] BALANCE_COLS = { "balance" }; 
 
 	/**
 	 * The where clause for fetching an individual account.
@@ -34,8 +35,8 @@ public class AccountManager {
 	 * @param db database to query.
 	 */
 	
-	public static Account getById(final SQLiteDatabase db,final Integer id) {
-		String[] whereValues = { id.toString() };
+	public static Account getById(final SQLiteDatabase db,final int id) {
+		String[] whereValues = { Integer.toString( id ) };
 		Cursor cursor = db.query(DBHelper.ACCOUNTS_TABLE_NAME, AccountManager.COLUMNS, 
 				AccountManager.GET_BY_ID_SQL, whereValues, null, null, "name ASC");
 		
@@ -48,6 +49,27 @@ public class AccountManager {
 			cursor.close();
 		}
 	}
+		
+	/**
+	 * Get the list of accounts from the database.
+	 * 
+	 * @param db database to query.
+	 */
+	
+	public static long getBalanceById(final SQLiteDatabase db,final int id) {
+		String[] whereValues = { Integer.toString(id) };
+		Cursor cursor = db.query(DBHelper.ACCOUNTS_TABLE_NAME, AccountManager.BALANCE_COLS, 
+				AccountManager.GET_BY_ID_SQL, whereValues, null, null, null);
+		
+		try {
+			if(cursor.moveToNext()) {
+				return cursor.getLong(0);
+			}			
+			return 0;
+		} finally {
+			cursor.close();
+		}
+	}
 	
 	/**
 	 * Create a new account with the given name
@@ -56,10 +78,10 @@ public class AccountManager {
 	public static synchronized void create(final SQLiteDatabase db, 
 			final Account account) {
 		ContentValues values = new ContentValues();
-		values.put("name", account.getName());
-		values.put("balance", account.getOpeningBalance());
-		values.put("opening_balance", account.getOpeningBalance());
-		values.put("currency", account.getCurrency());
+		values.put("name", account.name);
+		values.put("balance", account.openingBalance);
+		values.put("opening_balance", account.openingBalance);
+		values.put("currency", account.currency);
 		db.insert(DBHelper.ACCOUNTS_TABLE_NAME, null, values);
 	}
 	
@@ -69,19 +91,19 @@ public class AccountManager {
 	
 	public static synchronized void update(final SQLiteDatabase db, 
 			final Account account, long oldOpeningBalance) {
-		String[] whereArgs = { Integer.toString(account.getId()) };
+		String[] whereArgs = { Integer.toString(account.id) };
 
 		ContentValues values = new ContentValues();
-		values.put("name", account.getName());
-		values.put("opening_balance", account.getOpeningBalance());
-		values.put("currency", account.getCurrency());
+		values.put("name", account.name);
+		values.put("opening_balance", account.openingBalance);
+		values.put("currency", account.currency);
 		db.update(	DBHelper.ACCOUNTS_TABLE_NAME, 
 					values, 
 					AccountManager.GET_BY_ID_SQL, 
 					whereArgs);
 		
-		adjustBalance(db, account.getId(), 0 - oldOpeningBalance);
-		adjustBalance(db, account.getId(), account.getOpeningBalance() );
+		adjustBalance(db, account.id, 0 - oldOpeningBalance);
+		adjustBalance(db, account.id, account.openingBalance );
 	}
 	
 	/**
@@ -132,7 +154,7 @@ public class AccountManager {
 	 */
 	
 	public static void delete(final SQLiteDatabase db, final Account account) {
-		String[] whereValues = { Integer.toString(account.getId()) };
+		String[] whereValues = { Integer.toString(account.id) };
 		db.delete(	DBHelper.ACCOUNTS_TABLE_NAME,  
 					AccountManager.GET_BY_ID_SQL, 
 					whereValues);

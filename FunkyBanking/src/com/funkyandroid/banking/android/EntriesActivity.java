@@ -74,7 +74,7 @@ public class EntriesActivity extends Activity {
     		return;    		
     	}
         
-		Currency currency = Currency.getInstance(account.getCurrency());
+		Currency currency = Currency.getInstance(account.currency);
 		if( currency == null ) {
 			currencySymbol = BalanceFormatter.UNKNOWN_CURRENCY_SYMBOL;
 		} else {
@@ -82,7 +82,7 @@ public class EntriesActivity extends Activity {
 		}
     	    	
 		TextView titleView = (TextView) findViewById(R.id.title);
-		titleView.setText(account.getName());
+		titleView.setText(account.name);
 
 		Button button = (Button) findViewById(R.id.add);
         button.setOnClickListener(
@@ -90,7 +90,7 @@ public class EntriesActivity extends Activity {
         				public void onClick(final View view) {
         					Context context = EntriesActivity.this;
         					Intent intent = new Intent(context, EditEntryActivity.class);
-        					intent.putExtra("com.funkyandroid.banking.account_id", account.getId());
+        					intent.putExtra("com.funkyandroid.banking.account_id", account.id);
         					intent.putExtra("com.funkyandroid.banking.account_currency", currencySymbol);
         					context.startActivity(intent);    				
         				}
@@ -119,8 +119,8 @@ public class EntriesActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
-    	account = AccountManager.getById(database, account.getId());
-    	updateBalance(account.getBalance());
+    	account = AccountManager.getById(database, account.id);
+    	updateBalance(account.balance);
 		adapter.notifyDataSetChanged();
     }
 
@@ -147,13 +147,27 @@ public class EntriesActivity extends Activity {
 				public boolean onMenuItemClick(final MenuItem item) {
 					Context context = EntriesActivity.this;
 					Intent intent = new Intent(context, EditEntryActivity.class);
-					intent.putExtra("com.funkyandroid.banking.account_id", account.getId());
+					intent.putExtra("com.funkyandroid.banking.account_id", account.id);
 					intent.putExtra("com.funkyandroid.banking.account_currency", currencySymbol);
 					context.startActivity(intent);    				
 		            return true;						
 				}
 			}
 		);
+		
+		menu.add(R.string.menuReports)
+			.setIcon(android.R.drawable.ic_menu_search)
+			.setOnMenuItemClickListener(
+				new OnMenuItemClickListener() {
+					public boolean onMenuItemClick(final MenuItem item) {
+						Context context = EntriesActivity.this;
+						Intent intent = new Intent(context, SpendingReportActivity.class);
+						intent.putExtra("com.funkyandroid.banking.account_id", account.id);
+						context.startActivity(intent);    				
+			            return true;						
+					}
+				}
+			);
 		
 		MenuUtil.buildMenu(this, menu);
 		

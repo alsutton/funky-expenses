@@ -120,7 +120,9 @@ public class EditEntryActivity extends Activity {
      */
     
     public void onDestroy() {
-    	db.close();
+    	if( db != null && db.isOpen() ) {
+    		db.close();
+    	}
     	super.onDestroy();
     }
     
@@ -191,7 +193,13 @@ public class EditEntryActivity extends Activity {
  	    	editText.setText(Long.toString(amount/100));
  	    	
  	    	editText = (EditText) findViewById(R.id.amountMinor);
- 	    	editText.setText(Long.toString(amount%100));
+ 	    	long value = amount%100;
+ 	    	StringBuffer valueBuffer = new StringBuffer(2);
+ 	    	if( value < 10 ) {
+ 	    		valueBuffer.append('0');
+ 	    	}
+ 	    	valueBuffer.append(value);
+ 	    	editText.setText(valueBuffer.toString());
  	    	
  	    	Button button = (Button) findViewById(R.id.okButton);
  	    	button.setText(R.string.updateButtonText);

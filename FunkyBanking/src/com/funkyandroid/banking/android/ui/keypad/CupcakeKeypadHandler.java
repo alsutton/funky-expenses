@@ -2,7 +2,7 @@ package com.funkyandroid.banking.android.ui.keypad;
 
 import android.content.Context;
 
-import com.funkyandroid.banking.android.expenses.demo.R;
+import com.funkyandroid.banking.android.expenses.adfree.R;
 
 public class CupcakeKeypadHandler 
 	extends KeypadHandler {

@@ -5,7 +5,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 
-import com.funkyandroid.banking.android.expenses.demo.R;
+import com.funkyandroid.banking.android.expenses.adfree.R;
 
 public class MenuUtil {
 

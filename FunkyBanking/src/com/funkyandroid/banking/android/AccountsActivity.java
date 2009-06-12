@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
-import com.funkyandroid.banking.android.expenses.demo.R;
+import com.funkyandroid.banking.android.expenses.adfree.R;
 import com.funkyandroid.banking.android.ui.keypad.KeypadFactory;
 import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.Crypto;
@@ -122,7 +122,7 @@ public class AccountsActivity extends Activity
 					}
 				}
 			);
-	
+
 		menu.add(R.string.menuChangePassword)
 			.setIcon(android.R.drawable.ic_menu_view)
 			.setOnMenuItemClickListener(
@@ -133,6 +133,30 @@ public class AccountsActivity extends Activity
 					}
 				}
 			);
+	
+		menu.add(R.string.menuExport)
+		.setIcon(android.R.drawable.ic_menu_save)
+		.setOnMenuItemClickListener(
+			new OnMenuItemClickListener() {
+				public boolean onMenuItemClick(final MenuItem item) {
+					Intent viewIntent = new Intent(AccountsActivity.this, BackupActivity.class);
+					AccountsActivity.this.startActivity(viewIntent);    				    	
+		            return true;						
+				}
+			}
+		);
+
+		menu.add(R.string.menuRestore)
+		.setIcon(android.R.drawable.ic_menu_upload)
+		.setOnMenuItemClickListener(
+			new OnMenuItemClickListener() {
+				public boolean onMenuItemClick(final MenuItem item) {
+					Intent viewIntent = new Intent(AccountsActivity.this, RestoreActivity.class);
+					AccountsActivity.this.startActivity(viewIntent);    				    	
+		            return true;						
+				}
+			}
+		);
 		
 		MenuUtil.buildMenu(this, menu);
 		

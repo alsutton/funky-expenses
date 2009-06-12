@@ -156,8 +156,6 @@ public class RestoreActivity extends Activity {
 	    	editText = (EditText) findViewById(R.id.password);
 	    	String password = editText.getText().toString();
 	    	
-	    	DBHelper.dropTables(db);
-	    	DBHelper.createTables(db);
 	    	new Thread(new Restorer(name, password)).start();
     	} catch(Exception ex) {
             new AlertDialog.Builder(this)
@@ -244,6 +242,8 @@ public class RestoreActivity extends Activity {
 			    		throw new FileNotFoundException("Backup file header is invalid.");
 			    	}
 			    	
+			    	DBHelper.dropTables(db);
+			    	DBHelper.createTables(db);
 			    	restoreCategories();
 			    	restorePayees();
     				restoreSettings();

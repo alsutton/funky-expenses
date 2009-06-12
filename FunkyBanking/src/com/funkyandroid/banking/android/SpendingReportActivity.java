@@ -27,7 +27,7 @@ import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CategoryManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.TransactionManager;
-import com.funkyandroid.banking.android.expenses.demo.R;
+import com.funkyandroid.banking.android.expenses.adfree.R;
 import com.funkyandroid.banking.android.utils.BalanceFormatter;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
@@ -135,7 +135,8 @@ public class SpendingReportActivity extends Activity {
 						Context context = SpendingReportActivity.this;
 						Intent intent = new Intent(context, EntriesActivity.class);
 						intent.putExtra("com.funkyandroid.banking.account_id", accountId);
-						context.startActivity(intent);    				
+						context.startActivity(intent);
+						finish();
 			            return true;						
 					}
 				}

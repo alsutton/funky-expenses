@@ -37,7 +37,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.funkyandroid.banking.android.data.DBHelper;
-import com.funkyandroid.banking.android.expenses.adfree.R;
+import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BackupUtils;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 

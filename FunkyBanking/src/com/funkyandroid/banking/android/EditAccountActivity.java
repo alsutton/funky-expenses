@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
-import com.funkyandroid.banking.android.expenses.adfree.R;
+import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
 import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;

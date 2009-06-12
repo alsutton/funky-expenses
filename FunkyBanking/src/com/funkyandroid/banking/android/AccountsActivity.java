@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
-import com.funkyandroid.banking.android.expenses.adfree.R;
+import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.keypad.KeypadFactory;
 import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.Crypto;

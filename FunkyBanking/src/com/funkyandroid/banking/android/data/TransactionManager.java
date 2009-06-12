@@ -115,6 +115,7 @@ public final class TransactionManager {
 		values.put("account_id", transaction.getAccountId());
 		values.put("payee_id", payeeId);
 		values.put("category_id", transaction.getCategoryId());
+		values.put("link_id", 0);
 		values.put("timestamp", transaction.getTimestamp());
 		values.put("type", transaction.getType());
 		db.insert(DBHelper.ENTRIES_TABLE_NAME, null, values);

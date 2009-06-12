@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="titleAbout">About</string>
-    <string name="titleAccounts">Accounts</string>
-    <string name="titleEntries">Account Entries</string>
-    <string name="titleCharts">Charts</string>
-    <string name="titleRecurring">Repeating Transactions</string>
     <string name="app_name">Funky Expenses</string>
-    <string name="accountAddButtonText">Add new account</string>
-    <string name="newAccount">Add Account</string>
-    <string name="newEntry">Add Entry</string>
-    <string name="entriesAddButtonText">Add new transaction</string>
+
     <string name="accountNameText">Account Name</string>
     <string name="accountOpeningBalanceText">Opening Balance</string>
     <string name="accountTitleText">Account Details</string>
     <string name="accountCurrencyText">Currency</string>
+    <string name="backupName">Backup Name</string>
+    <string name="backupPassword">Password</string>
+    <string name="backupOKButton">Backup</string>
+    <string name="backupStatusTitle">Backup Status</string>
     <string name="entryAmountText">Amount</string>        
     <string name="entryDateText">Date</string>
     <string name="entryPayeeText">Payee</string>        
     <string name="entryCategoryText">Category</string>
     <string name="entryTitleText">Transaction Details</string>
     <string name="entryTypeText">Type</string>
+    <string name="restoreName">Backup Name</string>
+    <string name="restorePassword">Password</string>
+    <string name="restoreOKButton">Restore</string>
+    <string name="restoreStatusTitle">Restore Status</string>
+    <string name="titleAbout">About</string>
+    <string name="titleAccounts">Accounts</string>
+    <string name="titleEntries">Account Entries</string>
+    <string name="titleCharts">Charts</string>
+    <string name="titleRecurring">Repeating Transactions</string>
+    <string name="titleRestore">Restore</string>
+
+    <string name="accountAddButtonText">Add new account</string>
+    <string name="newAccount">Add Account</string>
+    <string name="newEntry">Add Entry</string>
+    <string name="entriesAddButtonText">Add new transaction</string>
     <string name="okButtonText">Save</string>        
     <string name="cancelButtonText">Discard</string>        
     <string name="updateButtonText">Update</string>        
@@ -27,10 +38,14 @@
     <string name="settings">Settings</string>
     <string name="enterPassword">Enter Password</string>        
     <string name="incorrectPassword">** Password Incorrect **\n\nEnter Password</string>        
+    <string name="menuAccounts">Account List</string>     
     <string name="menuChangePassword">Change Password</string>     
     <string name="menuEntries">Account Entries</string>     
     <string name="menuReports">Categories</string>        
+    <string name="menuExport">Back up</string>
+    <string name="menuRestore">Restore</string>
     <string name="titleReports">Category Report</string>        
+    <string name="titleBackup">Backup</string>        
     <string name="ok">OK</string>        
     <string name="cancel">Cancel</string>   
     <string name="setPassword">Enter New Password</string>     

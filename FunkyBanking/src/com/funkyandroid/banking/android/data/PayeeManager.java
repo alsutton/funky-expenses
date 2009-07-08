@@ -19,6 +19,21 @@ public class PayeeManager {
 	 */
 	
 	private static final String GET_BY_NAME_SQL = "name = ?";
+
+	/**
+	 * The result columns for the autocomplete suggestions.
+	 */
+	private static final String[] SUGGEST_COLS = { "name", "_id" }; 
+
+	/**
+	 * The query for the autocomplete suggestions.
+	 */
+	private static final String SUGGEST_QUERY = "name like ?";
+
+	/**
+	 * The column holding a payee name.
+	 */
+	public static final String[] NAME_COL = { "name" };
 	
 	/**
 	 * Get the list of accounts from the database.
@@ -103,4 +118,20 @@ public class PayeeManager {
 					PayeeManager.GET_BY_ID_SQL, 
 					whereArgs);
 	}
+	
+
+	/**
+	 * Get the matches to show in the autocompleter.
+	 * 
+	 * @param db The database to get the information from.
+	 * @param string What the user has typed so far.
+	 * 
+	 * @return A cursor holding the list of possible options.
+	 */
+	public static Cursor getMatchesFor(final SQLiteDatabase db, final String string) {
+		String[] whereArgs = { string+"%" };
+		return db.query(DBHelper.PAYEE_TABLE_NAME, SUGGEST_COLS, 
+				SUGGEST_QUERY, whereArgs, null, null, "name ASC");
+	}
+	
 }

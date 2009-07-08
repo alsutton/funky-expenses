@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.funkyandroid.banking.android.data.CategoryManager;
 import com.funkyandroid.banking.android.data.DBHelper;
+import com.funkyandroid.banking.android.data.PayeeManager;
 import com.funkyandroid.banking.android.data.Transaction;
 import com.funkyandroid.banking.android.data.TransactionManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
@@ -53,6 +54,18 @@ public class EditEntryActivity extends Activity {
 	 */
 	
 	private SQLiteDatabase db;
+
+	/**
+	 * The category suggestor.
+	 */
+	
+	private CategorySuggestionsAdapter categorySuggester;	
+
+	/**
+	 * The category suggestor.
+	 */
+	
+	private PayeeSuggestionsAdapter payeeSuggester;	
 	
     /** Called when the activity is first created. */
     @Override
@@ -114,6 +127,27 @@ public class EditEntryActivity extends Activity {
         editText.setOnFocusChangeListener(majorAmountEventListener);
         
     	db = (new DBHelper(this)).getWritableDatabase();
+    	
+    	categorySuggester = 
+    		new CategorySuggestionsAdapter(
+					this, 
+					android.R.layout.simple_dropdown_item_1line, 
+					null, 
+					CategoryManager.NAME_COL, 
+					new int[] {android.R.id.text1} );
+    	AutoCompleteTextView categoryEntry = (AutoCompleteTextView) findViewById(R.id.category);
+    	categoryEntry.setAdapter(categorySuggester);
+    	
+    	payeeSuggester = 
+    		new PayeeSuggestionsAdapter(
+					this, 
+					android.R.layout.simple_dropdown_item_1line, 
+					null, 
+					PayeeManager.NAME_COL, 
+					new int[] {android.R.id.text1} );
+    	AutoCompleteTextView payeeEntry = (AutoCompleteTextView) findViewById(R.id.payee);
+    	payeeEntry.setAdapter(payeeSuggester);
+
     }
 
     /**
@@ -206,27 +240,15 @@ public class EditEntryActivity extends Activity {
  	    	button.setText(R.string.updateButtonText);
  	    	button = (Button) findViewById(R.id.cancelButton);
  	    	button.setText(R.string.deleteButtonText);	 	    	
-    	}
-    	
-    	CategorySuggestionsAdapter adapter = 
-    		new CategorySuggestionsAdapter(
-    					this, 
-    					android.R.layout.simple_dropdown_item_1line, 
-    					null, 
-    					CategoryManager.NAME_COL, 
-    					new int[] {android.R.id.text1} );
 
-    	
-    	AutoCompleteTextView categoryEntry =
-    		(AutoCompleteTextView) findViewById(R.id.category);
-    	
-    	String category = CategoryManager.getById(db, transaction.getCategoryId()); 
-    	if(CategoryManager.UNCAT_CAT.equals(category)) {
-    		category = "";
+ 	    	String category = CategoryManager.getById(db, transaction.getCategoryId()); 
+ 	    	if(CategoryManager.UNCAT_CAT.equals(category)) {
+ 	    		category = "";
+ 	    	}
+ 	    	TextView categoryEntry = (TextView) findViewById(R.id.category);    	
+ 	    	categoryEntry.setText(category);
     	}
-    	categoryEntry.setText(category);
-    	categoryEntry.setAdapter(adapter);
-	    	
+    	
     	updateDate();
     }
 
@@ -340,7 +362,38 @@ public class EditEntryActivity extends Activity {
     	}
     }
 
+    /**
+     * Suggestions adapter for payees.
+     */
+    
+    private class PayeeSuggestionsAdapter extends SimpleCursorAdapter {
 
+    	public PayeeSuggestionsAdapter(final Context context, final int layout, final Cursor c,
+    			final String[] from, final int[] to) {
+    		super(context, layout, c, from, to);
+    	}
+
+    	@Override
+    	public String convertToString(final Cursor cursor)
+    	{
+    		return cursor.getString(0);
+    	}
+    	
+    	@Override
+    	public Cursor runQueryOnBackgroundThread(final CharSequence constraint)
+    	{
+    		if(constraint == null || constraint.length() == 0) {
+    			return super.runQueryOnBackgroundThread(constraint);
+    		}
+    		return PayeeManager.getMatchesFor(EditEntryActivity.this.db, constraint.toString());
+    	}
+
+    }
+
+    /**
+     * Suggestions adapter for categories.
+     */
+    
     private class CategorySuggestionsAdapter extends SimpleCursorAdapter {
 
     	public CategorySuggestionsAdapter(final Context context, final int layout, final Cursor c,

@@ -86,7 +86,7 @@
 				android:textStyle="bold"
 		        android:gravity="left"/>
 		
-		    <EditText
+		    <AutoCompleteTextView
 		        android:id="@+id/payee"
 		        android:layout_height="wrap_content"
 		        android:layout_width="fill_parent"
@@ -95,6 +95,7 @@
 				android:singleLine="true"
 		        android:scrollHorizontally="true"
 		        android:autoText="false"
+		        android:completionThreshold="2"
 		        android:gravity="fill_horizontal"
 				android:nextFocusDown="@+id/okCategory"/>
 		        

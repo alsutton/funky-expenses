@@ -50,7 +50,7 @@ public class DBHelper
 		"CREATE TABLE IF NOT EXISTS " + ENTRIES_TABLE_NAME + 
 		" (_id  integer primary key autoincrement, account_id INT, "+
 		"  timestamp INT(8), category_id INT, payee_id INT, " +
-		"  type INT, amount INT(8));";
+		"  type INT, amount INT(8), notes TEXT);";
 	
 	/**
 	 * The SQL to create the temporary table to migrate entries into
@@ -109,7 +109,7 @@ public class DBHelper
 	  */
 	
 	 public DBHelper(final Context context) {
-		 super(context, "FunkyBanking", null, 8);
+		 super(context, "FunkyBanking", null, 9);
 	 }
 	 
 	@Override
@@ -148,6 +148,9 @@ public class DBHelper
 		}
 		if(oldVersion < 8) {
 			db.execSQL("UPDATE "+DBHelper.ENTRIES_TABLE_NAME+" SET link_id = 0 WHERE link_id is null");			
+		}
+		if(oldVersion < 9) {
+			db.execSQL("ALTER TABLE "+DBHelper.ENTRIES_TABLE_NAME+" ADD notes TEXT");		
 		}
 	}
 	

@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">Funky Expenses</string>
 
+	<string name="account_prompt">Choose an Account</string>
+	<string name="accountText">Account</string>
     <string name="accountNameText">Account Name</string>
     <string name="accountOpeningBalanceText">Opening Balance</string>
     <string name="accountTitleText">Account Details</string>

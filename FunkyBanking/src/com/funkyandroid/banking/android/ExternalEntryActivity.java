@@ -2,25 +2,34 @@ package com.funkyandroid.banking.android;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Date;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemSelectedListener;
 
+import com.funkyandroid.banking.android.data.Account;
+import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CategoryManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.PayeeManager;
@@ -32,7 +41,13 @@ import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.StringUtils;
 
-public class EditEntryActivity extends Activity {
+public class ExternalEntryActivity extends Activity {
+	
+	/**
+	 * Shared empty String.
+	 */
+	
+	private static final String EMPTY_STRING = "";
 	
 	/**
 	 * The transaction being edited.
@@ -41,17 +56,17 @@ public class EditEntryActivity extends Activity {
 	private Transaction transaction;
 	
 	/**
-	 * Whether or not the transaction was fetched from the database.
-	 */
-	
-	private boolean fetched = false;
-
-	/**
 	 * The Database connection
 	 */
 	
 	private SQLiteDatabase db;
 
+	/**
+	 * The accounts spinner.
+	 */
+	
+	private Spinner accountsSpinner;
+	
 	/**
 	 * The category suggestor.
 	 */
@@ -69,17 +84,17 @@ public class EditEntryActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setTitle(R.string.entryTitleText);
-        setContentView(R.layout.edit_entry);
+        setContentView(R.layout.new_external_entry);
 
 		Button button = (Button) findViewById(R.id.newEntryDateButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
         		        	Calendar cal = Calendar.getInstance();
-        		        	cal.setTime(new Date(EditEntryActivity.this.transaction.getTimestamp()));
+        		        	cal.setTime(new Date(ExternalEntryActivity.this.transaction.getTimestamp()));
         		        	
         		            new DatePickerDialog(
-        		            		EditEntryActivity.this, 
+        		            		ExternalEntryActivity.this, 
         		            		new DateListener(), 
         		            		cal.get(Calendar.YEAR),
         		                    cal.get(Calendar.MONTH), 
@@ -92,7 +107,7 @@ public class EditEntryActivity extends Activity {
         		new View.OnClickListener() {
         				public void onClick(final View view) {
         					storeEntryDetails();
-        					EditEntryActivity.this.finish();
+        					ExternalEntryActivity.this.finish();
         				}
         		});
         
@@ -100,15 +115,7 @@ public class EditEntryActivity extends Activity {
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
-        					if( fetched ) {        				    	
-        				    	SQLiteDatabase db = (new DBHelper(EditEntryActivity.this)).getWritableDatabase();
-        						try {    	
-       					    		TransactionManager.delete(db, transaction, false);	    		
-        						} finally {
-        							db.close();
-        						}
-        					}
-        					EditEntryActivity.this.finish();
+        					ExternalEntryActivity.this.finish();
         				}
         		});
         
@@ -167,108 +174,86 @@ public class EditEntryActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
-    	Intent startingIntent = getIntent();    	
-    	
+    	Intent startingIntent = getIntent();    	    	
 
-    	String currencySymbol = startingIntent.getStringExtra(
-    				"com.funkyandroid.banking.account_currency"
-    			);
-    	TextView cSymb = (TextView) findViewById(R.id.currencySymbol);
-    	cSymb.setText(currencySymbol);
-    	int transactionId = startingIntent.getIntExtra("com.funkyandroid.banking.transaction_id", -1);
+    	((TextView) findViewById(R.id.currencySymbol)).setText("");
     	
-    	if( transactionId == -1 ) {
-	    	int accountId = startingIntent.getIntExtra("com.funkyandroid.banking.account_id", -1);
-	    	if( accountId == -1 ) {		    	
-	    		finish();
-	    		return;
-	    	}
-	    	
-	    	createNew(accountId);
-    	} else {
-    		transaction = TransactionManager.getById(db, transactionId);
-    		if( transaction == null ) {
-    			finish();
-    			return;    		
-    		}
-    		
-    		populateWithTransaction();
-    	}
-    	
-    	updateDate();
-    }
-
-    /**
-     * Creates a new, empty transaction
-     */
-    
-    private void createNew(final int accountId) {
 		transaction = new Transaction();
-		transaction.setAccountId(accountId);
-		transaction.setTimestamp(System.currentTimeMillis());
+		transaction.setAccountId(-1);
+		
+		long date = startingIntent.getLongExtra("com.funkyandroid.DATE", -1);
+		if( date == -1) {
+			date = System.currentTimeMillis();
+		}
+		transaction.setTimestamp(date);    	
+    	updateDate();
+    	
+		String payee = startingIntent.getStringExtra("com.funkyandroid.PAYEE");
+		if( payee == null || payee.length() == 0 ) {
+			((TextView)findViewById(R.id.payee)).setText(EMPTY_STRING);
+		} else {
+			((TextView)findViewById(R.id.payee)).setText(payee);
+		}
+		
+
+		String category = startingIntent.getStringExtra("com.funkyandroid.CATEGORY");
+		if( category == null || category.length() == 0 ) {
+			((TextView)findViewById(R.id.category)).setText(EMPTY_STRING);
+		} else {
+			((TextView)findViewById(R.id.category)).setText(category);
+			
+		}
+
+		((TextView)findViewById(R.id.amountMajor)).setText("0");
+		((TextView)findViewById(R.id.amountMinor)).setText("00");
+		String amount = startingIntent.getStringExtra("com.funkyandroid.AMOUNT");
+		if( amount != null && amount.length() > 0 ) {
+			int sepIdx = amount.indexOf('.');
+			if(sepIdx == -1) {
+				((TextView)findViewById(R.id.amountMajor)).setText(amount);
+			} else {
+				((TextView)findViewById(R.id.amountMajor)).setText(amount.substring(0, sepIdx));
+				if(sepIdx < amount.length()) {
+					((TextView)findViewById(R.id.amountMinor)).setText(amount.substring(sepIdx+1));
+				}
+			}
+		}
 
 		RadioButton button = (RadioButton) findViewById(R.id.debitButton);
 		button.setSelected(true);
+		
+		Cursor cursor = AccountManager.getAll(db);
+		startManagingCursor(cursor);
+    	AccountsAdapter adapter = new AccountsAdapter(
+					this, 
+					android.R.layout.simple_spinner_item, 
+					cursor, 
+					AccountManager.NAME_COL, 
+					new int[] {android.R.id.text1} );
+    	adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    	accountsSpinner = (Spinner)findViewById(R.id.accountSpinner);
+    	accountsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-		fetched = false;    	
-    }
-    
-    /**
-     * Fetches a transaction from the database an populates the screen.
-     * 
-     */
-    
-    private void populateWithTransaction() {		
-		switch(transaction.getType()) {
-			case	Transaction.TYPE_CREDIT:
-			{
-				RadioButton button = (RadioButton) findViewById(R.id.creditButton);
-				button.setChecked(true);
-				break;
+			public void onItemSelected(final AdapterView<?> adapterView, final View view,
+					final int position, final long id) {
+				int realId = (int)(id & 0xffffffff);
+				Account theAccount = AccountManager.getById(db, realId);
+				if( theAccount != null ) {
+					ExternalEntryActivity.this.transaction.setAccountId(realId);
+					Currency currency = Currency.getInstance(theAccount.currency);
+			    	((TextView) findViewById(R.id.currencySymbol)).setText(currency.getSymbol());
+				}				
 			}
-			case	Transaction.TYPE_DEBIT:
-			{
-				RadioButton button = (RadioButton) findViewById(R.id.debitButton);
-				button.setChecked(true);
-				break;
+
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
 			}
-		}
-		
-		EditText editText = (EditText) findViewById(R.id.payee);
-		editText.setText(transaction.getPayee());
-		
-		long amount = transaction.getAmount();
-		if( amount < 0 ) {
-			amount = 0 - amount;
-		}
-		
-    	editText = (EditText) findViewById(R.id.amountMajor);
-    	editText.setText(Long.toString(amount/100));
-    	
-    	editText = (EditText) findViewById(R.id.amountMinor);
-    	long value = amount%100;
-    	StringBuffer valueBuffer = new StringBuffer(2);
-    	if( value < 10 ) {
-    		valueBuffer.append('0');
-    	}
-    	valueBuffer.append(value);
-    	editText.setText(valueBuffer.toString());
-    	
-    	Button button = (Button) findViewById(R.id.okButton);
-    	button.setText(R.string.updateButtonText);
-    	button = (Button) findViewById(R.id.cancelButton);
-    	button.setText(R.string.deleteButtonText);	 	    	
-
-    	String category = CategoryManager.getById(db, transaction.getCategoryId()); 
-    	if(CategoryManager.UNCAT_CAT.equals(category)) {
-    		category = "";
-    	}
-    	TextView categoryEntry = (TextView) findViewById(R.id.category);    	
-    	categoryEntry.setText(category);    	
-
-    	fetched = true;
+    		
+    	});
+    	accountsSpinner.setAdapter(adapter);    	
     }
-    
+
     /**
      * Check to see if the . key has been pressed, if so move to the minor currency area
      */
@@ -306,7 +291,8 @@ public class EditEntryActivity extends Activity {
     private void updateDate() {
     	Button button = (Button) findViewById(R.id.newEntryDateButton);
     	SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM, yyyy");
-    	button.setText(sdf.format(new Date(transaction.getTimestamp())));
+    	String date = sdf.format(new Date(transaction.getTimestamp()));
+		button.setText(date);
     }
 
     /**
@@ -316,8 +302,8 @@ public class EditEntryActivity extends Activity {
         public void onDateSet(DatePicker view, int year, int month, int day) {
         	Calendar cal = Calendar.getInstance();
         	cal.set(year, month, day);
-        	EditEntryActivity.this.transaction.setTimestamp(cal.getTime().getTime());
-        	EditEntryActivity.this.updateDate();
+        	ExternalEntryActivity.this.transaction.setTimestamp(cal.getTime().getTime());
+        	ExternalEntryActivity.this.updateDate();
         }
     }
 
@@ -344,7 +330,6 @@ public class EditEntryActivity extends Activity {
     	}
     	transaction.setType(type);
 
-    	long oldAmount = transaction.getAmount();
     	long amount = 0;
     	editText = (EditText) findViewById(R.id.amountMajor);
     	String amountString = editText.getText().toString();
@@ -372,10 +357,25 @@ public class EditEntryActivity extends Activity {
 		int categoryId = CategoryManager.getByName(db, category);			
 		transaction.setCategoryId(categoryId);
 		
-	   	if( fetched ) {
-	   		TransactionManager.update(db, transaction, oldAmount);
-    	} else {
-    		TransactionManager.create(db, transaction);	    		
-    	}
+   		TransactionManager.create(db, transaction);	    		
     }
+    
+
+    /**
+     * Suggestions adapter for payees.
+     */
+
+    public class AccountsAdapter extends SimpleCursorAdapter {
+
+    	public AccountsAdapter(final Context context, final int layout, final Cursor c,
+    			final String[] from, final int[] to) {
+    		super(context, layout, c, from, to);
+    	}
+
+    	@Override
+    	public String convertToString(final Cursor cursor)
+    	{
+    		return cursor.getString(1);
+    	}
+    }    
 }

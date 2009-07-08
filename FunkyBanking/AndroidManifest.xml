@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      android:versionCode="1201" android:versionName="1.2.1" package="com.funkyandroid.banking.android.expenses.demo">
+      package="com.funkyandroid.banking.android.expenses.demo" android:versionCode="1202" android:versionName="1.2.2">
       
     <uses-sdk android:minSdkVersion="1" />
 
@@ -17,6 +17,12 @@
         <activity android:name="com.funkyandroid.banking.android.EntriesActivity"/>
         <activity android:name="com.funkyandroid.banking.android.EditAccountActivity"/>
         <activity android:name="com.funkyandroid.banking.android.EditEntryActivity"/>
+        <activity android:name="com.funkyandroid.banking.android.ExternalEntryActivity">
+            <intent-filter>
+                <action android:name="com.funkyandroid.action.NEW_TRANSACTION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name="com.funkyandroid.banking.android.RestoreActivity"/>
         <activity android:name="com.funkyandroid.banking.android.SpendingReportActivity"/>
         

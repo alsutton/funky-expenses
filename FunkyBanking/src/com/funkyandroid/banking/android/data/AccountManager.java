@@ -19,6 +19,11 @@ public class AccountManager {
 	private static final String GET_BY_ID_SQL = "_id = ?";
 	
 	/**
+	 * The column holding a payee name.
+	 */
+	public static final String[] NAME_COL = { "name" };
+	
+	/**
 	 * Get the list of accounts from the database.
 	 * 
 	 * @param db database to query.

@@ -44,7 +44,7 @@ public class EntryView extends LinearLayout {
 		
 		setOrientation(LinearLayout.VERTICAL);
 
-		setPadding(getPaddingLeft(), getPaddingTop()+2, getPaddingRight(), getPaddingBottom()+2);
+		setPadding(getPaddingLeft(), getPaddingTop()+2, getPaddingRight()+5, getPaddingBottom()+2);
 
 		LinearLayout dateAndValue = new LinearLayout(context);
 		dateAndValue.setOrientation(LinearLayout.HORIZONTAL);

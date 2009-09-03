@@ -37,7 +37,7 @@ public class AccountView extends LinearLayout {
 		
 		setOrientation(LinearLayout.VERTICAL);
 
-		setPadding(getPaddingLeft(), getPaddingTop()+2, getPaddingRight(), getPaddingBottom()+2);
+		setPadding(getPaddingLeft(), getPaddingTop()+2, getPaddingRight()+5, getPaddingBottom()+2);
 		
 		ViewGroup.LayoutParams nameLayout = new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 		name = new TextView(context);

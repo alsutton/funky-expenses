@@ -2,7 +2,6 @@ package com.funkyandroid.banking.android;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Currency;
 import java.util.Date;
 
 import android.app.Activity;
@@ -31,6 +30,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CategoryManager;
+import com.funkyandroid.banking.android.data.CurrencyManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.PayeeManager;
 import com.funkyandroid.banking.android.data.Transaction;
@@ -240,8 +240,8 @@ public class ExternalEntryActivity extends Activity {
 				Account theAccount = AccountManager.getById(db, realId);
 				if( theAccount != null ) {
 					ExternalEntryActivity.this.transaction.setAccountId(realId);
-					Currency currency = Currency.getInstance(theAccount.currency);
-			    	((TextView) findViewById(R.id.currencySymbol)).setText(currency.getSymbol());
+					String currencySymbol = CurrencyManager.getSymbol(db, theAccount.currency);
+			    	((TextView) findViewById(R.id.currencySymbol)).setText(currencySymbol);
 				}				
 			}
 

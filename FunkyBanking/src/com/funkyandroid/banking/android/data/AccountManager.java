@@ -6,6 +6,15 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class AccountManager {
 	 
+	/**
+	 * The query to get information about all of the accounts
+	 */
+	
+	private static final String GET_ALL_QUERY = 
+			"SELECT a._id, a.name, a.opening_balance, a.balance, c.symbol "+
+			"  FROM "+DBHelper.ACCOUNTS_TABLE_NAME+" a, "+DBHelper.CURRENCIES_TABLE_NAME+" c "+
+			" WHERE a.currency = c.short_code ORDER BY name ASC";
+	
 	private static final String[] COLUMNS = { "_id", "name", "opening_balance", "balance", "currency" };
 	
 	private static final String[] BALANCE_UPDATE_COLUMNS = { "balance" }; 
@@ -30,8 +39,7 @@ public class AccountManager {
 	 */
 	
 	public static Cursor getAll(final SQLiteDatabase db) {
-		return db.query(DBHelper.ACCOUNTS_TABLE_NAME, AccountManager.COLUMNS, 
-				null, null, null, null, "name ASC");
+		return db.rawQuery(GET_ALL_QUERY, null); 
 	}
 	
 	/**

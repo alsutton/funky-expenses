@@ -1,7 +1,5 @@
 package com.funkyandroid.banking.android.utils;
 
-import java.util.Currency;
-
 public class BalanceFormatter {
 	
 	/**
@@ -31,16 +29,5 @@ public class BalanceFormatter {
 			builder.append('0');
 		}
 		builder.append(minorCurrency);
-	}
-
-	public static void format(final StringBuilder builder, long balance, final Currency currency) {
-		String currencySymbol;
-		if(currency != null) {
-			currencySymbol = currency.getSymbol();
-		} else {
-			currencySymbol = UNKNOWN_CURRENCY_SYMBOL;
-		}
-		
-		BalanceFormatter.format(builder, balance, currencySymbol);
 	}
 }

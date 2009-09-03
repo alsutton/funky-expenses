@@ -1,9 +1,5 @@
 package com.funkyandroid.banking.android;
 
-import java.util.Currency;
-
-import com.funkyandroid.banking.android.utils.BalanceFormatter;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -12,6 +8,8 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.funkyandroid.banking.android.utils.BalanceFormatter;
 
 public class AccountView extends LinearLayout {
 
@@ -32,7 +30,7 @@ public class AccountView extends LinearLayout {
 	 * 
 	 * @param context The context the view is in.
 	 */
-	public AccountView(Context context) {
+	public AccountView(final Context context) {
 		super(context);
 		
 		setOrientation(LinearLayout.VERTICAL);
@@ -67,7 +65,7 @@ public class AccountView extends LinearLayout {
 	 * Set the icon.
 	 */
 	
-	public void setBalance(final long balance, final String currencyCode) {				
+	public void setBalance(final long balance, final String currencySymbol) {				
 		if			( balance < 0 ) {
 			value.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
 		} else if	( balance > 0 ) {
@@ -78,7 +76,8 @@ public class AccountView extends LinearLayout {
 				
 		StringBuilder valueString = new StringBuilder(10);
 		valueString.append("Balance : ");
-		BalanceFormatter.format(valueString, balance, Currency.getInstance(currencyCode));
+		
+		BalanceFormatter.format(valueString, balance, currencySymbol);
 		valueString.append(' ');
 		value.setText(valueString.toString());
 	}	

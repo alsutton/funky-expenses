@@ -1,5 +1,8 @@
 package com.funkyandroid.banking.android.data;
 
+import java.util.Currency;
+import java.util.Locale;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -35,6 +38,20 @@ public class DBHelper
 	private static final String CATEGORIES_TABLE_CREATE_SQL = 
 		"CREATE TABLE IF NOT EXISTS " + CATEGORIES_TABLE_NAME + 
 		"(_id  integer primary key autoincrement, name TEXT);";
+
+	/**
+	 * The categories table name.
+	 */
+	
+	public static final String CURRENCIES_TABLE_NAME = "currencies";
+	
+	/**
+	 * The SQL to create the categories table
+	 */
+	
+	private static final String CURRENCIES_TABLE_CREATE_SQL = 
+		"CREATE TABLE IF NOT EXISTS " + CURRENCIES_TABLE_NAME + 
+		"(short_code TEXT primary key, symbol TEXT);";
 	
 	/**
 	 * The chart table name.
@@ -109,7 +126,7 @@ public class DBHelper
 	  */
 	
 	 public DBHelper(final Context context) {
-		 super(context, "FunkyBanking", null, 9);
+		 super(context, "FunkyBanking", null, 10);
 	 }
 	 
 	@Override
@@ -152,6 +169,10 @@ public class DBHelper
 		if(oldVersion < 9) {
 			db.execSQL("ALTER TABLE "+DBHelper.ENTRIES_TABLE_NAME+" ADD notes TEXT");		
 		}
+		if(oldVersion < 10) {
+			db.execSQL(DBHelper.CURRENCIES_TABLE_CREATE_SQL);
+			populateCurrencies(db);
+		}
 	}
 	
 	/**
@@ -168,7 +189,9 @@ public class DBHelper
 			db.execSQL(DBHelper.PAYEE_TABLE_CREATE_SQL);
 			db.execSQL(DBHelper.RECURRING_TABLE_CREATE_SQL);
 			db.execSQL(DBHelper.SETTINGS_TABLE_CREATE_SQL);
+			db.execSQL(DBHelper.CURRENCIES_TABLE_CREATE_SQL);
 			createIndexes(db);
+			populateCurrencies(db);
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -196,6 +219,7 @@ public class DBHelper
 		try {
 			db.execSQL("DROP TABLE IF EXISTS "+DBHelper.ACCOUNTS_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+DBHelper.CATEGORIES_TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS "+DBHelper.CURRENCIES_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+DBHelper.ENTRIES_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+DBHelper.PAYEE_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+DBHelper.RECURRING_TABLE_NAME);
@@ -204,5 +228,30 @@ public class DBHelper
 		} finally {
 			db.endTransaction();
 		}
+	}
+	
+	/**
+	 * Populate the currencies table
+	 */
+	
+	private static void populateCurrencies(final SQLiteDatabase database) {
+        for(Locale locale : Locale.getAvailableLocales()) {
+        	try {
+	        	Currency currency = Currency.getInstance(locale);
+	        	if(currency == null) {
+	        		continue;
+	        	}
+	        	String code = currency.getCurrencyCode();
+	        	String symbol = currency.getSymbol();
+	        	if( symbol == null || symbol.length() > 3) {
+	        		symbol = code;
+	        	}
+	        	CurrencyManager.create(database, code, symbol);
+        	} catch(IllegalArgumentException iae) {
+        		; // Do nothing. This is thrown for unsupported locales.
+        	} catch(NullPointerException npe) {
+        		; // Do nothing. Locale does not have a currency code.
+        	}
+        }		
 	}
 }

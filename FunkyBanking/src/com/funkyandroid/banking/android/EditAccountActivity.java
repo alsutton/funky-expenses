@@ -1,7 +1,5 @@
 package com.funkyandroid.banking.android;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
@@ -10,17 +8,20 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
+import com.funkyandroid.banking.android.data.CurrencyManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
@@ -94,28 +95,7 @@ public class EditAccountActivity extends Activity {
         editText = (EditText) findViewById(R.id.amountMajor);
         MajorAmountEventListener majorAmountEventListener = 
         	new MajorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.setOnFocusChangeListener(majorAmountEventListener);
-        
-        List<String> currencyList = new ArrayList<String>(); 
-        for(Locale locale : Locale.getAvailableLocales()) {
-        	try {
-	        	Currency currency = Currency.getInstance(locale);
-	        	if(currency == null) {
-	        		continue;
-	        	}
-	        	String code = currency.getCurrencyCode();
-	        	if( ! currencyList.contains(code) ) {
-	        		currencyList.add(code);
-	        	}
-        	} catch(IllegalArgumentException iae) {
-        		; // Do nothing. This is thrown for unsupported locales.
-        	} catch(NullPointerException npe) {
-        		; // Do nothing. Locale does not have a currency code.
-        	}
-        }
-        Collections.sort(currencyList);
-        currencies = new String[currencyList.size()];
-        currencyList.toArray(currencies);
+        editText.setOnFocusChangeListener(majorAmountEventListener);        
     }
         
     /**
@@ -130,14 +110,19 @@ public class EditAccountActivity extends Activity {
     	
     	Intent startingIntent = getIntent();    	
     	
-    	int accountId = startingIntent.getIntExtra("com.funkyandroid.banking.account_id", -1);    	
-    	if( accountId == -1 ) {
-    		createEmptyAccount();
-    		return;
-    	}
-    	
     	SQLiteDatabase db = (new DBHelper(this)).getReadableDatabase();
 		try {    	
+	        List<String> currencyList = CurrencyManager.getAllShortCodes(db); 
+	        currencyList.add(0, getResources().getString(R.string.add_currency));
+	        currencies = new String[currencyList.size()];
+	        currencyList.toArray(currencies);
+
+	        int accountId = startingIntent.getIntExtra("com.funkyandroid.banking.account_id", -1);    	
+	    	if( accountId == -1 ) {
+	    		createEmptyAccount();
+	    		return;
+	    	}
+    	
 			account = AccountManager.getById(db, accountId);
 		} finally {
 			db.close();
@@ -171,7 +156,7 @@ public class EditAccountActivity extends Activity {
  	    	button.setText(R.string.deleteButtonText);
     	}
 	    	
-    	updateCurrencyInformation(account.currency);
+    	setCurrency(account.currency);
     }
 
     /**
@@ -187,7 +172,7 @@ public class EditAccountActivity extends Activity {
 		} catch(IllegalArgumentException iae) {
 			account.currency = "EUR";
 		}
-    	updateCurrencyInformation(account.currency);    	
+    	setCurrency(account.currency);    	
     }
     
     /**
@@ -271,26 +256,75 @@ public class EditAccountActivity extends Activity {
 			.setTitle("Choose a Currency")
 			.setItems(currencies, new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int which) {
-	            	updateCurrencyInformation(currencies[which]);
+	            	if( which == 0 ) {
+	            		addNewCurrency();
+	            	} else {
+	            	   	account.currency = currencies[which];
+	            		setCurrency(account.currency);
+	            	}
 	            }
 	        })
 	        .create()
 	        .show();
     }
-    
+
     /**
-     * Update the account currency
+     * Add a new currency
      */
     
-    private void updateCurrencyInformation(final String currencyCode) {
-    	account.currency = currencyCode;
-    	Currency currency = Currency.getInstance(currencyCode);
+    public void addNewCurrency() {
+		final View entryView = getLayoutInflater().inflate(
+				R.layout.new_currency, 
+				(ViewGroup) findViewById(R.id.new_currency_root)
+			);
+		
+        new AlertDialog.Builder(this)
+			.setView(entryView)
+	        .setPositiveButton("OK", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					EditText codeView = (EditText) entryView.findViewById(R.id.code);
+					String code = codeView.getText().toString(); 
+					EditText symbolView = (EditText) entryView.findViewById(R.id.symbol);
+					String symbol = symbolView.getText().toString();
+					
+			    	SQLiteDatabase db = (new DBHelper(EditAccountActivity.this)).getWritableDatabase();
+					try {    	
+						CurrencyManager.create(db, code, symbol);
+						setCurrency(code, symbol);
+					   	account.currency = code;
+					} finally {
+						db.close();
+					}
+				}	        	
+	        })
+	        .setNegativeButton("CancelSKR", null)
+	        .show();		
+    }
+    
+    /**
+     * Set the currency in an account
+     */
+    	
+    private void setCurrency(final String code) {
+    	SQLiteDatabase db = (new DBHelper(this)).getReadableDatabase();
+		try {    	
+			String symbol = CurrencyManager.getSymbol(db, code);
+			setCurrency(code, symbol);
+		} finally {
+			db.close();
+		}
+    }
+    
+    /**
+     * Set the currency in an account
+     */
+    	
+    private void setCurrency(final String code, final String symbol) {
+    	Button currencyButton = (Button) findViewById(R.id.currency);
+    	currencyButton.setText(code);
     	
     	TextView textView = (TextView) findViewById(R.id.currencySymbol);
-    	textView.setText(currency.getSymbol());
-
-    	Button currencyButton = (Button) findViewById(R.id.currency);
-    	currencyButton.setText(currency.getCurrencyCode());   	
+    	textView.setText(symbol);
     }
     
 }

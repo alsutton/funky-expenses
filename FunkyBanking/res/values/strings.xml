@@ -57,4 +57,9 @@
     <string name="keypadSwitchUpper">A..</string>     
     <string name="keypadSwitchLower">a..</string>     
     <string name="keypadSwitchNumbers">1..</string>     
+
+    <string name="add_currency">New Currency....</string>
+    <string name="add_instructions">Please enter the three letter currency code and symbol for the currency you wish to add.</string>     
+    <string name="add_currency_prompt">Code :</string>     
+    <string name="add_symbol_prompt">Symbol :</string>     
 </resources>

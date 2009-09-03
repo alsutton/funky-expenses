@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout	xmlns:android="http://schemas.android.com/apk/res/android"
+				android:id="@+id/new_currency_root"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+	<TextView	android:id="@+id/instructions"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:paddingLeft="5dip"
+				android:paddingRight="5dip"
+				android:paddingBottom="10dip" 
+				android:textSize="18sp"
+				android:textColor="#fff"
+				android:text="@string/add_instructions"/>
+				
+	<LinearLayout	android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:paddingLeft="5dip"
+					android:paddingRight="5dip"
+					android:orientation="horizontal">
+		<TextView	android:id="@+id/codePrompt"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingRight="10dip" 
+					android:textSize="18sp"
+					android:textColor="#fff"
+					android:text="@string/add_currency_prompt"/>
+		
+	    <EditText	android:id="@+id/code"
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+					android:singleLine="true"
+	        		android:scrollHorizontally="false"
+			        android:autoText="false"
+	        		android:gravity="right" 
+	        		android:maxLength="3"/>
+	</LinearLayout>
+
+	<LinearLayout	android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:paddingLeft="5dip"
+					android:paddingRight="5dip"
+					android:orientation="horizontal">
+			<TextView	android:id="@+id/symbolPrompt"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingRight="10dip" 
+						android:textSize="18sp"
+						android:textColor="#fff"
+						android:text="@string/add_symbol_prompt"/>
+		
+		    <EditText	android:id="@+id/symbol"
+		        		android:layout_width="fill_parent"
+		        		android:layout_height="wrap_content"
+						android:singleLine="true"
+		        		android:scrollHorizontally="false"
+				        android:autoText="false"
+		        		android:gravity="right" 
+		        		android:maxLength="5"/>
+	</LinearLayout>
+</LinearLayout>

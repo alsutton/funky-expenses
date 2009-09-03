@@ -1,7 +1,5 @@
 package com.funkyandroid.banking.android;
 
-import java.util.Currency;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +23,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CategoryManager;
+import com.funkyandroid.banking.android.data.CurrencyManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.TransactionManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
@@ -78,13 +77,8 @@ public class SpendingReportActivity extends Activity {
     		finish();
     		return;    		
     	}
-        
-		Currency currency = Currency.getInstance(account.currency);
-		if( currency == null ) {
-			currencySymbol = BalanceFormatter.UNKNOWN_CURRENCY_SYMBOL;
-		} else {
-			currencySymbol = currency.getSymbol();
-		}
+
+    	currencySymbol = CurrencyManager.getSymbol(database, account.currency);
     	    	
 		TextView titleView = (TextView) findViewById(R.id.title);
 		titleView.setText(account.name);

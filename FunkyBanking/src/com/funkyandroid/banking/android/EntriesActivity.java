@@ -1,7 +1,5 @@
 package com.funkyandroid.banking.android;
 
-import java.util.Currency;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

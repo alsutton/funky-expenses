@@ -8,6 +8,16 @@ public class BalanceFormatter {
 	
 	public static final String UNKNOWN_CURRENCY_SYMBOL = "";
 
+	public static String format(long balance) {
+		return BalanceFormatter.format(balance, null);
+	}
+	
+	public static String format(long balance, final String currencySymbol) {
+		final StringBuilder builder = new StringBuilder(8);
+		format(builder, balance, currencySymbol);
+		return builder.toString();
+	}
+
 	public static void format(final StringBuilder builder, long balance, final String currencySymbol) {
 		if( balance < 0 ) {
 			builder.append('-');

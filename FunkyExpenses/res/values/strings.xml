@@ -46,6 +46,7 @@
     <string name="menuReports">Categories</string>        
     <string name="menuExport">Back up</string>
     <string name="menuRestore">Restore</string>
+    <string name="menuEmail">Email CSV</string>
     <string name="titleReports">Category Report</string>        
     <string name="titleBackup">Backup</string>        
     <string name="ok">OK</string>        

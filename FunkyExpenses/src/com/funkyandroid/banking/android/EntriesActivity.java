@@ -1,12 +1,20 @@
 package com.funkyandroid.banking.android;
 
+import java.io.File;
+import java.io.PrintStream;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -163,6 +171,17 @@ public class EntriesActivity extends Activity {
 				}
 			);
 		
+		menu.add(R.string.menuEmail)
+		.setIcon(android.R.drawable.ic_menu_send)
+		.setOnMenuItemClickListener(
+			new OnMenuItemClickListener() {
+				public boolean onMenuItemClick(final MenuItem item) {
+					emailCSV("al.sutton@alsutton.com");    				
+		            return true;						
+				}
+			}
+		);
+	
 		MenuUtil.buildMenu(this, menu);
 		
 		return true;
@@ -187,4 +206,65 @@ public class EntriesActivity extends Activity {
 		}
     	textView.setText(balanceText.toString());
     }
+
+    /**
+     * Send a CSV export of the account to a user via email.
+     */
+    
+    private void emailCSV(final String recipient) {
+    	new Thread(new MyExporter()).start();
+    }
+    
+    /**
+     * Thread in which export will run
+     */
+    
+    private class MyExporter implements Runnable {
+    	
+	    /**
+	     * Email a CSV of the account information out
+	     */
+	    
+	    public void run() {
+	    	try {
+				File exportFile = new File(getFilesDir(), "export.csv");
+				Cursor exportCursor = TransactionManager.getForExportForAccount(database, account.id);
+		    	try {
+		    		PrintStream ps = new PrintStream(
+		    								EntriesActivity.this.openFileOutput("export.csv", Activity.MODE_WORLD_READABLE)
+		    							);
+		    		try {
+		    			ps.print("\"Date\",\"Category\",\"Payee\",\"Amount (");
+		    			ps.print(currencySymbol);
+		    			ps.println(")\"");
+		    			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+		    			while(exportCursor.moveToNext()) {
+		        			Date entryDate = new Date(exportCursor.getLong(0));
+		        			ps.print(df.format(entryDate));
+		        			ps.print(",\"");
+		        			ps.print(exportCursor.getString(1));
+		        			ps.print("\",\"");
+		        			ps.print(exportCursor.getString(2));
+		        			ps.print("\",");
+		        			ps.println(BalanceFormatter.format(exportCursor.getLong(3)));
+		    			}
+		    		} finally {
+		    			ps.close();
+		    		}
+		    	} finally {
+		    		exportCursor.close();
+		    	}
+		    	
+		    	Intent sendIntent = new Intent(Intent.ACTION_SEND);
+		    	sendIntent.setType("image/csv");
+		    	sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Funky Expenses Export");
+		    	sendIntent.putExtra(Intent.EXTRA_TEXT, "Export from the account called "+account.name);
+		   	    sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportFile));
+
+		   	    startActivity(Intent.createChooser(sendIntent, "Send using..."));    	
+		    } catch(Exception ex) {
+				Log.e("FExpenses", "CSV Export", ex);		    	
+		    }
+	    }
+	}
 }

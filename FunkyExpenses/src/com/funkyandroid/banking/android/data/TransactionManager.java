@@ -25,6 +25,19 @@ public final class TransactionManager {
 	 * The SQL to select the transactions for an account.
 	 */
 	
+	private static final String EXPORT_TRANSACTIONS_FOR_ACCOUNT_SQL = 
+		"SELECT t.timestamp, c.name, p.name, t.amount FROM "
+		+ DBHelper.ENTRIES_TABLE_NAME
+		+ " t, "
+		+ DBHelper.PAYEE_TABLE_NAME
+		+ " p, "
+		+ DBHelper.CATEGORIES_TABLE_NAME
+		+" c WHERE t.account_id = ? AND p._id = t.payee_id AND c._id = t.category_id ORDER BY timestamp DESC";
+
+	/**
+	 * The SQL to select the transactions for an account.
+	 */
+	
 	private static final String ACCOUNT_AND_CAT_QUERY = 
 		"SELECT t._id as _id, p.name, t.amount, t.timestamp FROM "
 		+ DBHelper.ENTRIES_TABLE_NAME
@@ -55,6 +68,19 @@ public final class TransactionManager {
 			final int accountId) {		
 		String[] whereValues = { Integer.toString(accountId) };
 		return db.rawQuery (TRANSACTIONS_FOR_ACCOUNT_SQL, whereValues);
+	}
+
+	/**
+	 * Get the list of transactions for an account.
+	 * 
+	 * @param db database to query.
+	 * @param accountId The ID of the account to get the transactions for.
+	 */
+	
+	public static Cursor getForExportForAccount(final SQLiteDatabase db, 
+			final int accountId) {		
+		String[] whereValues = { Integer.toString(accountId) };
+		return db.rawQuery (EXPORT_TRANSACTIONS_FOR_ACCOUNT_SQL, whereValues);
 	}
 
 	/**

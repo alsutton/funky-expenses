@@ -1,7 +1,6 @@
 package com.funkyandroid.banking.android;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -70,6 +69,18 @@ public class BackupActivity extends Activity {
 	 */
 	
 	private SQLiteDatabase db;
+	
+	/**
+	 * The path for the backup
+	 */
+	
+	private String path;
+	
+	/**
+	 * The password for the backup
+	 */
+	
+	private String password;
 	
     /** Called when the activity is first created. */
     @Override
@@ -164,11 +175,22 @@ public class BackupActivity extends Activity {
     	try {
 	    	EditText editText = (EditText) findViewById(R.id.name);
 	    	String name = editText.getText().toString();
+	    	path = getBackupFilename(name);
 	    	
 	    	editText = (EditText) findViewById(R.id.password);
-	    	String password = editText.getText().toString();
+	    	password = editText.getText().toString();
+
+	    	if(path == null) {
+	    		reportNoBackupDirectory();
+	    		return;
+	    	}
 	    	
-	    	new Thread(new Backupper(name, password)).start();
+	    	if(new File(path).exists()) {
+	    		reportExistingFile();
+	    		return;
+	    	}
+	    	
+	    	startBackupThread();
     	} catch(Exception ex) {
             new AlertDialog.Builder(this)
 	    		.setTitle("Backup Failed")
@@ -184,6 +206,82 @@ public class BackupActivity extends Activity {
     }
     
     /**
+     * Create the filename for tha backup
+     * @throws IOException 
+     */
+    
+    private String getBackupFilename(final String name) throws IOException {
+		StringBuilder path = new StringBuilder();  
+		BackupUtils.addBackupPath(path);
+		File backupDir = new File(path.toString());
+		if(!backupDir.exists() && !backupDir.mkdir()) {
+			return null;
+		}
+		
+		path.append('/');
+		path.append(name);
+		path.append(".fex");    	
+		return path.toString();
+    }
+    
+    /**
+     * Report that the backup directory could not be created
+     */
+    
+    private void reportExistingFile() {
+        new AlertDialog.Builder(this)
+		.setTitle("Overwrite Backup?")
+		.setMessage("A backup with that name already exists. Do you want to overwrite it?")
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setPositiveButton("Yes", new OnClickListener() {
+			public void onClick(final DialogInterface dialog, final int which) {
+		    	startBackupThread();
+			}
+		})
+		.setNegativeButton("No", null)
+		.show();		    	    	
+    }
+    
+    
+    /**
+     * Start the backup
+     */
+    
+    private void startBackupThread() {
+    	try {
+	    	new Thread(new Backupper(path, password)).start();
+    	} catch(Exception ex) {
+            new AlertDialog.Builder(this)
+	    		.setTitle("Backup Failed")
+	    		.setMessage("The backup can't be started : "+ex.getMessage())
+	    		.setIcon(android.R.drawable.ic_dialog_alert)
+	    		.setPositiveButton("OK", new OnClickListener() {
+					public void onClick(final DialogInterface dialog, final int which) {
+						BackupActivity.this.finish();
+					}
+	    		})
+	    		.show();		    	
+    	}    	
+    }
+    
+    /**
+     * Report that the backup directory could not be created
+     */
+    
+    private void reportNoBackupDirectory() {
+        new AlertDialog.Builder(this)
+		.setTitle("Backup Failed")
+		.setMessage("The backup could not be created. Please check your memory card for problems.")
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setPositiveButton("OK", new OnClickListener() {
+			public void onClick(final DialogInterface dialog, final int which) {
+				BackupActivity.this.finish();
+			}
+		})
+		.show();		    	    	
+    }
+    
+    /**
      * Class to perform the backup
      */
     
@@ -192,7 +290,7 @@ public class BackupActivity extends Activity {
     	/**
     	 * The name of the backup.
     	 */
-    	private final String name;
+    	private final String path;
     	
     	/**
     	 * The cipher to encrypt the data with.
@@ -210,10 +308,10 @@ public class BackupActivity extends Activity {
     	 */
     	private List<byte[]> waitingBytes = new ArrayList<byte[]>();
 
-    	Backupper(final String name, final String password) 
+    	Backupper(final String path, final String password) 
     		throws NoSuchAlgorithmException, NoSuchPaddingException, 
     		InvalidKeyException, UnsupportedEncodingException, InvalidKeySpecException, InvalidAlgorithmParameterException {
-    		this.name = name;
+    		this.path = path;
     		cipher = BackupUtils.getCipher(password, Cipher.ENCRYPT_MODE);
     	}
     	
@@ -224,18 +322,7 @@ public class BackupActivity extends Activity {
     	public void run() {
     		updateStatus("Backup Started");
     		try {
-    			StringBuilder path = new StringBuilder();  
-    			BackupUtils.addBackupPath(path);
-    			File backupDir = new File(path.toString());
-    			if(!backupDir.exists() && !backupDir.mkdir()) {
-    				throw new FileNotFoundException("Unable to create backup directory");
-    			}
-    			
-    			path.append('/');
-    			path.append(name);
-    			path.append(".fex");
-    			
-    			final File file = new File(path.toString());
+    			final File file = new File(path);
 				fos = new FileOutputStream(file);
 			    try {
     				add(BackupUtils.BACKUP_HEADER);

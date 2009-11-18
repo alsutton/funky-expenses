@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
@@ -60,7 +61,7 @@ public class SpendingReportActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setTitle(R.string.titleReports);
+        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.spending);
     	
     	Intent startingIntent = getIntent();    	
@@ -135,7 +136,7 @@ public class SpendingReportActivity extends Activity {
 					}
 				}
 			);
-		
+        
 		MenuUtil.buildMenu(this, menu);
 		
 		return true;
@@ -151,13 +152,6 @@ public class SpendingReportActivity extends Activity {
 		BalanceFormatter.format(balanceText, newBalance, currencySymbol);
     	
     	TextView textView = (TextView) findViewById(R.id.balance);
-		if			( newBalance < 0 ) {
-			textView.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
-		} else if	( newBalance > 0 ) {
-			textView.setTextColor(Color.rgb(0x00, 0xc0, 0x00));
-		} else {
-			textView.setTextColor(Color.rgb(0xcf, 0xc0, 0x00));
-		}
     	textView.setText(balanceText.toString());
     }
 

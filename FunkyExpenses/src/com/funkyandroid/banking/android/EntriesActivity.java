@@ -11,13 +11,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -64,6 +64,7 @@ public class EntriesActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.entries);
     	
     	Intent startingIntent = getIntent();    	
@@ -197,13 +198,6 @@ public class EntriesActivity extends Activity {
 		BalanceFormatter.format(balanceText, newBalance, currencySymbol);
     	
     	TextView textView = (TextView) findViewById(R.id.balance);
-		if			( newBalance < 0 ) {
-			textView.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
-		} else if	( newBalance > 0 ) {
-			textView.setTextColor(Color.rgb(0x00, 0xc0, 0x00));
-		} else {
-			textView.setTextColor(Color.rgb(0xcf, 0xc0, 0x00));
-		}
     	textView.setText(balanceText.toString());
     }
 

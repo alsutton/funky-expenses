@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
@@ -61,6 +62,7 @@ public class AccountsActivity extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.accounts);
 
         db = (new DBHelper(this)).getWritableDatabase();        

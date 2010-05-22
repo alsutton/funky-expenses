@@ -27,6 +27,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CategoryManager;
@@ -174,6 +175,7 @@ public class ExternalEntryActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
+    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     	Intent startingIntent = getIntent();    	    	
 
     	((TextView) findViewById(R.id.currencySymbol)).setText("");
@@ -253,6 +255,13 @@ public class ExternalEntryActivity extends Activity {
     	});
     	accountsSpinner.setAdapter(adapter);    	
     }
+
+    @Override
+    public void onStop()
+    {
+       super.onStop();
+       FlurryAgent.onEndSession(this);
+    }    
 
     /**
      * Check to see if the . key has been pressed, if so move to the minor currency area

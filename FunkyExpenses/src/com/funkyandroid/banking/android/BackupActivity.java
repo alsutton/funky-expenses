@@ -35,6 +35,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BackupUtils;
@@ -131,6 +132,19 @@ public class BackupActivity extends Activity {
     	}
     	super.onDestroy();
     }
+
+    @Override
+    public void onStart() {
+    	super.onStart();
+    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
+    }
+    
+    @Override
+    public void onStop()
+    {
+       super.onStop();
+       FlurryAgent.onEndSession(this);
+    }    
     
     /**
      * Set up the menu for the application

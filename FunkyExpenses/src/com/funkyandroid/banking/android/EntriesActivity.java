@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
@@ -122,10 +123,18 @@ public class EntriesActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
+    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     	account = AccountManager.getById(database, account.id);
     	updateBalance(account.balance);
 		adapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onStop()
+    {
+       super.onStop();
+       FlurryAgent.onEndSession(this);
+    }    
 
     /**
      * Close database connection onDestroy.

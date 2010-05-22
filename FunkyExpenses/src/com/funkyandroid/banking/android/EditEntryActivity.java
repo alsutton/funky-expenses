@@ -21,6 +21,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.CategoryManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.PayeeManager;
@@ -167,6 +168,7 @@ public class EditEntryActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
+    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     	Intent startingIntent = getIntent();    	
     	
 
@@ -197,6 +199,13 @@ public class EditEntryActivity extends Activity {
     	
     	updateDate();
     }
+
+    @Override
+    public void onStop()
+    {
+       super.onStop();
+       FlurryAgent.onEndSession(this);
+    }    
 
     /**
      * Creates a new, empty transaction

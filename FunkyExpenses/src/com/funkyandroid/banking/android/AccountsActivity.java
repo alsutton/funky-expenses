@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
@@ -96,15 +97,19 @@ public class AccountsActivity extends Activity
     	super.onDestroy();    	
     }
     
-    /**
-     * Called whenever the activity becomes visible.
-     */
-    
     @Override
     public void onStart() {
     	super.onStart();
+    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
 		adapter.notifyDataSetChanged();
     }
+    
+    @Override
+    public void onStop()
+    {
+       super.onStop();
+       FlurryAgent.onEndSession(this);
+    }    
     
     /**
      * Set up the menu for the application

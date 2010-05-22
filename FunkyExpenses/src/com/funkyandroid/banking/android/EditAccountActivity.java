@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
@@ -105,6 +106,7 @@ public class EditAccountActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
+    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     	
     	fetched = false;
     	
@@ -158,6 +160,13 @@ public class EditAccountActivity extends Activity {
 	    	
     	setCurrency(account.currency);
     }
+
+    @Override
+    public void onStop()
+    {
+       super.onStop();
+       FlurryAgent.onEndSession(this);
+    }    
 
     /**
      * Creates a new empty account

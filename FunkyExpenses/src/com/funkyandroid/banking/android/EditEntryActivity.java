@@ -363,6 +363,7 @@ public class EditEntryActivity extends Activity {
 	    	}
 	    	
 	    	editText = (EditText) findViewById(R.id.amountMinor);
+	    	amountString = editText.getText().toString();
 	    	if(amountString != null && amountString.length() > 0) {
 	    		amountString = editText.getText().toString();
 	        	amount += Long.parseLong(amountString);

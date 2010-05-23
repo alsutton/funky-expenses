@@ -2,7 +2,8 @@
 <manifest	xmlns:android="http://schemas.android.com/apk/res/android"
       		package="com.funkyandroid.banking.android.expenses.demo"
       		android:versionCode="1300"
-      		android:versionName="1.3.0">
+      		android:versionName="1.3.0"
+      		android:installLocation="auto">
       
 	<uses-sdk 			android:minSdkVersion="1"
 						android:targetSdkVersion="4" />

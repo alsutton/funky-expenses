@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
@@ -93,7 +94,6 @@ public class EditEntryActivity extends Activity {
         		new View.OnClickListener() {
         				public void onClick(final View view) {
         					storeEntryDetails();
-        					EditEntryActivity.this.finish();
         				}
         		});
         
@@ -335,56 +335,65 @@ public class EditEntryActivity extends Activity {
      */
     
     public void storeEntryDetails() {
-    	EditText editText = (EditText) findViewById(R.id.payee);
-    	transaction.setPayee(editText.getText().toString());
-
-    	RadioGroup transactionType = (RadioGroup) findViewById(R.id.type);
-    	
-    	int type;
-    	switch (transactionType.getCheckedRadioButtonId()) {
-    		case R.id.debitButton:
-    			type = Transaction.TYPE_DEBIT;
-    			break;
-    		case R.id.creditButton:
-				type = Transaction.TYPE_CREDIT;
-				break;
-			default:
-				throw new RuntimeException("Unknown button ID"+transactionType.getCheckedRadioButtonId());
-    	}
-    	transaction.setType(type);
-
-    	long oldAmount = transaction.getAmount();
-    	long amount = 0;
-    	editText = (EditText) findViewById(R.id.amountMajor);
-    	String amountString = editText.getText().toString();
-    	if(amountString != null && amountString.length() > 0) {
-    		amount += Long.parseLong(amountString) * 100;
-    	}
-    	
-    	editText = (EditText) findViewById(R.id.amountMinor);
-    	if(amountString != null && amountString.length() > 0) {
-    		amountString = editText.getText().toString();
-        	amount += Long.parseLong(amountString);
-    	}
-    	if( type == Transaction.TYPE_DEBIT ) {
-    		amount = 0 - amount;
-    	}
-    	transaction.setAmount(amount);
-    	
-    	AutoCompleteTextView categoryEntry =
-    		(AutoCompleteTextView) findViewById(R.id.category);
-    	String category = categoryEntry.getText().toString();
-    	
-    	if(StringUtils.isEmpty(category)) {
-    		category = CategoryManager.UNCAT_CAT;
-    	}
-		int categoryId = CategoryManager.getByName(db, category);			
-		transaction.setCategoryId(categoryId);
-		
-	   	if( fetched ) {
-	   		TransactionManager.update(db, transaction, oldAmount);
-    	} else {
-    		TransactionManager.create(db, transaction);	    		
+    	try {
+	    	EditText editText = (EditText) findViewById(R.id.payee);
+	    	transaction.setPayee(editText.getText().toString());
+	
+	    	RadioGroup transactionType = (RadioGroup) findViewById(R.id.type);
+	    	
+	    	int type;
+	    	switch (transactionType.getCheckedRadioButtonId()) {
+	    		case R.id.debitButton:
+	    			type = Transaction.TYPE_DEBIT;
+	    			break;
+	    		case R.id.creditButton:
+					type = Transaction.TYPE_CREDIT;
+					break;
+				default:
+					throw new RuntimeException("Unknown button ID"+transactionType.getCheckedRadioButtonId());
+	    	}
+	    	transaction.setType(type);
+	
+	    	long oldAmount = transaction.getAmount();
+	    	long amount = 0;
+	    	editText = (EditText) findViewById(R.id.amountMajor);
+	    	String amountString = editText.getText().toString();
+	    	if(amountString != null && amountString.length() > 0) {
+	    		amount += Long.parseLong(amountString) * 100;
+	    	}
+	    	
+	    	editText = (EditText) findViewById(R.id.amountMinor);
+	    	if(amountString != null && amountString.length() > 0) {
+	    		amountString = editText.getText().toString();
+	        	amount += Long.parseLong(amountString);
+	    	}
+	    	if( type == Transaction.TYPE_DEBIT ) {
+	    		amount = 0 - amount;
+	    	}
+	    	transaction.setAmount(amount);
+	    	
+	    	AutoCompleteTextView categoryEntry =
+	    		(AutoCompleteTextView) findViewById(R.id.category);
+	    	String category = categoryEntry.getText().toString();
+	    	
+	    	if(StringUtils.isEmpty(category)) {
+	    		category = CategoryManager.UNCAT_CAT;
+	    	}
+			int categoryId = CategoryManager.getByName(db, category);			
+			transaction.setCategoryId(categoryId);
+			
+		   	if( fetched ) {
+		   		TransactionManager.update(db, transaction, oldAmount);
+	    	} else {
+	    		TransactionManager.create(db, transaction);	    		
+	    	}
+			finish();
+    	} catch( NumberFormatException ex ) {
+    		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
+    									.setTitle("Your entry could not be stored")
+    									.setMessage(ex.getMessage())
+    									.setPositiveButton("OK", null)
+    									.show();
     	}
     }
 }

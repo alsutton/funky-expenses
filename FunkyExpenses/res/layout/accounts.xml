@@ -2,31 +2,34 @@
 <LinearLayout 
 	xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:admobsdk="http://schemas.android.com/apk/res/com.funkyandroid.banking.android.expenses.demo"
+    android:background="#fff"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+    android:layout_height="fill_parent">
 	<LinearLayout
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 		android:layout_weight="0"
-		android:background="#ddd"
+		android:background="#69c"
 	    android:gravity="center"
 	    android:orientation="horizontal">
+		<TextView  
+			android:text="@string/titleAccounts"
+			android:gravity="center_vertical"
+		    android:layout_height="wrap_content" 
+		    android:layout_width="wrap_content" 
+		    android:layout_weight="1"
+			android:paddingLeft="5dip"
+		    android:textColor="#fff"
+			android:textSize="18sp"
+		    android:textStyle="bold"/>
 	    <Button
 	    	android:id="@+id/add"
 		    android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
-	    	android:background="@android:drawable/ic_menu_add"
+		    android:layout_weight="0"
+	    	android:background="@drawable/ic_title_add"
 	    	/>
-		<TextView  
-			android:text="@string/titleAccounts"
-		    android:layout_width="fill_parent" 
-		    android:layout_height="wrap_content" 
-		    android:textColor="#369"
-			android:textSize="18sp"
-		    android:gravity="center"
-		    android:textStyle="bold"/>
 	</LinearLayout>
 	
 	<ListView	android:id="@+id/informationList"

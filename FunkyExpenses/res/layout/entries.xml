@@ -10,24 +10,27 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 		android:layout_weight="0"
-		android:background="#ddd"
+		android:background="#69c"
 	    android:gravity="center"
 	    android:orientation="horizontal">
+		<TextView  
+			android:id="@+id/title"
+			android:text="@string/titleEntries"
+			android:gravity="center_vertical"
+		    android:layout_height="wrap_content" 
+		    android:layout_width="wrap_content" 
+		    android:layout_weight="1"
+			android:paddingLeft="5dip"
+		    android:textColor="#fff"
+			android:textSize="18sp"
+		    android:textStyle="bold"/>
 	    <Button
 	    	android:id="@+id/add"
 		    android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
-	    	android:background="@android:drawable/ic_menu_add"
+		    android:layout_weight="0"
+	    	android:background="@drawable/ic_title_add"
 	    	/>
-		<TextView  
-			android:id="@+id/title"
-			android:text="@string/titleEntries"
-		    android:layout_width="fill_parent" 
-		    android:layout_height="fill_parent" 
-		    android:textColor="#369"
-			android:textSize="18sp"
-		    android:gravity="center"
-		    android:textStyle="bold"/>
 	</LinearLayout>
 	
 	<TextView  

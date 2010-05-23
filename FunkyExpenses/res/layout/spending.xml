@@ -38,8 +38,8 @@
 		android:id="@+id/balance"
 	    android:layout_width="fill_parent" 
 	    android:layout_height="wrap_content" 
-	    android:background="#ddd"
-	    android:textColor="#369"
+	    android:background="#369"
+	    android:textColor="#fff"
 		android:layout_weight="0"
 	    android:gravity="center"/>
 	

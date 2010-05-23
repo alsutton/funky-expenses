@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -87,7 +88,7 @@ public class BackupActivity extends Activity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setTitle(R.string.titleBackup);
+        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.backup);
         
         ((Button) findViewById(R.id.cancelButton)).setOnClickListener(new View.OnClickListener() {

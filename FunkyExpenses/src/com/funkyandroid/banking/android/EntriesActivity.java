@@ -99,6 +99,13 @@ public class EntriesActivity extends Activity {
         					context.startActivity(intent);    				
         				}
         		});
+		button = (Button) findViewById(R.id.categories_button);
+        button.setOnClickListener(
+        		new View.OnClickListener() {
+        				public void onClick(final View view) {
+        					startCategories();
+        				}
+        		});
 
         Cursor entryCursor = TransactionManager.getForAccount(database, accountId);
     	startManagingCursor(entryCursor);
@@ -172,10 +179,7 @@ public class EntriesActivity extends Activity {
 			.setOnMenuItemClickListener(
 				new OnMenuItemClickListener() {
 					public boolean onMenuItemClick(final MenuItem item) {
-						Context context = EntriesActivity.this;
-						Intent intent = new Intent(context, SpendingReportActivity.class);
-						intent.putExtra("com.funkyandroid.banking.account_id", account.id);
-						context.startActivity(intent);    				
+						startCategories();
 			            return true;						
 					}
 				}
@@ -196,6 +200,17 @@ public class EntriesActivity extends Activity {
 		
 		return true;
 	}
+    
+    
+    /**
+     * Start the category report activity
+     */
+    
+    private void startCategories() {
+		Intent intent = new Intent(this, SpendingReportActivity.class);
+		intent.putExtra("com.funkyandroid.banking.account_id", account.id);
+		startActivity(intent);    				    	
+    }
     
     /**
      * Update the current account balance

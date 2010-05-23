@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ResourceCursorTreeAdapter;
 import android.widget.TextView;
@@ -91,6 +92,14 @@ public class SpendingReportActivity extends Activity {
     	ExpandableListView list = (ExpandableListView) findViewById(R.id.informationList);
     	list.setAdapter(adapter);
     	list.setOnChildClickListener(adapter);
+
+		Button button = (Button) findViewById(R.id.entries_button);
+        button.setOnClickListener(
+        		new View.OnClickListener() {
+        				public void onClick(final View view) {
+        					startEntries();
+        				}
+        		});
     }
 
     /**
@@ -135,11 +144,7 @@ public class SpendingReportActivity extends Activity {
 			.setOnMenuItemClickListener(
 				new OnMenuItemClickListener() {
 					public boolean onMenuItemClick(final MenuItem item) {
-						Context context = SpendingReportActivity.this;
-						Intent intent = new Intent(context, EntriesActivity.class);
-						intent.putExtra("com.funkyandroid.banking.account_id", accountId);
-						context.startActivity(intent);
-						finish();
+						startEntries();
 			            return true;						
 					}
 				}
@@ -149,6 +154,17 @@ public class SpendingReportActivity extends Activity {
 		
 		return true;
 	}
+    
+    /**
+     * Start the entries activity
+     */
+    
+    private void startEntries() {
+		Intent intent = new Intent(this, EntriesActivity.class);
+		intent.putExtra("com.funkyandroid.banking.account_id", accountId);
+		startActivity(intent);
+		finish();    	
+    }
     
     /**
      * Update the current account balance

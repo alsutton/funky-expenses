@@ -1,23 +1,22 @@
 package com.funkyandroid.banking.android;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.MenuItem.OnMenuItemClickListener;
-import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
+import android.widget.ResourceCursorTreeAdapter;
 import android.widget.TextView;
 import android.widget.ExpandableListView.OnChildClickListener;
 
@@ -169,25 +168,62 @@ public class SpendingReportActivity extends Activity {
 	 */
 	
 	public class SpendingReportListAdapter 
-		extends CursorTreeAdapter 
+		extends ResourceCursorTreeAdapter 
 		implements OnChildClickListener {
 
 		public SpendingReportListAdapter(final Cursor cursor) {
-			super(cursor, SpendingReportActivity.this);
+			super(SpendingReportActivity.this, cursor, R.layout.category_list_item, R.layout.entry_list_item);
 		}
 
 		@Override
 		public void bindGroupView(final View view, final Context context,
 				final Cursor cursor, final boolean isExpanded) {
-			final CategoryView row = (CategoryView) view;
-			row.setCategory(cursor);
+			((TextView)view.findViewById(R.id.name)).setText(cursor.getString(1));
+
+			final TextView value = (TextView)view.findViewById(R.id.value);
+			int balance = cursor.getInt(2);
+			if			( balance < 0 ) {
+				value.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
+			} else if	( balance > 0 ) {
+				value.setTextColor(Color.rgb(0x00, 0xc0, 0x00));
+			} else {
+				value.setTextColor(Color.rgb(0xcf, 0xc0, 0x00));
+			}			
+			StringBuilder valueString = new StringBuilder(10);
+			BalanceFormatter.format(valueString, balance, currencySymbol);
+			valueString.append(" in ");
+			int entries = cursor.getInt(3);
+			valueString.append(entries);
+			if( entries == 1) {
+				valueString.append(" entry.");
+			} else {
+				valueString.append(" entries.");
+			}
+			value.setText(valueString.toString());
 		}
 
 		@Override
 		public void bindChildView(final View view, final Context context,
 				final Cursor cursor, final boolean isLastChild) {
-			final EntryView row = (EntryView) view;
-			row.updateData(cursor, currencySymbol);
+			((TextView)view.findViewById(R.id.name)).setText(cursor.getString(1));
+
+			final TextView value = (TextView)view.findViewById(R.id.value);
+			final long balance = cursor.getLong(2);
+			if			( balance < 0 ) {
+				value.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
+			} else if	( balance > 0 ) {
+				value.setTextColor(Color.rgb(0x00, 0xc0, 0x00));
+			} else {
+				value.setTextColor(Color.rgb(0xcf, 0xc0, 0x00));
+			}
+			
+			StringBuilder valueString = new StringBuilder(10);
+			BalanceFormatter.format(valueString, balance, currencySymbol);
+			value.setText(valueString.toString());
+
+			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
+			Date entryDate = new Date(cursor.getLong(3));
+			((TextView)view.findViewById(R.id.date)).setText(sdf.format(entryDate));
 		}
 
 		@Override
@@ -195,22 +231,6 @@ public class SpendingReportActivity extends Activity {
 			Cursor cursor = TransactionManager.getCursorForCategoryAndAccount(database, accountId, groupCursor.getInt(0));
 			SpendingReportActivity.this.startManagingCursor(cursor);
 			return cursor;
-		}
-
-		@Override
-		protected View newChildView(final Context context, final Cursor cursor,
-				final boolean isLastChild, final ViewGroup parent) {			
-			final EntryView view = new EntryView(parent.getContext(), cursor, currencySymbol); 
-			bindChildView(view,context,cursor,isLastChild);
-			return view;
-		}
-
-		@Override
-		protected View newGroupView(final Context context, final Cursor cursor,
-				final boolean isExpanded, final ViewGroup parent) {
-			final CategoryView view = new CategoryView(parent.getContext()); 
-			bindGroupView(view,context,cursor,isExpanded);
-			return view;
 		}
 
 		/**
@@ -234,84 +254,5 @@ public class SpendingReportActivity extends Activity {
 			view.getContext().startActivity(intent);    				
 			return true;
 		}
-
 	}
-
-
-	/**
-	 * The view to show a category.
-	 */
-	
-	public class CategoryView extends LinearLayout {
-
-		/**
-		 * The view holding the name of the category
-		 */
-		
-		private final transient TextView category;
-		
-		/**
-		 * The view holding the number of entries in that category.
-		 */
-		
-		private final transient TextView amount;
-
-		/**
-		 * Constructor. Builds the views.
-		 * 
-		 * @param context The context in which the app is operating.
-		 */
-		public CategoryView(final Context context) {
-			super(context);
-		
-			setOrientation(LinearLayout.VERTICAL);
-
-			final ViewGroup.LayoutParams categoryLayout = new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-			category = new TextView(context);
-			category.setLayoutParams(categoryLayout);
-			category.setGravity(Gravity.CENTER_VERTICAL);
-			category.setTextSize(category.getTextSize()+4);
-			addView(category);
-
-			final ViewGroup.LayoutParams amountLayout = new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-			amount = new TextView(context);
-			amount.setLayoutParams(amountLayout);
-			amount.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
-			amount.setPadding(amount.getPaddingLeft(), amount.getPaddingTop(), 10, amount.getPaddingBottom());
-			amount.setTypeface(amount.getTypeface(), Typeface.BOLD);
-			addView(amount);
-
-			setPadding(	40, getPaddingTop(), getPaddingRight(), getPaddingBottom());
-		}
-		
-		/**
-		 * Set the category details.
-		 * 
-		 * @cursor The cursor holding the category details.
-		 */
-		
-		public void setCategory(final Cursor cursor) {					
-			category.setText(cursor.getString(1));
-
-			int balance = cursor.getInt(2);
-			if			( balance < 0 ) {
-				amount.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
-			} else if	( balance > 0 ) {
-				amount.setTextColor(Color.rgb(0x00, 0xc0, 0x00));
-			} else {
-				amount.setTextColor(Color.rgb(0xcf, 0xc0, 0x00));
-			}			
-			StringBuilder valueString = new StringBuilder(10);
-			BalanceFormatter.format(valueString, balance, currencySymbol);
-			valueString.append(" in ");
-			int entries = cursor.getInt(3);
-			valueString.append(entries);
-			if( entries == 1) {
-				valueString.append(" entry.");
-			} else {
-				valueString.append(" entries.");
-			}
-			amount.setText(valueString.toString());
-		}
-	}	
 }

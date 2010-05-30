@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -176,7 +177,16 @@ public class EntriesActivity extends ListActivity {
 		.setOnMenuItemClickListener(
 			new OnMenuItemClickListener() {
 				public boolean onMenuItemClick(final MenuItem item) {
-					emailCSV("al.sutton@alsutton.com");
+			        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+				    	new Thread(new MyExporter()).start();
+			        } else {
+			            new AlertDialog.Builder(EntriesActivity.this)
+			            		.setTitle("Missing Memory Card")
+			            		.setMessage("A memory card is required to export your data")
+			            		.setIcon(android.R.drawable.ic_dialog_alert)
+			            		.setPositiveButton("OK", null)
+			            		.show();
+			        }
 		            return true;
 				}
 			}
@@ -219,14 +229,6 @@ public class EntriesActivity extends ListActivity {
 
     	TextView textView = (TextView) findViewById(R.id.balance);
     	textView.setText(balanceText.toString());
-    }
-
-    /**
-     * Send a CSV export of the account to a user via email.
-     */
-
-    private void emailCSV(final String recipient) {
-    	new Thread(new MyExporter()).start();
     }
 
     /**

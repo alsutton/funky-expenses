@@ -16,6 +16,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -287,7 +288,7 @@ public class EntriesActivity extends ListActivity {
 
 	    public void run() {
 	    	try {
-				File exportFile = new File(getCacheDir(), "export.csv");
+				File exportFile = new File(Environment.getExternalStorageDirectory(), "export.csv");
 				if(exportFile.exists()) {
 					exportFile.delete();
 				}
@@ -320,7 +321,6 @@ public class EntriesActivity extends ListActivity {
 		    	Intent sendIntent = new Intent(Intent.ACTION_SEND);
 		    	sendIntent.setType("text/csv");
 		    	sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Funky Expenses Export");
-		    	sendIntent.putExtra(Intent.EXTRA_TEXT, "Export from the account called "+account.name);
 		   	    sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportFile));
 
 		   	    startActivity(Intent.createChooser(sendIntent, "Send using..."));

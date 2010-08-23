@@ -28,17 +28,6 @@ public class CategoryManager {
 			DBHelper.ENTRIES_TABLE_NAME + " t WHERE t.account_id = ? AND t.category_id = c._id GROUP BY t.category_id";
 		
 	/**
-	 * Get the list of accounts from the database.
-	 * 
-	 * @param db database to query.
-	 */
-	
-	public static Cursor getCategorySuggestions(final SQLiteDatabase db) {
-		return db.query(DBHelper.CATEGORIES_TABLE_NAME, SUGGEST_COLS, 
-				null, null, null, null, "name ASC");
-	}
-	
-	/**
 	 * Get the id of a category from its' name.
 	 * 
 	 * @param db database to query.

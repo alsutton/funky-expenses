@@ -34,7 +34,7 @@ public class CategorySuggestionsAdapter extends SimpleCursorAdapter {
 	@Override
 	public Cursor runQueryOnBackgroundThread(final CharSequence constraint)
 	{
-		if(constraint == null || constraint.length() == 0) {
+		if(db == null || !db.isOpen() || constraint == null || constraint.length() == 0) {
 			return super.runQueryOnBackgroundThread(constraint);
 		}
 		return CategoryManager.getMatchesFor(db, constraint.toString());

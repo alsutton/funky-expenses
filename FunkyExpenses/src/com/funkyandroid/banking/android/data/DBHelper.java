@@ -153,6 +153,7 @@ public class DBHelper
 			db.execSQL(DBHelper.ENTRIES_TABLE_CREATE_SQL);
 			db.execSQL("INSERT INTO "+
 					ENTRIES_TABLE_NAME+
+					"(_id,account_id,timestamp,category_id,payee_id,type,amount)  "+
 					" SELECT _id, account_id, timestamp, category_id, payee_id, type, amount FROM "+
 					ENTRIES_TABLE_NAME+
 					"_temp;");

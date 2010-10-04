@@ -38,7 +38,7 @@ import android.widget.TextView;
 
 import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.DBHelper;
-import com.funkyandroid.banking.android.expenses.demo.R;
+import com.funkyandroid.banking.android.expenses.adfree.R;
 import com.funkyandroid.banking.android.utils.BackupUtils;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
@@ -128,10 +128,10 @@ public class BackupActivity extends Activity {
      */
     
     public void onDestroy() {
+    	super.onDestroy();
     	if( db != null && db.isOpen() ) {
     		db.close();
     	}
-    	super.onDestroy();
     }
 
     @Override

@@ -37,15 +37,4 @@
 				android:layout_height="0dip"
 				android:choiceMode="singleChoice"
 				android:layout_weight="1" />    
-
-	<com.admob.android.ads.AdView  
-	                        android:id="@+id/ad" 
-	                        android:layout_width="fill_parent" 
-	                        android:layout_height="wrap_content"
-							android:layout_weight="0"
-	                        admobsdk:backgroundColor="#000000"
-	                        admobsdk:textColor="#FFFFFF"
-	                        admobsdk:keywords="Android Banking Expenses Financial"
-	                        admobsdk:refreshInterval="60"
-	                        admobsdk:testing="false" />
 </LinearLayout>

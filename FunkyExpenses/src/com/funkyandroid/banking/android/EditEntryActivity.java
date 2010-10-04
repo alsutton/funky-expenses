@@ -28,7 +28,7 @@ import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.PayeeManager;
 import com.funkyandroid.banking.android.data.Transaction;
 import com.funkyandroid.banking.android.data.TransactionManager;
-import com.funkyandroid.banking.android.expenses.demo.R;
+import com.funkyandroid.banking.android.expenses.adfree.R;
 import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
 import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
@@ -155,10 +155,10 @@ public class EditEntryActivity extends Activity {
      */
     
     public void onDestroy() {
+    	super.onDestroy();
     	if( db != null && db.isOpen() ) {
     		db.close();
     	}
-    	super.onDestroy();
     }
     
     /**

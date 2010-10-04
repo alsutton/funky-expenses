@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Funky Expenses</string>
+    <string name="app_name">Expenses</string>
 
 	<string name="account_prompt">Choose an Account</string>
 	<string name="accountText">Account</string>

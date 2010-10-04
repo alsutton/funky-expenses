@@ -1,0 +1,14 @@
+com.android.vending.licensing.ILicensingService
+com.android.vending.licensing.LicenseCheckerCallback$ApplicationErrorCode: com.android.vending.licensing.LicenseCheckerCallback$ApplicationErrorCode[] values()
+com.android.vending.licensing.LicenseCheckerCallback$ApplicationErrorCode: com.android.vending.licensing.LicenseCheckerCallback$ApplicationErrorCode valueOf(java.lang.String)
+com.android.vending.licensing.Policy$LicenseResponse: com.android.vending.licensing.Policy$LicenseResponse[] values()
+com.android.vending.licensing.Policy$LicenseResponse: com.android.vending.licensing.Policy$LicenseResponse valueOf(java.lang.String)
+com.funkyandroid.banking.android.BackupActivity
+com.funkyandroid.banking.android.EditAccountActivity
+com.funkyandroid.banking.android.EditEntryActivity
+com.funkyandroid.banking.android.ExternalEntryActivity
+com.funkyandroid.banking.android.RestoreActivity
+com.funkyandroid.banking.android.SpendingReportActivity
+com.funkyandroid.banking.android.expenses.adfree.Launcher
+com.funkyandroid.banking.android.AccountsActivity
+com.funkyandroid.banking.android.EntriesActivity

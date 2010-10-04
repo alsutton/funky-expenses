@@ -4,10 +4,15 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings.Secure;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,11 +26,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+import com.android.vending.licensing.AESObfuscator;
+import com.android.vending.licensing.LicenseChecker;
+import com.android.vending.licensing.LicenseCheckerCallback;
+import com.android.vending.licensing.ServerManagedPolicy;
 import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
-import com.funkyandroid.banking.android.expenses.demo.R;
+import com.funkyandroid.banking.android.expenses.adfree.R;
 import com.funkyandroid.banking.android.ui.keypad.KeypadFactory;
 import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.BalanceFormatter;
@@ -35,6 +44,27 @@ import com.funkyandroid.banking.android.utils.MenuUtil;
 public class AccountsActivity extends ListActivity
 	implements KeypadHandler.OnOKListener, OnItemLongClickListener {
 
+	private static final String BPK = 
+		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlzlqwamobzt8MKV8R2GnKuK+"+
+		"9Cj7tNXRlbCZmy4I1GBh3ig6HOT6lGHpfFtx72L1pfm2DP+Pn2PGwBIUHYmBnsidvYkbBR+"+
+		"XGqXxaO+R/ug8NeXOoIDpJYANE6MY1tWyMuBIHQ3GS2LHA1rbE8sXAhGKT+oy9+"+
+		"sRoWYXVibDVfy4wgHnF4L1na+BUv7/zPr9R9Tsvxl4DEq8zqRcanPGwWTrjtxGbt9XSnuUdqlAk"+
+		"oOkih4VJEHuUoS9KawbePetzzzjbq18vuQK03bSnajSgsG08mXsMTpadBEdX5/P/sNkzh6ZvvPR"+
+		"OE7YYB4eDztzRtdSGBNTZpXXgsVcAG25gwIDAQAB";
+
+    private static final byte[] BS = new byte[] {
+        -42, 35, 31, -28, -13, -54, 74, -62, 50, 88, -105, -45, 27, -17, -36, -13, -111, 32, -64, 9
+    };
+
+    /**
+	 * The license checking states
+	 */
+	
+	private static final int LICENSE_STATE_CHECK_FAILED = -2,
+							 LICENSE_STATE_CHECKING = -1,
+	 						 LICENSE_STATE_UNCHECKED = 0,
+							 LICENSE_STATE_CHECKED = 1;
+	
 	/**
 	 * The handler for showing keypads.
 	 */
@@ -48,11 +78,33 @@ public class AccountsActivity extends ListActivity
 	private String password1;
 
 	/**
+	 * Whether or not the license has been checked
+	 */
+	
+	private int licenseCheckStatus = LICENSE_STATE_UNCHECKED;
+	
+	/**
 	 * The database connection
 	 */
 
 	private SQLiteDatabase db;
 
+	/**
+	 * The license checker
+	 */
+    private LicenseChecker licenseChecker;
+	
+    /**
+     * License checker callback.
+     */
+    private MyLicenseCheckerCallback licenseCallback;
+
+    /**
+     * The handler for dealing with the OS
+     */
+    
+    private Handler handler = new Handler();
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,6 +135,10 @@ public class AccountsActivity extends ListActivity
         } else {
         	Toast.makeText(AccountsActivity.this, "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
         }
+
+        String deviceId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+        licenseChecker = new LicenseChecker(this, new ServerManagedPolicy(this,new AESObfuscator(BS, getPackageName(), deviceId)),BPK);
+		licenseCallback = new MyLicenseCheckerCallback();
     }
 
     /**
@@ -91,8 +147,8 @@ public class AccountsActivity extends ListActivity
 
     @Override
     public void onDestroy() {
-    	db.close();
     	super.onDestroy();
+    	db.close();
     }
 
     @Override
@@ -100,6 +156,12 @@ public class AccountsActivity extends ListActivity
     	super.onStart();
     	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
 		((MyListAdapter)getListAdapter()).notifyDataSetChanged();
+		
+		if(0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE )) {
+	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
+	    	startActivity(myIntent);    	
+	    	finish();
+		}
     }
 
     @Override
@@ -168,6 +230,18 @@ public class AccountsActivity extends ListActivity
 		return true;
 	}
 
+    public void onResume() { 
+		super.onResume();
+		if(licenseCheckStatus == LICENSE_STATE_UNCHECKED) {
+			licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECKING;
+			licenseChecker.checkAccess(licenseCallback);
+		} else if (licenseCheckStatus == LICENSE_STATE_CHECK_FAILED) {
+	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
+	    	startActivity(myIntent);    	
+	    	finish();
+		}
+    }
+    
 	/**
 	 * Handle clicks by opening a browser window for the app.
 	 */
@@ -176,6 +250,13 @@ public class AccountsActivity extends ListActivity
 		Intent viewIntent = new Intent(this, EntriesActivity.class);
 		viewIntent.putExtra("com.funkyandroid.banking.account_id", ((int)id & 0xffff));
 		startActivity(viewIntent);
+		handler.post( new Runnable() {
+			public void run() {
+				
+				Toast.makeText(AccountsActivity.this, "Google says you didn't but this app.", Toast.LENGTH_LONG).show();
+				AccountsActivity.this.finish();
+			}
+		} );
 	}
 
 	/**
@@ -297,5 +378,32 @@ public class AccountsActivity extends ListActivity
     		valueString.append(' ');
     		value.setText(valueString.toString());
     	}
+    }
+
+    /**
+     * License checker callback.
+     * 
+     * @author Al Sutton
+     */
+    private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
+        public void allow() {
+        	licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECKED;
+            return;
+        }
+
+        public void dontAllow() {
+        	licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECK_FAILED;
+            if (isFinishing()) {
+                return;
+            }
+        	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
+        	startActivity(myIntent);    	
+        	finish();
+        }
+
+        public void applicationError(ApplicationErrorCode errorCode) {
+        	licenseCheckStatus = AccountsActivity.LICENSE_STATE_UNCHECKED;
+            return;
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.funkyandroid.banking.android.data;
 
+import java.util.ArrayList;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 
 import android.content.Context;
@@ -236,13 +238,18 @@ public class DBHelper
 	 */
 	
 	private static void populateCurrencies(final SQLiteDatabase database) {
+		List<String> knownCodes = new ArrayList<String>();
         for(Locale locale : Locale.getAvailableLocales()) {
         	try {
-	        	Currency currency = Currency.getInstance(locale);
+	        	final Currency currency = Currency.getInstance(locale);
 	        	if(currency == null) {
 	        		continue;
 	        	}
-	        	String code = currency.getCurrencyCode();
+	        	final String code = currency.getCurrencyCode();
+	        	if(knownCodes.contains(code)) {
+	        		continue;
+	        	}
+	        	knownCodes.add(code);
 	        	String symbol = currency.getSymbol();
 	        	if( symbol == null || symbol.length() > 3) {
 	        		symbol = code;

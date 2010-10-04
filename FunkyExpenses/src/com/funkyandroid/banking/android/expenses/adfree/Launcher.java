@@ -1,11 +1,13 @@
-package com.funkyandroid.banking.android.expenses.demo;
+package com.funkyandroid.banking.android.expenses.adfree;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ApplicationInfo;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -16,7 +18,7 @@ import com.funkyandroid.banking.android.ui.keypad.KeypadFactory;
 import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.Crypto;
 
-public class DemoLauncher extends Activity 
+public class Launcher extends Activity 
 	implements KeypadHandler.OnOKListener {
 	
 	/**
@@ -57,11 +59,17 @@ public class DemoLauncher extends Activity
             .setMessage("Please report the following to support@funkyandroid.com : "+ex.getMessage())
             .setPositiveButton("OK", new OnClickListener() {
     			public void onClick(DialogInterface dialog, int which) {
-    		    	DemoLauncher.this.finish();
+    		    	Launcher.this.finish();
     			}        	
             })
             .show();		    		
     	}
+		
+		if(0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE )) {
+	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
+	    	startActivity(myIntent);    	
+	    	finish();
+		}
     }
     
     /**
@@ -86,7 +94,7 @@ public class DemoLauncher extends Activity
         .setMessage("The password you entered was not correct.")
         .setPositiveButton("OK", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-		    	keypadHandler.display(1, R.string.enterPassword, "", DemoLauncher.this, true);
+		    	keypadHandler.display(1, R.string.enterPassword, "", Launcher.this, true);
 			}        	
         })
         .show();		

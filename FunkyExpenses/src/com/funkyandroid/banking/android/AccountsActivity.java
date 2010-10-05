@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings.Secure;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +43,7 @@ import com.funkyandroid.banking.android.utils.MenuUtil;
 public class AccountsActivity extends ListActivity
 	implements KeypadHandler.OnOKListener, OnItemLongClickListener {
 
-	private static final String BPK = 
+	private static final String BPK =
 		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlzlqwamobzt8MKV8R2GnKuK+"+
 		"9Cj7tNXRlbCZmy4I1GBh3ig6HOT6lGHpfFtx72L1pfm2DP+Pn2PGwBIUHYmBnsidvYkbBR+"+
 		"XGqXxaO+R/ug8NeXOoIDpJYANE6MY1tWyMuBIHQ3GS2LHA1rbE8sXAhGKT+oy9+"+
@@ -59,12 +58,12 @@ public class AccountsActivity extends ListActivity
     /**
 	 * The license checking states
 	 */
-	
+
 	private static final int LICENSE_STATE_CHECK_FAILED = -2,
 							 LICENSE_STATE_CHECKING = -1,
 	 						 LICENSE_STATE_UNCHECKED = 0,
 							 LICENSE_STATE_CHECKED = 1;
-	
+
 	/**
 	 * The handler for showing keypads.
 	 */
@@ -80,9 +79,9 @@ public class AccountsActivity extends ListActivity
 	/**
 	 * Whether or not the license has been checked
 	 */
-	
+
 	private int licenseCheckStatus = LICENSE_STATE_UNCHECKED;
-	
+
 	/**
 	 * The database connection
 	 */
@@ -93,7 +92,7 @@ public class AccountsActivity extends ListActivity
 	 * The license checker
 	 */
     private LicenseChecker licenseChecker;
-	
+
     /**
      * License checker callback.
      */
@@ -102,9 +101,9 @@ public class AccountsActivity extends ListActivity
     /**
      * The handler for dealing with the OS
      */
-    
-    private Handler handler = new Handler();
-    
+
+    private final Handler handler = new Handler();
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -156,10 +155,10 @@ public class AccountsActivity extends ListActivity
     	super.onStart();
     	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
 		((MyListAdapter)getListAdapter()).notifyDataSetChanged();
-		
+
 		if(0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE )) {
 	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
-	    	startActivity(myIntent);    	
+	    	startActivity(myIntent);
 	    	finish();
 		}
     }
@@ -230,18 +229,19 @@ public class AccountsActivity extends ListActivity
 		return true;
 	}
 
-    public void onResume() { 
+    @Override
+	public void onResume() {
 		super.onResume();
 		if(licenseCheckStatus == LICENSE_STATE_UNCHECKED) {
 			licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECKING;
 			licenseChecker.checkAccess(licenseCallback);
 		} else if (licenseCheckStatus == LICENSE_STATE_CHECK_FAILED) {
 	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
-	    	startActivity(myIntent);    	
+	    	startActivity(myIntent);
 	    	finish();
 		}
     }
-    
+
 	/**
 	 * Handle clicks by opening a browser window for the app.
 	 */
@@ -252,7 +252,7 @@ public class AccountsActivity extends ListActivity
 		startActivity(viewIntent);
 		handler.post( new Runnable() {
 			public void run() {
-				
+
 				Toast.makeText(AccountsActivity.this, "Google says you didn't but this app.", Toast.LENGTH_LONG).show();
 				AccountsActivity.this.finish();
 			}
@@ -382,7 +382,7 @@ public class AccountsActivity extends ListActivity
 
     /**
      * License checker callback.
-     * 
+     *
      * @author Al Sutton
      */
     private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
@@ -397,7 +397,7 @@ public class AccountsActivity extends ListActivity
                 return;
             }
         	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
-        	startActivity(myIntent);    	
+        	startActivity(myIntent);
         	finish();
         }
 

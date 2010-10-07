@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings.Secure;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -97,12 +96,6 @@ public class AccountsActivity extends ListActivity
      * License checker callback.
      */
     private MyLicenseCheckerCallback licenseCallback;
-
-    /**
-     * The handler for dealing with the OS
-     */
-
-    private final Handler handler = new Handler();
 
     /** Called when the activity is first created. */
     @Override
@@ -250,13 +243,6 @@ public class AccountsActivity extends ListActivity
 		Intent viewIntent = new Intent(this, EntriesActivity.class);
 		viewIntent.putExtra("com.funkyandroid.banking.account_id", ((int)id & 0xffff));
 		startActivity(viewIntent);
-		handler.post( new Runnable() {
-			public void run() {
-
-				Toast.makeText(AccountsActivity.this, "Google says you didn't but this app.", Toast.LENGTH_LONG).show();
-				AccountsActivity.this.finish();
-			}
-		} );
 	}
 
 	/**

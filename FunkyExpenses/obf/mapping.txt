@@ -147,7 +147,6 @@ com.funkyandroid.banking.android.AccountsActivity -> com.funkyandroid.banking.an
     android.database.sqlite.SQLiteDatabase db -> e
     com.android.vending.licensing.LicenseChecker licenseChecker -> f
     com.funkyandroid.banking.android.AccountsActivity$MyLicenseCheckerCallback licenseCallback -> g
-    android.os.Handler handler -> h
     void onCreate(android.os.Bundle) -> onCreate
     void onDestroy() -> onDestroy
     void onStart() -> onStart
@@ -174,15 +173,12 @@ com.funkyandroid.banking.android.AccountsActivity$4 -> com.funkyandroid.banking.
 com.funkyandroid.banking.android.AccountsActivity$5 -> com.funkyandroid.banking.android.e:
     com.funkyandroid.banking.android.AccountsActivity this$0 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.funkyandroid.banking.android.AccountsActivity$6 -> com.funkyandroid.banking.android.f:
-    com.funkyandroid.banking.android.AccountsActivity this$0 -> a
-    void run() -> run
-com.funkyandroid.banking.android.AccountsActivity$MyLicenseCheckerCallback -> com.funkyandroid.banking.android.g:
+com.funkyandroid.banking.android.AccountsActivity$MyLicenseCheckerCallback -> com.funkyandroid.banking.android.f:
     com.funkyandroid.banking.android.AccountsActivity this$0 -> a
     void allow() -> a
     void dontAllow() -> b
     void applicationError$3f9ec153() -> c
-com.funkyandroid.banking.android.AccountsActivity$MyListAdapter -> com.funkyandroid.banking.android.h:
+com.funkyandroid.banking.android.AccountsActivity$MyListAdapter -> com.funkyandroid.banking.android.g:
     com.funkyandroid.banking.android.AccountsActivity this$0 -> a
     void bindView(android.view.View,android.content.Context,android.database.Cursor) -> bindView
 com.funkyandroid.banking.android.BackupActivity -> com.funkyandroid.banking.android.BackupActivity:
@@ -210,31 +206,31 @@ com.funkyandroid.banking.android.BackupActivity -> com.funkyandroid.banking.andr
     java.lang.String[] access$600() -> c
     java.lang.String[] access$700() -> d
     android.widget.TextView access$800(com.funkyandroid.banking.android.BackupActivity) -> d
-com.funkyandroid.banking.android.BackupActivity$1 -> com.funkyandroid.banking.android.i:
+com.funkyandroid.banking.android.BackupActivity$1 -> com.funkyandroid.banking.android.h:
     com.funkyandroid.banking.android.BackupActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.BackupActivity$2 -> com.funkyandroid.banking.android.j:
+com.funkyandroid.banking.android.BackupActivity$2 -> com.funkyandroid.banking.android.i:
     com.funkyandroid.banking.android.BackupActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.funkyandroid.banking.android.BackupActivity$3 -> com.funkyandroid.banking.android.k:
+com.funkyandroid.banking.android.BackupActivity$3 -> com.funkyandroid.banking.android.j:
     com.funkyandroid.banking.android.BackupActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.BackupActivity$4 -> com.funkyandroid.banking.android.l:
+com.funkyandroid.banking.android.BackupActivity$4 -> com.funkyandroid.banking.android.k:
     com.funkyandroid.banking.android.BackupActivity this$0 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.funkyandroid.banking.android.BackupActivity$5 -> com.funkyandroid.banking.android.m:
+com.funkyandroid.banking.android.BackupActivity$5 -> com.funkyandroid.banking.android.l:
     com.funkyandroid.banking.android.BackupActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.funkyandroid.banking.android.BackupActivity$6 -> com.funkyandroid.banking.android.n:
+com.funkyandroid.banking.android.BackupActivity$6 -> com.funkyandroid.banking.android.m:
     com.funkyandroid.banking.android.BackupActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.funkyandroid.banking.android.BackupActivity$7 -> com.funkyandroid.banking.android.o:
+com.funkyandroid.banking.android.BackupActivity$7 -> com.funkyandroid.banking.android.n:
     com.funkyandroid.banking.android.BackupActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.funkyandroid.banking.android.BackupActivity$8 -> com.funkyandroid.banking.android.p:
+com.funkyandroid.banking.android.BackupActivity$8 -> com.funkyandroid.banking.android.o:
     com.funkyandroid.banking.android.BackupActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.funkyandroid.banking.android.BackupActivity$Backupper -> com.funkyandroid.banking.android.q:
+com.funkyandroid.banking.android.BackupActivity$Backupper -> com.funkyandroid.banking.android.p:
     java.lang.String path -> b
     javax.crypto.Cipher cipher -> c
     java.io.FileOutputStream fos -> d
@@ -249,11 +245,11 @@ com.funkyandroid.banking.android.BackupActivity$Backupper -> com.funkyandroid.ba
     void backupSettings() -> b
     void backupAccounts() -> c
     void backupEntries() -> d
-com.funkyandroid.banking.android.BackupActivity$StatusUpdater -> com.funkyandroid.banking.android.r:
+com.funkyandroid.banking.android.BackupActivity$StatusUpdater -> com.funkyandroid.banking.android.q:
     java.lang.String statusUpdate -> b
     com.funkyandroid.banking.android.BackupActivity this$0 -> a
     void run() -> run
-com.funkyandroid.banking.android.CategorySuggestionsAdapter -> com.funkyandroid.banking.android.s:
+com.funkyandroid.banking.android.CategorySuggestionsAdapter -> com.funkyandroid.banking.android.r:
     android.database.sqlite.SQLiteDatabase db -> a
     android.database.Cursor runQueryOnBackgroundThread(java.lang.CharSequence) -> runQueryOnBackgroundThread
     java.lang.CharSequence convertToString(android.database.Cursor) -> convertToString
@@ -276,19 +272,19 @@ com.funkyandroid.banking.android.EditAccountActivity -> com.funkyandroid.banking
     java.lang.String[] access$300(com.funkyandroid.banking.android.EditAccountActivity) -> d
     void access$400(com.funkyandroid.banking.android.EditAccountActivity,java.lang.String) -> a
     void access$500(com.funkyandroid.banking.android.EditAccountActivity,java.lang.String,java.lang.String) -> a
-com.funkyandroid.banking.android.EditAccountActivity$1 -> com.funkyandroid.banking.android.t:
+com.funkyandroid.banking.android.EditAccountActivity$1 -> com.funkyandroid.banking.android.s:
     com.funkyandroid.banking.android.EditAccountActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.EditAccountActivity$2 -> com.funkyandroid.banking.android.u:
+com.funkyandroid.banking.android.EditAccountActivity$2 -> com.funkyandroid.banking.android.t:
     com.funkyandroid.banking.android.EditAccountActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.EditAccountActivity$3 -> com.funkyandroid.banking.android.v:
+com.funkyandroid.banking.android.EditAccountActivity$3 -> com.funkyandroid.banking.android.u:
     com.funkyandroid.banking.android.EditAccountActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.EditAccountActivity$4 -> com.funkyandroid.banking.android.w:
+com.funkyandroid.banking.android.EditAccountActivity$4 -> com.funkyandroid.banking.android.v:
     com.funkyandroid.banking.android.EditAccountActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.funkyandroid.banking.android.EditAccountActivity$5 -> com.funkyandroid.banking.android.x:
+com.funkyandroid.banking.android.EditAccountActivity$5 -> com.funkyandroid.banking.android.w:
     android.view.View val$entryView -> a
     com.funkyandroid.banking.android.EditAccountActivity this$0 -> b
     void onClick(android.content.DialogInterface,int) -> onClick
@@ -309,16 +305,16 @@ com.funkyandroid.banking.android.EditEntryActivity -> com.funkyandroid.banking.a
     com.funkyandroid.banking.android.data.Transaction access$000(com.funkyandroid.banking.android.EditEntryActivity) -> a
     boolean access$200(com.funkyandroid.banking.android.EditEntryActivity) -> b
     void access$300(com.funkyandroid.banking.android.EditEntryActivity) -> c
-com.funkyandroid.banking.android.EditEntryActivity$1 -> com.funkyandroid.banking.android.y:
+com.funkyandroid.banking.android.EditEntryActivity$1 -> com.funkyandroid.banking.android.x:
     com.funkyandroid.banking.android.EditEntryActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.EditEntryActivity$2 -> com.funkyandroid.banking.android.z:
+com.funkyandroid.banking.android.EditEntryActivity$2 -> com.funkyandroid.banking.android.y:
     com.funkyandroid.banking.android.EditEntryActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.EditEntryActivity$3 -> com.funkyandroid.banking.android.aa:
+com.funkyandroid.banking.android.EditEntryActivity$3 -> com.funkyandroid.banking.android.z:
     com.funkyandroid.banking.android.EditEntryActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.EditEntryActivity$DateListener -> com.funkyandroid.banking.android.ab:
+com.funkyandroid.banking.android.EditEntryActivity$DateListener -> com.funkyandroid.banking.android.aa:
     com.funkyandroid.banking.android.EditEntryActivity this$0 -> a
     void onDateSet(android.widget.DatePicker,int,int,int) -> onDateSet
 com.funkyandroid.banking.android.EntriesActivity -> com.funkyandroid.banking.android.EntriesActivity:
@@ -335,25 +331,25 @@ com.funkyandroid.banking.android.EntriesActivity -> com.funkyandroid.banking.and
     java.lang.String access$100(com.funkyandroid.banking.android.EntriesActivity) -> b
     void access$200(com.funkyandroid.banking.android.EntriesActivity) -> c
     android.database.sqlite.SQLiteDatabase access$400(com.funkyandroid.banking.android.EntriesActivity) -> d
-com.funkyandroid.banking.android.EntriesActivity$1 -> com.funkyandroid.banking.android.ac:
+com.funkyandroid.banking.android.EntriesActivity$1 -> com.funkyandroid.banking.android.ab:
     com.funkyandroid.banking.android.EntriesActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.EntriesActivity$2 -> com.funkyandroid.banking.android.ad:
+com.funkyandroid.banking.android.EntriesActivity$2 -> com.funkyandroid.banking.android.ac:
     com.funkyandroid.banking.android.EntriesActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.EntriesActivity$3 -> com.funkyandroid.banking.android.ae:
+com.funkyandroid.banking.android.EntriesActivity$3 -> com.funkyandroid.banking.android.ad:
     com.funkyandroid.banking.android.EntriesActivity this$0 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.funkyandroid.banking.android.EntriesActivity$4 -> com.funkyandroid.banking.android.af:
+com.funkyandroid.banking.android.EntriesActivity$4 -> com.funkyandroid.banking.android.ae:
     com.funkyandroid.banking.android.EntriesActivity this$0 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.funkyandroid.banking.android.EntriesActivity$5 -> com.funkyandroid.banking.android.ag:
+com.funkyandroid.banking.android.EntriesActivity$5 -> com.funkyandroid.banking.android.af:
     com.funkyandroid.banking.android.EntriesActivity this$0 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.funkyandroid.banking.android.EntriesActivity$MyExporter -> com.funkyandroid.banking.android.ah:
+com.funkyandroid.banking.android.EntriesActivity$MyExporter -> com.funkyandroid.banking.android.ag:
     com.funkyandroid.banking.android.EntriesActivity this$0 -> a
     void run() -> run
-com.funkyandroid.banking.android.EntriesActivity$MyListAdapter -> com.funkyandroid.banking.android.ai:
+com.funkyandroid.banking.android.EntriesActivity$MyListAdapter -> com.funkyandroid.banking.android.ah:
     java.text.SimpleDateFormat sdf -> b
     com.funkyandroid.banking.android.EntriesActivity this$0 -> a
     void bindView(android.view.View,android.content.Context,android.database.Cursor) -> bindView
@@ -374,26 +370,26 @@ com.funkyandroid.banking.android.ExternalEntryActivity -> com.funkyandroid.banki
     com.funkyandroid.banking.android.data.Transaction access$000(com.funkyandroid.banking.android.ExternalEntryActivity) -> a
     android.database.sqlite.SQLiteDatabase access$200(com.funkyandroid.banking.android.ExternalEntryActivity) -> b
     void access$300(com.funkyandroid.banking.android.ExternalEntryActivity) -> c
-com.funkyandroid.banking.android.ExternalEntryActivity$1 -> com.funkyandroid.banking.android.aj:
+com.funkyandroid.banking.android.ExternalEntryActivity$1 -> com.funkyandroid.banking.android.ai:
     com.funkyandroid.banking.android.ExternalEntryActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.ExternalEntryActivity$2 -> com.funkyandroid.banking.android.ak:
+com.funkyandroid.banking.android.ExternalEntryActivity$2 -> com.funkyandroid.banking.android.aj:
     com.funkyandroid.banking.android.ExternalEntryActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.ExternalEntryActivity$3 -> com.funkyandroid.banking.android.al:
+com.funkyandroid.banking.android.ExternalEntryActivity$3 -> com.funkyandroid.banking.android.ak:
     com.funkyandroid.banking.android.ExternalEntryActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.ExternalEntryActivity$4 -> com.funkyandroid.banking.android.am:
+com.funkyandroid.banking.android.ExternalEntryActivity$4 -> com.funkyandroid.banking.android.al:
     com.funkyandroid.banking.android.ExternalEntryActivity this$0 -> a
     void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
     void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
-com.funkyandroid.banking.android.ExternalEntryActivity$AccountsAdapter -> com.funkyandroid.banking.android.an:
+com.funkyandroid.banking.android.ExternalEntryActivity$AccountsAdapter -> com.funkyandroid.banking.android.am:
     com.funkyandroid.banking.android.ExternalEntryActivity this$0 -> a
     java.lang.CharSequence convertToString(android.database.Cursor) -> convertToString
-com.funkyandroid.banking.android.ExternalEntryActivity$DateListener -> com.funkyandroid.banking.android.ao:
+com.funkyandroid.banking.android.ExternalEntryActivity$DateListener -> com.funkyandroid.banking.android.an:
     com.funkyandroid.banking.android.ExternalEntryActivity this$0 -> a
     void onDateSet(android.widget.DatePicker,int,int,int) -> onDateSet
-com.funkyandroid.banking.android.PayeeSuggestionsAdapter -> com.funkyandroid.banking.android.ap:
+com.funkyandroid.banking.android.PayeeSuggestionsAdapter -> com.funkyandroid.banking.android.ao:
     android.database.sqlite.SQLiteDatabase db -> a
     android.database.Cursor runQueryOnBackgroundThread(java.lang.CharSequence) -> runQueryOnBackgroundThread
     java.lang.CharSequence convertToString(android.database.Cursor) -> convertToString
@@ -409,22 +405,22 @@ com.funkyandroid.banking.android.RestoreActivity -> com.funkyandroid.banking.and
     void access$200(com.funkyandroid.banking.android.RestoreActivity,java.lang.String) -> a
     android.database.sqlite.SQLiteDatabase access$300(com.funkyandroid.banking.android.RestoreActivity) -> a
     android.widget.TextView access$400(com.funkyandroid.banking.android.RestoreActivity) -> b
-com.funkyandroid.banking.android.RestoreActivity$1 -> com.funkyandroid.banking.android.aq:
+com.funkyandroid.banking.android.RestoreActivity$1 -> com.funkyandroid.banking.android.ap:
     com.funkyandroid.banking.android.RestoreActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.RestoreActivity$2 -> com.funkyandroid.banking.android.ar:
+com.funkyandroid.banking.android.RestoreActivity$2 -> com.funkyandroid.banking.android.aq:
     com.funkyandroid.banking.android.RestoreActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.funkyandroid.banking.android.RestoreActivity$3 -> com.funkyandroid.banking.android.as:
+com.funkyandroid.banking.android.RestoreActivity$3 -> com.funkyandroid.banking.android.ar:
     com.funkyandroid.banking.android.RestoreActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.RestoreActivity$4 -> com.funkyandroid.banking.android.at:
+com.funkyandroid.banking.android.RestoreActivity$4 -> com.funkyandroid.banking.android.as:
     com.funkyandroid.banking.android.RestoreActivity this$0 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.funkyandroid.banking.android.RestoreActivity$5 -> com.funkyandroid.banking.android.au:
+com.funkyandroid.banking.android.RestoreActivity$5 -> com.funkyandroid.banking.android.at:
     com.funkyandroid.banking.android.RestoreActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.funkyandroid.banking.android.RestoreActivity$Restorer -> com.funkyandroid.banking.android.av:
+com.funkyandroid.banking.android.RestoreActivity$Restorer -> com.funkyandroid.banking.android.au:
     com.funkyandroid.banking.android.RestoreActivity$Restorer$SteamPointer streamPointer -> b
     byte[] fourByteBuffer -> c
     java.lang.String name -> d
@@ -440,10 +436,10 @@ com.funkyandroid.banking.android.RestoreActivity$Restorer -> com.funkyandroid.ba
     void restoreSettings() -> b
     void restoreAccounts() -> c
     void restoreEntries() -> d
-com.funkyandroid.banking.android.RestoreActivity$Restorer$SteamPointer -> com.funkyandroid.banking.android.aw:
+com.funkyandroid.banking.android.RestoreActivity$Restorer$SteamPointer -> com.funkyandroid.banking.android.av:
     int offset -> a
     com.funkyandroid.banking.android.RestoreActivity$Restorer this$1 -> b
-com.funkyandroid.banking.android.RestoreActivity$StatusUpdater -> com.funkyandroid.banking.android.ax:
+com.funkyandroid.banking.android.RestoreActivity$StatusUpdater -> com.funkyandroid.banking.android.aw:
     java.lang.String statusUpdate -> b
     com.funkyandroid.banking.android.RestoreActivity this$0 -> a
     void run() -> run
@@ -461,13 +457,13 @@ com.funkyandroid.banking.android.SpendingReportActivity -> com.funkyandroid.bank
     java.lang.String access$100(com.funkyandroid.banking.android.SpendingReportActivity) -> b
     android.database.sqlite.SQLiteDatabase access$200(com.funkyandroid.banking.android.SpendingReportActivity) -> c
     int access$300(com.funkyandroid.banking.android.SpendingReportActivity) -> d
-com.funkyandroid.banking.android.SpendingReportActivity$1 -> com.funkyandroid.banking.android.ay:
+com.funkyandroid.banking.android.SpendingReportActivity$1 -> com.funkyandroid.banking.android.ax:
     com.funkyandroid.banking.android.SpendingReportActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.funkyandroid.banking.android.SpendingReportActivity$2 -> com.funkyandroid.banking.android.az:
+com.funkyandroid.banking.android.SpendingReportActivity$2 -> com.funkyandroid.banking.android.ay:
     com.funkyandroid.banking.android.SpendingReportActivity this$0 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.funkyandroid.banking.android.SpendingReportActivity$SpendingReportListAdapter -> com.funkyandroid.banking.android.ba:
+com.funkyandroid.banking.android.SpendingReportActivity$SpendingReportListAdapter -> com.funkyandroid.banking.android.az:
     com.funkyandroid.banking.android.SpendingReportActivity this$0 -> a
     void bindGroupView(android.view.View,android.content.Context,android.database.Cursor,boolean) -> bindGroupView
     void bindChildView(android.view.View,android.content.Context,android.database.Cursor,boolean) -> bindChildView

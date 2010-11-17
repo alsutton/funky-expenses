@@ -5,6 +5,5 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="libs/FlurryAgent.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GoogleLVL"/>
-	<classpathentry kind="src" path="GoogleLVL_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

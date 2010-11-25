@@ -31,5 +31,10 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 	<linkedResources>
+		<link>
+			<name>GoogleLVL_src</name>
+			<type>2</type>
+			<locationURI>_android_GoogleLVL/src</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

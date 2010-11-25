@@ -13,16 +13,16 @@ import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.Window;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.android.vending.licensing.AESObfuscator;
 import com.android.vending.licensing.LicenseChecker;
@@ -33,7 +33,6 @@ import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
 import com.funkyandroid.banking.android.expenses.adfree.R;
-import com.funkyandroid.banking.android.ui.keypad.KeypadFactory;
 import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.BalanceFormatter;
 import com.funkyandroid.banking.android.utils.Crypto;
@@ -263,7 +262,7 @@ public class AccountsActivity extends ListActivity
     private void showSetPassword() {
     	synchronized(this) {
 	    	if( keypadHandler == null ) {
-		    	keypadHandler = KeypadFactory.getKeypadHandler(this);
+		    	keypadHandler = new KeypadHandler(this);
 	    	}
     	}
 	    keypadHandler.display(1, R.string.setPassword, "", this, false);

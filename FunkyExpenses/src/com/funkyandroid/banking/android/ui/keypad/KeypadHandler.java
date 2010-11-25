@@ -10,94 +10,83 @@ import android.widget.TextView;
 
 import com.funkyandroid.banking.android.expenses.adfree.R;
 
-public abstract class KeypadHandler {
+public class KeypadHandler {
 
 	/**
 	 * The context the keypad is being used in.
 	 */
-	
+
 	protected final Context context;
-	
+
 	/**
 	 * The alert dialog in use.
 	 */
-	
+
 	protected AlertDialog dialog;
-	
+
 	/**
 	 * The view containing the keypad
 	 */
-	
-	protected View keypadView;	
+
+	protected View keypadView;
 
 	/**
 	 * The edit box being populated
 	 */
-	
+
 	protected EditText editText;
 
 	/**
 	 * The id used in the display.
 	 */
-	
+
 	private int displayId;
-	
+
 	/**
 	 * The listener for the OK button
 	 */
-	
+
 	private OnOKListener listener;
-	
-	public KeypadHandler(final Context context) {		
-		super();		
+
+	public KeypadHandler(final Context context) {
+		super();
 		this.context = context;
 	}
-	
+
 	/**
 	 * Display a keypad to the user.
-	 * 
+	 *
 	 * @param id An ID to identify events from the requested keypad.
 	 * @param titleResource The string resource for the title.
 	 * @param startText The initial text for the box.
 	 * @param listener A listener for the OK button.
-	 * @param hiddenEntry Whether or not the entered text should be hidden from the user. 
+	 * @param keypadLayout The ID of the layout resource holdinf the keypad layout.
 	 */
-	public abstract void display(final int id, final int titleResource, 
+
+	public void display(final int id, final int titleResource,
 			final CharSequence startText, final OnOKListener listener,
-			final boolean hiddenEntry);
-	
-	/**
-	 * Display a keypad to the user.
-	 * 
-	 * @param id An ID to identify events from the requested keypad.
-	 * @param titleResource The string resource for the title.
-	 * @param startText The initial text for the box.
-	 * @param listener A listener for the OK button.
-	 * @param keypadLayout The ID of the layout resource holdinf the keypad layout. 
-	 */
-	
-	protected void display(final int id, final int titleResource, 
-			final CharSequence startText, final OnOKListener listener,
-			final int keypadLayout) {
+			final boolean hiddenEntry) {
+		int keypadLayout = hiddenEntry ? R.layout.cupcake_password_keypad : R.layout.cupcake_keypad;
+
 		displayId = id;
 		this.listener = listener;
-		
-    	AlertDialog.Builder builder = new AlertDialog.Builder(context);    	
+
+    	AlertDialog.Builder builder = new AlertDialog.Builder(context);
     	dialog = builder.create();
     	keypadView = dialog.getLayoutInflater().inflate(keypadLayout, null);
-    	dialog.setView(keypadView);    	
+    	dialog.setView(keypadView);
     	dialog.show();
-        
+
     	WindowManager.LayoutParams layout = dialog.getWindow().getAttributes();
     	layout.width = WindowManager.LayoutParams.FILL_PARENT;
     	dialog.getWindow().setAttributes(layout);
-		
+
     	TextView titleView = (TextView) keypadView.findViewById(R.id.title);
     	titleView.setText(titleResource);
-    	
+
     	editText = (EditText) keypadView.findViewById(R.id.typedText);
     	editText.setText(startText);
-    	    	
+
 		Button button = (Button)keypadView.findViewById(R.id.okButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
@@ -108,11 +97,11 @@ public abstract class KeypadHandler {
         		});
         editText.requestFocus();
 	}
-	
+
 	/**
 	 * Dismiss the keypad dialog
 	 */
-	
+
 	public void dismiss() {
 		if( dialog != null && dialog.isShowing() ) {
 			dialog.dismiss();
@@ -121,13 +110,13 @@ public abstract class KeypadHandler {
 	/**
 	 * Notify the listener that OK has been pressed.
 	 */
-	
+
 	private void notifyListener() {
 		if(listener != null) {
 			listener.onOK(displayId, editText.getText().toString());
 		}
 	}
-	
+
 	/**
 	 * Interface for classes listening for the OK button.
 	 */

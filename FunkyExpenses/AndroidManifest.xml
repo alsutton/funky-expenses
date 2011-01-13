@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest	xmlns:android="http://schemas.android.com/apk/res/android"
-      		android:installLocation="auto" android:versionName="1.3.6" android:versionCode="1306" package="com.funkyandroid.banking.android.expenses.adfree">
+      		android:installLocation="auto" 
+      		android:versionName="1.3.6" 
+      		android:versionCode="1306" 
+      		package="com.funkyandroid.banking.android.expenses.adfree">
       
 	<uses-sdk 			android:minSdkVersion="4"
-						android:targetSdkVersion="4" />
+						android:targetSdkVersion="8" />
 	<supports-screens 	android:largeScreens="true"
 						android:normalScreens="true"
 						android:smallScreens="true"
 						android:anyDensity="true"/>
 
-    <application android:icon="@drawable/ic_launcher_main" android:label="@string/app_name" android:debuggable="false">
+    <application	android:icon="@drawable/ic_launcher_main" 
+    				android:label="@string/app_name"
+    				android:backupAgent="MyBackupAgent">
         <activity android:name=".Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

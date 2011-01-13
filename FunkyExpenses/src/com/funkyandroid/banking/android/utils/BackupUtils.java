@@ -87,6 +87,43 @@ public final class BackupUtils {
 	}	
 	
 	/**
+	 * Decode an int from a buffer
+	 */
+	
+	public static int getInt(final byte[] data, int offset) {
+		int value = (((int)(data[offset]&0xff))  <<24)+
+		       		(((int)(data[offset+1]&0xff))<<16)+
+		       		(((int)(data[offset+2]&0xff))<< 8)+
+		       		 ((int)(data[offset+3]&0xff));
+		return value;
+	}
+	
+	/**
+	 * Decode an long from a buffer
+	 */
+	
+	public static long getLong(final byte[] data, int offset) {
+		long value = (((long)(data[offset]&0xff))  <<56)+
+		      		 (((long)(data[offset+1]&0xff))<<48)+
+		       		 (((long)(data[offset+2]&0xff))<<40)+
+		       		 (((long)(data[offset+3]&0xff))<<32)+
+		    		 (((long)(data[offset+4]&0xff))<<24)+
+		       		 (((long)(data[offset+5]&0xff))<<16)+
+		       		 (((long)(data[offset+6]&0xff))<< 8)+
+		       		  ((long)(data[offset+7]&0xff));
+		return value;
+	}
+
+	/**
+	 * Get a string of a given size from a buffer
+	 * @throws UnsupportedEncodingException 
+	 */
+	
+	public static String getString(final byte[] data, int offset, int length) throws UnsupportedEncodingException {
+		return new String(data, offset, length, "UTF-8");
+	}
+	
+	/**
 	 * Get the cipher
 	 * 
 	 * @param mode The mode the cipher should be started in.

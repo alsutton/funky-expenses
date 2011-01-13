@@ -1,5 +1,7 @@
 package com.funkyandroid.banking.android.data;
 
+import com.funkyandroid.banking.android.data.listeners.DataChangeListenerFactory;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -99,6 +101,7 @@ public class PayeeManager {
 		db.insert(	DBHelper.PAYEE_TABLE_NAME, 
 					null, 
 					values);
+		DataChangeListenerFactory.listener.onDataChanged(db);
 		
 		return getId(db, name);
 	}
@@ -117,6 +120,7 @@ public class PayeeManager {
 					values, 
 					PayeeManager.GET_BY_ID_SQL, 
 					whereArgs);
+		DataChangeListenerFactory.listener.onDataChanged(db);
 	}
 	
 

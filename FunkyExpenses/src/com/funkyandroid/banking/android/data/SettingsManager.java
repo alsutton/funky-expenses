@@ -1,5 +1,7 @@
 package com.funkyandroid.banking.android.data;
 
+import com.funkyandroid.banking.android.data.listeners.DataChangeListenerFactory;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -78,6 +80,9 @@ public class SettingsManager {
 				values.put("value", value);
 				db.insert( DBHelper.SETTINGS_TABLE_NAME, null, values);
 			}
+		}
+		if(!"LAST_UPDATE".equals(name)) {
+			DataChangeListenerFactory.listener.onDataChanged(db);
 		}
 	}
 }

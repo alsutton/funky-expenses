@@ -1,5 +1,7 @@
 package com.funkyandroid.banking.android.data;
 
+import com.funkyandroid.banking.android.data.listeners.DataChangeListenerFactory;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -96,6 +98,7 @@ public class AccountManager {
 		values.put("opening_balance", account.openingBalance);
 		values.put("currency", account.currency);
 		db.insert(DBHelper.ACCOUNTS_TABLE_NAME, null, values);
+		DataChangeListenerFactory.listener.onDataChanged(db);
 	}
 	
 	/**
@@ -117,6 +120,7 @@ public class AccountManager {
 		
 		adjustBalance(db, account.id, 0 - oldOpeningBalance);
 		adjustBalance(db, account.id, account.openingBalance );
+		DataChangeListenerFactory.listener.onDataChanged(db);
 	}
 	
 	/**
@@ -155,13 +159,14 @@ public class AccountManager {
 					values, 
 					AccountManager.GET_BY_ID_SQL, 
 					whereArgs);
+		DataChangeListenerFactory.listener.onDataChanged(db);
 		
 		return balance;
 	}
 
 	
 	/**
-	 * Get the list of accounts from the database.
+	 * Delete an account.
 	 * 
 	 * @param db database to query.
 	 */
@@ -172,6 +177,7 @@ public class AccountManager {
 					AccountManager.GET_BY_ID_SQL, 
 					whereValues);
 		TransactionManager.deleteAllForAccount(db, account);
+		DataChangeListenerFactory.listener.onDataChanged(db);
 	}
 	
 	/**

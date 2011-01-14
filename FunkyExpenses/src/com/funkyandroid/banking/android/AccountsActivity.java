@@ -348,15 +348,16 @@ public class AccountsActivity extends ListActivity
     		((TextView)view.findViewById(R.id.name)).setText(cursor.getString(1));
 
     		final long balance = cursor.getLong(3);
-    		final TextView value = (TextView)view.findViewById(R.id.value);
+    		View sideBar = view.findViewById(R.id.sidebar);
     		if			( balance < 0 ) {
-    			value.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
+    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0x00, 0x00));
     		} else if	( balance > 0 ) {
-    			value.setTextColor(Color.rgb(0x00, 0xc0, 0x00));
+    			sideBar.setBackgroundColor(Color.rgb(0x00, 0xc0, 0x00));
     		} else {
-    			value.setTextColor(Color.rgb(0xcf, 0xc0, 0x00));
+    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0xc0, 0xc0));
     		}
 
+    		final TextView value = (TextView)view.findViewById(R.id.value);
     		final StringBuilder valueString = new StringBuilder(32);
     		valueString.append("Balance : ");
     		BalanceFormatter.format(valueString, balance, cursor.getString(4));

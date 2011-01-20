@@ -1,7 +1,5 @@
 package com.funkyandroid.banking.android.data;
 
-import com.funkyandroid.banking.android.data.listeners.DataChangeListenerFactory;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -149,7 +147,6 @@ public final class TransactionManager {
 		db.insert(DBHelper.ENTRIES_TABLE_NAME, null, values);
 
 		long returnValue = AccountManager.adjustBalance(db, transaction.getAccountId(), transaction.getAmount());		
-		DataChangeListenerFactory.listener.onDataChanged(db);
 		return returnValue;
 	}
 	
@@ -168,7 +165,6 @@ public final class TransactionManager {
 
 		AccountManager.adjustBalance(db, transaction.getAccountId(), 0-oldAmount);
 		long returnValue = AccountManager.adjustBalance(db, transaction.getAccountId(), transaction.getAmount());		
-		DataChangeListenerFactory.listener.onDataChanged(db);
 
 		return returnValue;
 	}
@@ -195,7 +191,6 @@ public final class TransactionManager {
 					values, 
 					TransactionManager.GET_BY_ID_SQL, 
 					whereArgs);
-		DataChangeListenerFactory.listener.onDataChanged(db);
 	}
 
 	/**
@@ -216,7 +211,6 @@ public final class TransactionManager {
 			}
 		}
 		deleteFromDatabase(db, transaction);
-		DataChangeListenerFactory.listener.onDataChanged(db);
 	}
 		
 
@@ -228,7 +222,6 @@ public final class TransactionManager {
 		String[] whereArgs = { Integer.toString(transaction.getId()) };
 		db.delete(DBHelper.ENTRIES_TABLE_NAME, TransactionManager.GET_BY_ID_SQL, whereArgs);		
 		AccountManager.adjustBalance(db, transaction.getAccountId(), 0-transaction.getAmount());
-		DataChangeListenerFactory.listener.onDataChanged(db);
 	}
 
 	/**
@@ -240,6 +233,5 @@ public final class TransactionManager {
 	public static void deleteAllForAccount(final SQLiteDatabase db, final Account account) {
 		String[] whereArgs = { Integer.toString(account.id) };
 		db.delete(DBHelper.ENTRIES_TABLE_NAME, TransactionManager.DELETE_FOR_ACCOUNT_SQL, whereArgs);
-		DataChangeListenerFactory.listener.onDataChanged(db);
 	}
 }

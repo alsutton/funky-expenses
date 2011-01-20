@@ -3,8 +3,6 @@ package com.funkyandroid.banking.android.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.funkyandroid.banking.android.data.listeners.DataChangeListenerFactory;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -66,7 +64,6 @@ public class CurrencyManager {
 		values.put("short_code", code);
 		values.put("symbol", symbol);
 		database.insert(DBHelper.CURRENCIES_TABLE_NAME, null, values);
-		DataChangeListenerFactory.listener.onDataChanged(database);
 	}
 
 	/**

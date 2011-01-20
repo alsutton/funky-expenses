@@ -1,7 +1,5 @@
 package com.funkyandroid.banking.android.data;
 
-import com.funkyandroid.banking.android.data.listeners.DataChangeListenerFactory;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -88,7 +86,6 @@ public class CategoryManager {
 			values.put("name", name);
 			db.insert(DBHelper.CATEGORIES_TABLE_NAME, null, values);
 			db.setTransactionSuccessful();
-			DataChangeListenerFactory.listener.onDataChanged(db);
 		} finally {
 			db.endTransaction();
 		}

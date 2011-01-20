@@ -1,18 +1,23 @@
 package com.funkyandroid.banking.android;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
@@ -47,6 +52,14 @@ public class CategoriesReportActivity extends ListActivity {
 
 	private String currencySymbol;
 
+	private final AdapterView.OnItemLongClickListener longClickListener =
+		new AdapterView.OnItemLongClickListener() {
+			public boolean onItemLongClick(AdapterView<?> list, View view, int position, long id) {
+				editCategory(((int)id & 0xffffffff));
+				return false;
+			}
+		};
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +74,7 @@ public class CategoriesReportActivity extends ListActivity {
     		return;
     	}
 
-    	database = (new DBHelper(this)).getReadableDatabase();
+    	database = (new DBHelper(this)).getWritableDatabase();
     	Account account = AccountManager.getById(database, accountId);
     	if( account == null ) {
     		database.close();
@@ -77,7 +90,8 @@ public class CategoriesReportActivity extends ListActivity {
         Cursor categoryCursor = CategoryManager.getForAccount(database, accountId);
     	startManagingCursor(categoryCursor);
 
-    	super.setListAdapter(new SpendingReportListAdapter(categoryCursor));
+    	setListAdapter(new SpendingReportListAdapter(categoryCursor));
+    	super.getListView().setOnItemLongClickListener(longClickListener);
 
 		Button button = (Button) findViewById(R.id.entries_button);
         button.setOnClickListener(
@@ -175,7 +189,7 @@ public class CategoriesReportActivity extends ListActivity {
 		super.onListItemClick(parent, view, position, id);
 	}
 
-	/**
+   	/**
      * Update the current account balance
      */
 
@@ -186,6 +200,40 @@ public class CategoriesReportActivity extends ListActivity {
 
     	TextView textView = (TextView) findViewById(R.id.balance);
     	textView.setText(balanceText.toString());
+    }
+
+    /**
+     * Handle a long press by showing the edit category dialog.
+     *
+     * @param categoryId The ID of the category to edit.
+     */
+
+    private void editCategory(final int categoryId) {
+    	String name = CategoryManager.getById(database, categoryId);
+
+    	LayoutInflater inflater = (LayoutInflater)getSystemService( Context.LAYOUT_INFLATER_SERVICE);
+    	final View editView = inflater.inflate(R.layout.edit_category, null);
+    	if(name != null && name.length() > 0) {
+    		((EditText)(editView.findViewById(R.id.categoryName))).setText(name);
+    	}
+
+    	new AlertDialog.Builder(this)
+    			.setPositiveButton(R.string.okButtonText, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						EditText catName = (EditText) editView.findViewById(R.id.categoryName);
+						if(catName == null || catName.getText().length() == 0) {
+							return;
+						}
+						CategoryManager.updateCategory(database, categoryId, catName.getText().toString());
+						((ResourceCursorAdapter)CategoriesReportActivity.this.getListAdapter()).getCursor().requery();
+					}
+    			})
+    			.setNegativeButton(R.string.cancelButtonText, null)
+    			.setView(editView)
+    			.setTitle(R.string.editCategory)
+    			.create()
+    			.show();
+
     }
 
 	/**

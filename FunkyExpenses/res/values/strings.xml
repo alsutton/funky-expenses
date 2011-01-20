@@ -12,6 +12,7 @@
     <string name="backupPassword">Password</string>
     <string name="backupOKButton">Backup</string>
     <string name="backupStatusTitle">Backup Status</string>
+    <string name="editCategory">Edit Category Name</string>        
     <string name="entryAmountText">Amount</string>        
     <string name="entryDateText">Date</string>
     <string name="entryPayeeText">Payee</string>        

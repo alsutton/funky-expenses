@@ -1,5 +1,8 @@
 package com.funkyandroid.banking.android;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -20,20 +24,26 @@ import android.widget.TextView;
 import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
-import com.funkyandroid.banking.android.data.CategoryManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
 import com.funkyandroid.banking.android.data.DBHelper;
+import com.funkyandroid.banking.android.data.TransactionManager;
 import com.funkyandroid.banking.android.expenses.adfree.R;
 import com.funkyandroid.banking.android.utils.BalanceFormatter;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
-public class CategoriesReportActivity extends ListActivity {
+public class CategoryReportActivity extends ListActivity {
 
 	/**
 	 * The ID of the account being viewed.
 	 */
 
 	private int accountId;
+
+	/**
+	 * The category the report is for
+	 */
+
+	private int categoryId;
 
 	/**
 	 * The connection to the database.
@@ -61,6 +71,12 @@ public class CategoriesReportActivity extends ListActivity {
     		return;
     	}
 
+    	categoryId = startingIntent.getIntExtra("com.funkyandroid.banking.category_id", -1);
+    	if( categoryId == -1 ) {
+    		finish();
+    		return;
+    	}
+
     	database = (new DBHelper(this)).getReadableDatabase();
     	Account account = AccountManager.getById(database, accountId);
     	if( account == null ) {
@@ -74,10 +90,10 @@ public class CategoriesReportActivity extends ListActivity {
 		TextView titleView = (TextView) findViewById(R.id.title);
 		titleView.setText(account.name);
 
-        Cursor categoryCursor = CategoryManager.getForAccount(database, accountId);
-    	startManagingCursor(categoryCursor);
+		Cursor cursor = TransactionManager.getCursorForCategoryAndAccount(database, accountId, categoryId);
+		startManagingCursor(cursor);
+    	setListAdapter( new MyAdapter(cursor) );
 
-    	super.setListAdapter(new SpendingReportListAdapter(categoryCursor));
 
 		Button button = (Button) findViewById(R.id.entries_button);
         button.setOnClickListener(
@@ -97,7 +113,7 @@ public class CategoriesReportActivity extends ListActivity {
     	super.onStart();
     	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     	updateBalance(AccountManager.getBalanceById(database, accountId));
-    	((ResourceCursorAdapter)getListAdapter()).notifyDataSetChanged();
+		((ResourceCursorAdapter)getListAdapter()).notifyDataSetChanged();
     }
 
     @Override
@@ -165,15 +181,15 @@ public class CategoriesReportActivity extends ListActivity {
 	 *
 	 * @return Always true to indicate activity was started.
 	 */
+
     @Override
-	public void onListItemClick(final ListView parent,
-			final View view, final int position, final long id) {
-		Intent intent = new Intent(view.getContext(), CategoryReportActivity.class);
-		intent.putExtra("com.funkyandroid.banking.account_id", accountId);
-		intent.putExtra("com.funkyandroid.banking.category_id", ((int)id&0xffffff));
+	public void onListItemClick(final ListView parent, final View view, final int position, final long id) {
+		Intent intent = new Intent(view.getContext(), EditEntryActivity.class);
+		intent.putExtra("com.funkyandroid.banking.transaction_id", ((int)id&0xffffff));
+		intent.putExtra("com.funkyandroid.banking.account_currency", currencySymbol);
 		view.getContext().startActivity(intent);
-		super.onListItemClick(parent, view, position, id);
 	}
+
 
 	/**
      * Update the current account balance
@@ -192,41 +208,35 @@ public class CategoriesReportActivity extends ListActivity {
 	 * The list adapter used for the expandable tree.
 	 */
 
-	public class SpendingReportListAdapter
+	public class MyAdapter
 		extends ResourceCursorAdapter {
 
-		public SpendingReportListAdapter(final Cursor cursor) {
-			super(CategoriesReportActivity.this, R.layout.category_list_item, cursor);
+		public MyAdapter(final Cursor cursor) {
+			super(CategoryReportActivity.this, R.layout.entry_list_item, cursor );
 		}
 
 		@Override
-		public void bindView(final View view, final Context context,
-				final Cursor cursor) {
+		public void bindView(final View view, final Context context, final Cursor cursor) {
+			Log.i("FE", "BIndin");
 			((TextView)view.findViewById(R.id.name)).setText(cursor.getString(1));
 
-			int balance = cursor.getInt(2);
-    		View sideBar = view.findViewById(R.id.sidebar);
-    		if			( balance < 0 ) {
-    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0x00, 0x00));
-    		} else if	( balance > 0 ) {
-    			sideBar.setBackgroundColor(Color.rgb(0x00, 0xc0, 0x00));
-    		} else {
-    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0xc0, 0xc0));
-    		}
-
-
 			final TextView value = (TextView)view.findViewById(R.id.value);
+			final long balance = cursor.getLong(2);
+			if			( balance < 0 ) {
+				value.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
+			} else if	( balance > 0 ) {
+				value.setTextColor(Color.rgb(0x00, 0xc0, 0x00));
+			} else {
+				value.setTextColor(Color.rgb(0xcf, 0xc0, 0x00));
+			}
+
 			StringBuilder valueString = new StringBuilder(10);
 			BalanceFormatter.format(valueString, balance, currencySymbol);
-			valueString.append(" in ");
-			int entries = cursor.getInt(3);
-			valueString.append(entries);
-			if( entries == 1) {
-				valueString.append(" entry.");
-			} else {
-				valueString.append(" entries.");
-			}
 			value.setText(valueString.toString());
+
+			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
+			Date entryDate = new Date(cursor.getLong(3));
+			((TextView)view.findViewById(R.id.date)).setText(sdf.format(entryDate));
 		}
 	}
 }

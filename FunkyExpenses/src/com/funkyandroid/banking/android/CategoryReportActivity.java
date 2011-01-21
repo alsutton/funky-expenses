@@ -220,16 +220,17 @@ public class CategoryReportActivity extends ListActivity {
 			Log.i("FE", "BIndin");
 			((TextView)view.findViewById(R.id.name)).setText(cursor.getString(1));
 
-			final TextView value = (TextView)view.findViewById(R.id.value);
 			final long balance = cursor.getLong(2);
-			if			( balance < 0 ) {
-				value.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
-			} else if	( balance > 0 ) {
-				value.setTextColor(Color.rgb(0x00, 0xc0, 0x00));
-			} else {
-				value.setTextColor(Color.rgb(0xcf, 0xc0, 0x00));
-			}
+    		View sideBar = view.findViewById(R.id.sidebar);
+    		if			( balance < 0 ) {
+    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0x00, 0x00));
+    		} else if	( balance > 0 ) {
+    			sideBar.setBackgroundColor(Color.rgb(0x00, 0xc0, 0x00));
+    		} else {
+    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0xc0, 0xc0));
+    		}
 
+			final TextView value = (TextView)view.findViewById(R.id.value);
 			StringBuilder valueString = new StringBuilder(10);
 			BalanceFormatter.format(valueString, balance, currencySymbol);
 			value.setText(valueString.toString());

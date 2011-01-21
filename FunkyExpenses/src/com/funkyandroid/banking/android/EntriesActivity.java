@@ -21,9 +21,9 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.Window;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
@@ -259,16 +259,17 @@ public class EntriesActivity extends ListActivity {
     	public void bindView(final View view, final Context context, final Cursor cursor) {
     		((TextView)view.findViewById(R.id.name)).setText(cursor.getString(1));
 
-    		final TextView value = (TextView)view.findViewById(R.id.value);
     		final long balance = cursor.getLong(2);
+    		View sideBar = view.findViewById(R.id.sidebar);
     		if			( balance < 0 ) {
-    			value.setTextColor(Color.rgb(0xc0, 0x00, 0x00));
+    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0x00, 0x00));
     		} else if	( balance > 0 ) {
-    			value.setTextColor(Color.rgb(0x00, 0xc0, 0x00));
+    			sideBar.setBackgroundColor(Color.rgb(0x00, 0xc0, 0x00));
     		} else {
-    			value.setTextColor(Color.rgb(0xcf, 0xc0, 0x00));
+    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0xc0, 0xc0));
     		}
 
+    		final TextView value = (TextView)view.findViewById(R.id.value);
     		StringBuilder valueString = new StringBuilder(10);
     		BalanceFormatter.format(valueString, balance, currencySymbol);
     		value.setText(valueString.toString());

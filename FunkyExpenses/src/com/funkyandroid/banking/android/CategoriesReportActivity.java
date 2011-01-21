@@ -163,8 +163,8 @@ public class CategoriesReportActivity extends ListActivity {
     private void startEntries() {
 		Intent intent = new Intent(this, EntriesActivity.class);
 		intent.putExtra("com.funkyandroid.banking.account_id", accountId);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
-		finish();
     }
 
 	/**

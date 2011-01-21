@@ -215,6 +215,7 @@ public class EntriesActivity extends ListActivity {
     private void startCategories() {
 		Intent intent = new Intent(this, CategoriesReportActivity.class);
 		intent.putExtra("com.funkyandroid.banking.account_id", account.id);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
     }
 

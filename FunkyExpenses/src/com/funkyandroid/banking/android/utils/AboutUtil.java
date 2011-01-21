@@ -10,17 +10,17 @@ public class AboutUtil {
 	/**
 	 * Private constructor to avoid instantiation.
 	 */
-	
+
 	private AboutUtil() {
 		super();
 	}
-	
+
 	/**
 	 * Show the about dialogue
-	 * 
+	 *
 	 * @param activity The activity that wants to show the about box.
 	 */
-	
+
 	public static final void showDialog(final Context context) {
 		PackageInfo pi = null;
 		try {
@@ -34,10 +34,10 @@ public class AboutUtil {
 			message.append(pi.versionName);
 			message.append("\n\n");
 		}
-		message.append("Copyright 2009 Funky Android Limited, All Rights Reserved.\n\nSee www.funkyexpenses.com for more information.");
+		message.append("Copyright 2009-2011 Funky Android Limited, All Rights Reserved.\n\nSee www.funkyexpenses.com for more information.");
         new AlertDialog.Builder(context).setTitle(pi.applicationInfo.labelRes)
 	            .setMessage(message.toString())
 	            .setPositiveButton("OK", null)
-	            .show();		
+	            .show();
 	}
 }

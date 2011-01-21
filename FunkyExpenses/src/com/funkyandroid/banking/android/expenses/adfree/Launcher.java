@@ -63,9 +63,8 @@ public class Launcher extends Activity
             })
             .show();
     	}
-
 		if(0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE )) {
-	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://market.android.com/details?id=com.funkyandroid.banking.android.expenses.adfree"));
+	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
 	    	startActivity(myIntent);
 	    	finish();
 		}

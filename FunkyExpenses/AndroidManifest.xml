@@ -2,7 +2,7 @@
 <manifest	xmlns:android="http://schemas.android.com/apk/res/android"
       		android:versionName="1.3.6" 
       		android:versionCode="1306" 
-      		package="com.funkyandroid.banking.android.expenses.adfree">
+      		package="com.funkyandroid.banking.android.expenses.demo">
       
 	<uses-sdk 			android:minSdkVersion="4"
 						android:targetSdkVersion="8" />
@@ -36,10 +36,13 @@
         </activity>
         <activity android:name="com.funkyandroid.banking.android.RestoreActivity"/>
         
-        <meta-data	android:value="a14a223253a67f4" android:name="ADMOB_PUBLISHER_ID" />        
-        
-		<meta-data	android:name="com.google.android.backup.api_key"
-		    		android:value="AEdPqrEAAAAIIkNMdF2Mpv4vZvdHpaBcR03e-iLdK-tN07keXg" />
+        <activity android:name="com.admob.android.ads.AdMobActivity" 
+              android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+              android:configChanges="orientation|keyboard|keyboardHidden"
+              />
+
+        <meta-data	android:value="a14a223253a67f4" android:name="ADMOB_PUBLISHER_ID" /> 
+        <meta-data	android:value="false" android:name="ADMOB_ALLOW_LOCATION_FOR_ADS" />       
     </application>
 
 	<uses-permission android:name="android.permission.INTERNET" />

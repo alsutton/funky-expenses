@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -25,7 +26,6 @@ import android.widget.RadioGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.Account;
@@ -36,50 +36,50 @@ import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.PayeeManager;
 import com.funkyandroid.banking.android.data.Transaction;
 import com.funkyandroid.banking.android.data.TransactionManager;
-import com.funkyandroid.banking.android.expenses.adfree.R;
+import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
 import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.StringUtils;
 
 public class ExternalEntryActivity extends Activity {
-	
+
 	/**
 	 * Shared empty String.
 	 */
-	
+
 	private static final String EMPTY_STRING = "";
-	
+
 	/**
 	 * The transaction being edited.
 	 */
-	
+
 	private Transaction transaction;
-	
+
 	/**
 	 * The Database connection
 	 */
-	
+
 	private SQLiteDatabase db;
 
 	/**
 	 * The accounts spinner.
 	 */
-	
+
 	private Spinner accountsSpinner;
-	
-	/**
-	 * The category suggestor.
-	 */
-	
-	private CategorySuggestionsAdapter categorySuggester;	
 
 	/**
 	 * The category suggestor.
 	 */
-	
-	private PayeeSuggestionsAdapter payeeSuggester;	
-	
+
+	private CategorySuggestionsAdapter categorySuggester;
+
+	/**
+	 * The category suggestor.
+	 */
+
+	private PayeeSuggestionsAdapter payeeSuggester;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,16 +93,16 @@ public class ExternalEntryActivity extends Activity {
         				public void onClick(final View view) {
         		        	Calendar cal = Calendar.getInstance();
         		        	cal.setTime(new Date(ExternalEntryActivity.this.transaction.getTimestamp()));
-        		        	
+
         		            new DatePickerDialog(
-        		            		ExternalEntryActivity.this, 
-        		            		new DateListener(), 
+        		            		ExternalEntryActivity.this,
+        		            		new DateListener(),
         		            		cal.get(Calendar.YEAR),
-        		                    cal.get(Calendar.MONTH), 
+        		                    cal.get(Calendar.MONTH),
         		                    cal.get(Calendar.DAY_OF_MONTH)).show();
         				}
         		});
-        
+
 		button = (Button) findViewById(R.id.okButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
@@ -111,7 +111,7 @@ public class ExternalEntryActivity extends Activity {
         					ExternalEntryActivity.this.finish();
         				}
         		});
-        
+
 		button = (Button) findViewById(R.id.cancelButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
@@ -119,37 +119,37 @@ public class ExternalEntryActivity extends Activity {
         					ExternalEntryActivity.this.finish();
         				}
         		});
-        
+
         EditText editText = (EditText) findViewById(R.id.amountMinor);
-        MinorAmountEventListener minorAmountEventListener = 
+        MinorAmountEventListener minorAmountEventListener =
         	new MinorAmountEventListener(editText.getOnFocusChangeListener());
         editText.addTextChangedListener(minorAmountEventListener);
         editText.setOnFocusChangeListener(minorAmountEventListener);
-        
+
         editText = (EditText) findViewById(R.id.amountMajor);
-        MajorAmountEventListener majorAmountEventListener = 
+        MajorAmountEventListener majorAmountEventListener =
         	new MajorAmountEventListener(editText.getOnFocusChangeListener());
         editText.setOnFocusChangeListener(majorAmountEventListener);
-        
+
     	db = (new DBHelper(this)).getWritableDatabase();
-    	
-    	categorySuggester = 
+
+    	categorySuggester =
     		new CategorySuggestionsAdapter(
-					this, 
-					android.R.layout.simple_dropdown_item_1line, 
-					null, 
-					CategoryManager.NAME_COL, 
+					this,
+					android.R.layout.simple_dropdown_item_1line,
+					null,
+					CategoryManager.NAME_COL,
 					new int[] {android.R.id.text1},
 					db);
     	AutoCompleteTextView categoryEntry = (AutoCompleteTextView) findViewById(R.id.category);
     	categoryEntry.setAdapter(categorySuggester);
-    	
-    	payeeSuggester = 
+
+    	payeeSuggester =
     		new PayeeSuggestionsAdapter(
-					this, 
-					android.R.layout.simple_dropdown_item_1line, 
-					null, 
-					PayeeManager.NAME_COL, 
+					this,
+					android.R.layout.simple_dropdown_item_1line,
+					null,
+					PayeeManager.NAME_COL,
 					new int[] {android.R.id.text1},
 					db );
     	AutoCompleteTextView payeeEntry = (AutoCompleteTextView) findViewById(R.id.payee);
@@ -160,50 +160,51 @@ public class ExternalEntryActivity extends Activity {
     /**
      * Override onDestroy to close the database.
      */
-    
-    public void onDestroy() {
+
+    @Override
+	public void onDestroy() {
     	super.onDestroy();
     	if( db != null && db.isOpen() ) {
     		db.close();
     	}
     }
-    
+
     /**
-     * Get the account details when started. 
+     * Get the account details when started.
      */
-    
+
     @Override
     public void onStart() {
     	super.onStart();
     	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
-    	Intent startingIntent = getIntent();    	    	
+    	Intent startingIntent = getIntent();
 
     	((TextView) findViewById(R.id.currencySymbol)).setText("");
-    	
+
 		transaction = new Transaction();
 		transaction.setAccountId(-1);
-		
+
 		long date = startingIntent.getLongExtra("com.funkyandroid.DATE", -1);
 		if( date == -1) {
 			date = System.currentTimeMillis();
 		}
-		transaction.setTimestamp(date);    	
+		transaction.setTimestamp(date);
     	updateDate();
-    	
+
 		String payee = startingIntent.getStringExtra("com.funkyandroid.PAYEE");
 		if( payee == null || payee.length() == 0 ) {
 			((TextView)findViewById(R.id.payee)).setText(EMPTY_STRING);
 		} else {
 			((TextView)findViewById(R.id.payee)).setText(payee);
 		}
-		
+
 
 		String category = startingIntent.getStringExtra("com.funkyandroid.CATEGORY");
 		if( category == null || category.length() == 0 ) {
 			((TextView)findViewById(R.id.category)).setText(EMPTY_STRING);
 		} else {
 			((TextView)findViewById(R.id.category)).setText(category);
-			
+
 		}
 
 		((TextView)findViewById(R.id.amountMajor)).setText("0");
@@ -223,14 +224,14 @@ public class ExternalEntryActivity extends Activity {
 
 		RadioButton button = (RadioButton) findViewById(R.id.debitButton);
 		button.setSelected(true);
-		
+
 		Cursor cursor = AccountManager.getAll(db);
 		startManagingCursor(cursor);
     	AccountsAdapter adapter = new AccountsAdapter(
-					this, 
-					android.R.layout.simple_spinner_item, 
-					cursor, 
-					AccountManager.NAME_COL, 
+					this,
+					android.R.layout.simple_spinner_item,
+					cursor,
+					AccountManager.NAME_COL,
 					new int[] {android.R.id.text1} );
     	adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     	accountsSpinner = (Spinner)findViewById(R.id.accountSpinner);
@@ -244,16 +245,16 @@ public class ExternalEntryActivity extends Activity {
 					ExternalEntryActivity.this.transaction.setAccountId(realId);
 					String currencySymbol = CurrencyManager.getSymbol(db, theAccount.currency);
 			    	((TextView) findViewById(R.id.currencySymbol)).setText(currencySymbol);
-				}				
+				}
 			}
 
 			public void onNothingSelected(AdapterView<?> arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
-    		
+
     	});
-    	accountsSpinner.setAdapter(adapter);    	
+    	accountsSpinner.setAdapter(adapter);
     }
 
     @Override
@@ -261,12 +262,12 @@ public class ExternalEntryActivity extends Activity {
     {
        super.onStop();
        FlurryAgent.onEndSession(this);
-    }    
+    }
 
     /**
      * Check to see if the . key has been pressed, if so move to the minor currency area
      */
-    
+
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
     	if( event.getKeyCode() == KeyEvent.KEYCODE_PERIOD ) {
@@ -279,22 +280,22 @@ public class ExternalEntryActivity extends Activity {
     	}
     	return super.onKeyDown(keyCode, event);
     }
-    
+
     /**
      * Set up the menu for the application
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-			     
+
 		MenuUtil.buildMenu(this, menu);
-		
+
 		return true;
 	}
-    
+
 
     /**
-     * Update the date button with the latest value. 
+     * Update the date button with the latest value.
      */
 
     private void updateDate() {
@@ -319,13 +320,13 @@ public class ExternalEntryActivity extends Activity {
     /**
      * Store the account details into the database.
      */
-    
+
     public void storeEntryDetails() {
     	EditText editText = (EditText) findViewById(R.id.payee);
     	transaction.setPayee(editText.getText().toString());
 
     	RadioGroup transactionType = (RadioGroup) findViewById(R.id.type);
-    	
+
     	int type;
     	switch (transactionType.getCheckedRadioButtonId()) {
     		case R.id.debitButton:
@@ -345,7 +346,7 @@ public class ExternalEntryActivity extends Activity {
     	if(amountString != null && amountString.length() > 0) {
     		amount += Long.parseLong(amountString) * 100;
     	}
-    	
+
     	editText = (EditText) findViewById(R.id.amountMinor);
     	if(amountString != null && amountString.length() > 0) {
     		amountString = editText.getText().toString();
@@ -355,20 +356,20 @@ public class ExternalEntryActivity extends Activity {
     		amount = 0 - amount;
     	}
     	transaction.setAmount(amount);
-    	
+
     	AutoCompleteTextView categoryEntry =
     		(AutoCompleteTextView) findViewById(R.id.category);
     	String category = categoryEntry.getText().toString();
-    	
+
     	if(StringUtils.isEmpty(category)) {
     		category = CategoryManager.UNCAT_CAT;
     	}
-		int categoryId = CategoryManager.getByName(db, category);			
+		int categoryId = CategoryManager.getByName(db, category);
 		transaction.setCategoryId(categoryId);
-		
-   		TransactionManager.create(db, transaction);	    		
+
+   		TransactionManager.create(db, transaction);
     }
-    
+
 
     /**
      * Suggestions adapter for payees.
@@ -386,5 +387,5 @@ public class ExternalEntryActivity extends Activity {
     	{
     		return cursor.getString(1);
     	}
-    }    
+    }
 }

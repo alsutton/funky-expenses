@@ -19,8 +19,8 @@ import javax.crypto.NoSuchPaddingException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -29,28 +29,28 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.Window;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.DBHelper;
-import com.funkyandroid.banking.android.expenses.adfree.R;
+import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BackupUtils;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class BackupActivity extends Activity {
 
 	private final static String[] NAME_ID_COLS = { "_id", "name" };
-	
+
 	private final static String[] SETTINGS_COLS = { "name", "value" };
 
 	private final static String[] ACCOUNTS_COLS = { "_id", "opening_balance", "balance", "name", "currency" };
 
-	private final static String[] ENTRIES_COLS = 
+	private final static String[] ENTRIES_COLS =
 		{	"_id", "account_id", "category_id", "payee_id", "link_id",
 			"timestamp", "type", "amount" };
 
@@ -59,44 +59,44 @@ public class BackupActivity extends Activity {
 	 */
 
 	private TextView status;
-	
+
 	/**
 	 * The handler for posting updates to the status.
 	 */
-	
-	private Handler handler = new Handler();
-	
+
+	private final Handler handler = new Handler();
+
 	/**
 	 * The Database connection
 	 */
-	
+
 	private SQLiteDatabase db;
-	
+
 	/**
 	 * The path for the backup
 	 */
-	
+
 	private String path;
-	
+
 	/**
 	 * The password for the backup
 	 */
-	
+
 	private String password;
-	
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.backup);
-        
+
         ((Button) findViewById(R.id.cancelButton)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View view) {
 				BackupActivity.this.finish();
-			}        	
+			}
         });
-        
+
         Button okButton = (Button) findViewById(R.id.okButton);
         status = (TextView) findViewById(R.id.status);
         if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -109,12 +109,12 @@ public class BackupActivity extends Activity {
 							BackupActivity.this.finish();
 						}
             		})
-            		.show();		
+            		.show();
             okButton.setEnabled(false);
             status.setText("ERROR : No memory card found. Backup unavailable");
         	return;
         }
-        
+
         okButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View view) {
 				startBackup();
@@ -126,8 +126,9 @@ public class BackupActivity extends Activity {
     /**
      * Override onDestroy to close the database.
      */
-    
-    public void onDestroy() {
+
+    @Override
+	public void onDestroy() {
     	super.onDestroy();
     	if( db != null && db.isOpen() ) {
     		db.close();
@@ -139,51 +140,51 @@ public class BackupActivity extends Activity {
     	super.onStart();
     	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     }
-    
+
     @Override
     public void onStop()
     {
        super.onStop();
        FlurryAgent.onEndSession(this);
-    }    
-    
+    }
+
     /**
      * Set up the menu for the application
      */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
-			     
+
 		menu.add(R.string.menuAccounts)
 		.setIcon(android.R.drawable.ic_menu_revert)
 		.setOnMenuItemClickListener(
 			new OnMenuItemClickListener() {
 				public boolean onMenuItemClick(final MenuItem item) {
 					Intent intent = new Intent(BackupActivity.this, AccountsActivity.class);
-					BackupActivity.this.startActivity(intent);    				
+					BackupActivity.this.startActivity(intent);
 					finish();
-		            return true;						
+		            return true;
 				}
 			}
 		);
 
 		MenuUtil.buildMenu(this, menu);
-		
+
 		return true;
 	}
-    
+
     /**
      * Update the status window.
      */
-    
+
     private void updateStatus( final String statusUpdate ) {
     	handler.post( new StatusUpdater(statusUpdate) );
     }
-    
+
     /**
      * Start the backup
-     * @throws NoSuchPaddingException 
-     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
      */
 
     private void startBackup() {
@@ -191,7 +192,7 @@ public class BackupActivity extends Activity {
 	    	EditText editText = (EditText) findViewById(R.id.name);
 	    	String name = editText.getText().toString();
 	    	path = getBackupFilename(name);
-	    	
+
 	    	editText = (EditText) findViewById(R.id.password);
 	    	password = editText.getText().toString();
 
@@ -199,12 +200,12 @@ public class BackupActivity extends Activity {
 	    		reportNoBackupDirectory();
 	    		return;
 	    	}
-	    	
+
 	    	if(new File(path).exists()) {
 	    		reportExistingFile();
 	    		return;
 	    	}
-	    	
+
 	    	startBackupThread();
     	} catch(Exception ex) {
             new AlertDialog.Builder(this)
@@ -216,33 +217,33 @@ public class BackupActivity extends Activity {
 						BackupActivity.this.finish();
 					}
 	    		})
-	    		.show();		    	
+	    		.show();
     	}
     }
-    
+
     /**
      * Create the filename for tha backup
-     * @throws IOException 
+     * @throws IOException
      */
-    
+
     private String getBackupFilename(final String name) throws IOException {
-		StringBuilder path = new StringBuilder();  
+		StringBuilder path = new StringBuilder();
 		BackupUtils.addBackupPath(path);
 		File backupDir = new File(path.toString());
 		if(!backupDir.exists() && !backupDir.mkdir()) {
 			return null;
 		}
-		
+
 		path.append('/');
 		path.append(name);
-		path.append(".fex");    	
+		path.append(".fex");
 		return path.toString();
     }
-    
+
     /**
      * Report that the backup directory could not be created
      */
-    
+
     private void reportExistingFile() {
         new AlertDialog.Builder(this)
 		.setTitle("Overwrite Backup?")
@@ -254,14 +255,14 @@ public class BackupActivity extends Activity {
 			}
 		})
 		.setNegativeButton("No", null)
-		.show();		    	    	
+		.show();
     }
-    
-    
+
+
     /**
      * Start the backup
      */
-    
+
     private void startBackupThread() {
     	try {
 	    	new Thread(new Backupper(path, password)).start();
@@ -275,14 +276,14 @@ public class BackupActivity extends Activity {
 						BackupActivity.this.finish();
 					}
 	    		})
-	    		.show();		    	
-    	}    	
+	    		.show();
+    	}
     }
-    
+
     /**
      * Report that the backup directory could not be created
      */
-    
+
     private void reportNoBackupDirectory() {
         new AlertDialog.Builder(this)
 		.setTitle("Backup Failed")
@@ -293,47 +294,47 @@ public class BackupActivity extends Activity {
 				BackupActivity.this.finish();
 			}
 		})
-		.show();		    	    	
+		.show();
     }
-    
+
     /**
      * Class to perform the backup
      */
-    
+
     private class Backupper implements Runnable {
 
     	/**
     	 * The name of the backup.
     	 */
     	private final String path;
-    	
+
     	/**
     	 * The cipher to encrypt the data with.
     	 */
-    	
+
     	private final Cipher cipher;
-    	
+
     	/**
     	 * The stream the data is being written to.
     	 */
     	private FileOutputStream fos;
-    	
+
     	/**
     	 * The list of bytes waiting to be encrypted.
     	 */
-    	private List<byte[]> waitingBytes = new ArrayList<byte[]>();
+    	private final List<byte[]> waitingBytes = new ArrayList<byte[]>();
 
-    	Backupper(final String path, final String password) 
-    		throws NoSuchAlgorithmException, NoSuchPaddingException, 
+    	Backupper(final String path, final String password)
+    		throws NoSuchAlgorithmException, NoSuchPaddingException,
     		InvalidKeyException, UnsupportedEncodingException, InvalidKeySpecException, InvalidAlgorithmParameterException {
     		this.path = path;
     		cipher = BackupUtils.getCipher(password, Cipher.ENCRYPT_MODE);
     	}
-    	
+
     	/**
     	 * Perform the backup.
     	 */
-    	
+
     	public void run() {
     		updateStatus("Backup Started");
     		try {
@@ -359,54 +360,54 @@ public class BackupActivity extends Activity {
 
     	/**
     	 * Encrypt a string
-    	 * @throws UnsupportedEncodingException 
+    	 * @throws UnsupportedEncodingException
     	 */
-    	
+
     	private void add(final String string) throws UnsupportedEncodingException {
 			byte[] stringBytes  = string.getBytes("UTF-8");
 			byte[] lengthBytes = new byte[4];
 			BackupUtils.serialize(stringBytes.length, lengthBytes, 0);
 			waitingBytes.add(lengthBytes);
-			waitingBytes.add(stringBytes);    		
+			waitingBytes.add(stringBytes);
     	}
 
     	/**
     	 * Encrypt an integer
-    	 * @throws UnsupportedEncodingException 
+    	 * @throws UnsupportedEncodingException
     	 */
-    	
+
     	private void add(final int data) throws UnsupportedEncodingException {
     		byte[] dataBytes = new byte[4];
     		BackupUtils.serialize(data, dataBytes, 0);
 			waitingBytes.add(dataBytes);
     	}
-    	
+
     	/**
     	 * Encrypt a long
-    	 * @throws UnsupportedEncodingException 
+    	 * @throws UnsupportedEncodingException
     	 */
-    	
+
     	private void add(final long data) throws UnsupportedEncodingException {
     		byte[] dataBytes = new byte[8];
 			BackupUtils.serialize(data, dataBytes, 0);
 			waitingBytes.add(dataBytes);
     	}
-    	
+
     	/**
     	 * Writes data in a cipher to the output stream
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
-    	 * @throws IOException 
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
+    	 * @throws IOException
     	 */
-    	
-    	private void writeEncryptedData() 
+
+    	private void writeEncryptedData()
     		throws IllegalBlockSizeException, BadPaddingException, IOException {
-    		
+
     		int totalLength = 0;
     		for( byte[] array : waitingBytes ) {
     			totalLength += array.length;
     		}
-    		
+
     		byte[] data = new byte[totalLength];
     		int position = 0;
     		for( byte[] array : waitingBytes ) {
@@ -414,65 +415,65 @@ public class BackupActivity extends Activity {
     			position += array.length;
     		}
 
-			byte[] encryptedData = cipher.doFinal(data); 
+			byte[] encryptedData = cipher.doFinal(data);
     		byte[] lengthData = new byte[4];
 			BackupUtils.serialize(encryptedData.length, lengthData, 0);
 			fos.write(lengthData);
-			fos.write(encryptedData);    		
+			fos.write(encryptedData);
 
 			waitingBytes.clear();
     	}
-    	
+
     	/**
     	 * Backup the categories
-    	 * 
+    	 *
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void backupCategories() 
+
+    	private void backupCategories()
     		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Backing up categories....");
     		backupIDNameTable(DBHelper.CATEGORIES_TABLE_NAME);
     	}
-    	
+
     	/**
     	 * Backup the payees
-    	 * 
+    	 *
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void backupPayees() 
+
+    	private void backupPayees()
     		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Backing up payees....");
     		backupIDNameTable(DBHelper.PAYEE_TABLE_NAME);
     	}
-    	
+
     	/**
     	 * Backup a table with an id and name in it.
-    	 * 
+    	 *
     	 * @param table The table to backup.
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void backupIDNameTable(final String table) 
+
+    	private void backupIDNameTable(final String table)
 		throws IllegalBlockSizeException, BadPaddingException, IOException {
-    		Cursor cursor = db.query(	table, 
-    									BackupActivity.NAME_ID_COLS, 
+    		Cursor cursor = db.query(	table,
+    									BackupActivity.NAME_ID_COLS,
     									null, null, null, null, null);
     		try {
     			add(cursor.getCount());
@@ -484,31 +485,31 @@ public class BackupActivity extends Activity {
     				} else {
     					add(cursor.getString(1));
     				}
-    				
+
     				writeEncryptedData();
     			}
     		} finally {
     			cursor.close();
     		}
     	}
-    	
+
     	/**
     	 * Backup a table with an id and name in it.
-    	 * 
+    	 *
     	 * @param table The table to backup.
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void backupSettings() 
+
+    	private void backupSettings()
 		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Backing up settings....");
-    		Cursor cursor = db.query(	DBHelper.SETTINGS_TABLE_NAME, 
-    									BackupActivity.SETTINGS_COLS, 
+    		Cursor cursor = db.query(	DBHelper.SETTINGS_TABLE_NAME,
+    									BackupActivity.SETTINGS_COLS,
     									null, null, null, null, null);
     		try {
     			add(cursor.getCount());
@@ -517,7 +518,7 @@ public class BackupActivity extends Activity {
     				if( cursor.isNull(0) || cursor.isNull(1)) {
     					continue;
     				}
-    				    				
+
     				add(cursor.getString(0));
     				add(cursor.getString(1));
     				writeEncryptedData();
@@ -526,24 +527,24 @@ public class BackupActivity extends Activity {
     			cursor.close();
     		}
     	}
-    	
+
     	/**
     	 * Backup a table with an id and name in it.
-    	 * 
+    	 *
     	 * @param table The table to backup.
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void backupAccounts() 
+
+    	private void backupAccounts()
 		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Backing up accounts....");
-    		Cursor cursor = db.query(	DBHelper.ACCOUNTS_TABLE_NAME, 
-    									BackupActivity.ACCOUNTS_COLS, 
+    		Cursor cursor = db.query(	DBHelper.ACCOUNTS_TABLE_NAME,
+    									BackupActivity.ACCOUNTS_COLS,
     									null, null, null, null, null);
     		try {
     			add(cursor.getCount());
@@ -560,24 +561,24 @@ public class BackupActivity extends Activity {
     			cursor.close();
     		}
     	}
-    	
+
     	/**
     	 * Backup a table with an id and name in it.
-    	 * 
+    	 *
     	 * @param table The table to backup.
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void backupEntries() 
+
+    	private void backupEntries()
 		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Backing up entries....");
-    		Cursor cursor = db.query(	DBHelper.ENTRIES_TABLE_NAME, 
-    									BackupActivity.ENTRIES_COLS, 
+    		Cursor cursor = db.query(	DBHelper.ENTRIES_TABLE_NAME,
+    									BackupActivity.ENTRIES_COLS,
     									null, null, null, null, null);
     		try {
     			add(cursor.getCount());
@@ -598,25 +599,25 @@ public class BackupActivity extends Activity {
     		}
     	}
     }
-    
-    
+
+
     /**
      * Status updater runnable.
      */
-    
+
     private class StatusUpdater implements Runnable {
     	/**
     	 * The update.
     	 */
-    	
-    	private String statusUpdate;
-    	
+
+    	private final String statusUpdate;
+
     	StatusUpdater(final String statusUpdate) {
-    		this.statusUpdate = statusUpdate; 
+    		this.statusUpdate = statusUpdate;
     	}
-    	
+
     	public void run() {
-    		status.setText(statusUpdate);	
+    		status.setText(statusUpdate);
     	}
     }
 }

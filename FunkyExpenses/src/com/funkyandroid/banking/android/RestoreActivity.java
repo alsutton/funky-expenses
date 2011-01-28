@@ -1,8 +1,8 @@
 package com.funkyandroid.banking.android;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
@@ -19,8 +19,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,15 +28,15 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.DBHelper;
-import com.funkyandroid.banking.android.expenses.adfree.R;
+import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BackupUtils;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
@@ -47,32 +47,32 @@ public class RestoreActivity extends Activity {
 	 */
 
 	private TextView status;
-	
+
 	/**
 	 * The handler for posting updates to the status.
 	 */
-	
-	private Handler handler = new Handler();
-	
+
+	private final Handler handler = new Handler();
+
 	/**
 	 * The Database connection
 	 */
-	
+
 	private SQLiteDatabase db;
-	
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setTitle(R.string.titleRestore);
         setContentView(R.layout.restore);
-        
+
         ((Button) findViewById(R.id.cancelButton)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View view) {
 				RestoreActivity.this.finish();
-			}        	
+			}
         });
-        
+
         Button okButton = (Button) findViewById(R.id.okButton);
         status = (TextView) findViewById(R.id.status);
         if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -85,12 +85,12 @@ public class RestoreActivity extends Activity {
 							RestoreActivity.this.finish();
 						}
             		})
-            		.show();		
+            		.show();
             okButton.setEnabled(false);
             status.setText("ERROR : No memory card found. Restore unavailable");
         	return;
         }
-        
+
         okButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View view) {
 				startRestore();
@@ -102,75 +102,76 @@ public class RestoreActivity extends Activity {
     /**
      * Override onDestroy to close the database.
      */
-    
-    public void onDestroy() {
+
+    @Override
+	public void onDestroy() {
     	super.onDestroy();
     	if( db != null && db.isOpen() ) {
     		db.close();
     	}
     }
-    
+
 
     @Override
     public void onStart() {
     	super.onStart();
     	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     }
-    
+
     @Override
     public void onStop()
     {
        super.onStop();
        FlurryAgent.onEndSession(this);
-    }    
-    
+    }
+
     /**
      * Set up the menu for the application
      */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
-			     
+
 		menu.add(R.string.menuAccounts)
 		.setIcon(android.R.drawable.ic_menu_revert)
 		.setOnMenuItemClickListener(
 			new OnMenuItemClickListener() {
 				public boolean onMenuItemClick(final MenuItem item) {
 					Intent intent = new Intent(RestoreActivity.this, AccountsActivity.class);
-					RestoreActivity.this.startActivity(intent);    				
+					RestoreActivity.this.startActivity(intent);
 					finish();
-		            return true;						
+		            return true;
 				}
 			}
 		);
 
 		MenuUtil.buildMenu(this, menu);
-		
+
 		return true;
 	}
-    
+
     /**
      * Update the status window.
      */
-    
+
     private void updateStatus( final String statusUpdate ) {
     	handler.post( new StatusUpdater(statusUpdate) );
     }
-    
+
     /**
      * Start the backup
-     * @throws NoSuchPaddingException 
-     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
      */
 
     private void startRestore() {
     	try {
 	    	EditText editText = (EditText) findViewById(R.id.name);
 	    	String name = editText.getText().toString();
-	    	
+
 	    	editText = (EditText) findViewById(R.id.password);
 	    	String password = editText.getText().toString();
-	    	
+
 	    	new Thread(new Restorer(name, password)).start();
     	} catch(Exception ex) {
             new AlertDialog.Builder(this)
@@ -182,73 +183,73 @@ public class RestoreActivity extends Activity {
 						RestoreActivity.this.finish();
 					}
 	    		})
-	    		.show();		    	
+	    		.show();
     	}
     }
-    
+
     /**
      * Class to perform the backup
      */
-    
+
     private class Restorer implements Runnable {
 
     	/**
     	 * The current stream pointer
     	 */
-    	
+
     	private final SteamPointer streamPointer = new SteamPointer();
-    	
+
     	/**
     	 * Four byte buffer used to read data block sizes
-    	 */    	
+    	 */
     	private final byte[] fourByteBuffer = new byte[4];
 
     	/**
     	 * The name of the backup.
     	 */
     	private final String name;
-    	
+
     	/**
     	 * The cipher to encrypt the data with.
     	 */
-    	
+
     	private final Cipher cipher;
-    	
+
     	/**
     	 * The stream the data is being written to.
     	 */
     	private FileInputStream fis;
 
-    	Restorer(final String name, final String password) 
-    		throws NoSuchAlgorithmException, NoSuchPaddingException, 
+    	Restorer(final String name, final String password)
+    		throws NoSuchAlgorithmException, NoSuchPaddingException,
     		InvalidKeyException, UnsupportedEncodingException, InvalidKeySpecException, InvalidAlgorithmParameterException {
     		this.name = name;
     		cipher = BackupUtils.getCipher(password, Cipher.DECRYPT_MODE);
     	}
-    	
+
     	/**
     	 * Perform the backup.
     	 */
-    	
+
     	public void run() {
     		updateStatus("Restore Started");
     		try {
-    			StringBuilder path = new StringBuilder();  
+    			StringBuilder path = new StringBuilder();
     			BackupUtils.addBackupPath(path);
     			File backupDir = new File(path.toString());
     			if(!backupDir.exists() ) {
     				throw new FileNotFoundException("Unable to find backup directory.");
     			}
-    			
+
     			path.append('/');
     			path.append(name);
     			path.append(".fex");
-    			
+
     			final File file = new File(path.toString());
     			if(!file.exists() ) {
     				throw new FileNotFoundException("Unable to find backup file.");
     			}
-    			
+
     			fis = new FileInputStream(file);
 			    try {
 			    	byte[] header = readBlock();
@@ -256,7 +257,7 @@ public class RestoreActivity extends Activity {
 			    	if(!BackupUtils.BACKUP_HEADER.equals(headerString)) {
 			    		throw new FileNotFoundException("Backup file header is invalid.");
 			    	}
-			    	
+
 			    	DBHelper.dropTables(db);
 			    	DBHelper.createTables(db);
 			    	restoreCategories();
@@ -276,12 +277,12 @@ public class RestoreActivity extends Activity {
 
     	/**
     	 * Read an encrypted block.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
+
     	private byte[] readBlock() throws IOException, IllegalBlockSizeException, BadPaddingException {
     		fis.read(fourByteBuffer);
     		streamPointer.offset = 0;
@@ -293,24 +294,24 @@ public class RestoreActivity extends Activity {
     		streamPointer.offset = 0;
     		return cipher.doFinal(data);
     	}
-    	
+
     	/**
     	 * Decode an int from a buffer
     	 */
-    	
+
     	private int getInt(final byte[] data) {
-    		int value = (((int)(data[streamPointer.offset]&0xff))  <<24)+
-			       		(((int)(data[streamPointer.offset+1]&0xff))<<16)+
-			       		(((int)(data[streamPointer.offset+2]&0xff))<< 8)+
-			       		 ((int)(data[streamPointer.offset+3]&0xff));
+    		int value = (((data[streamPointer.offset]&0xff))  <<24)+
+			       		(((data[streamPointer.offset+1]&0xff))<<16)+
+			       		(((data[streamPointer.offset+2]&0xff))<< 8)+
+			       		 ((data[streamPointer.offset+3]&0xff));
     		streamPointer.offset += 4;
     		return value;
     	}
-    	
+
     	/**
     	 * Decode an long from a buffer
     	 */
-    	
+
     	private long getLong(final byte[] data) {
     		long value = (((long)(data[streamPointer.offset]&0xff))  <<56)+
 			      		 (((long)(data[streamPointer.offset+1]&0xff))<<48)+
@@ -319,70 +320,70 @@ public class RestoreActivity extends Activity {
 			    		 (((long)(data[streamPointer.offset+4]&0xff))<<24)+
 			       		 (((long)(data[streamPointer.offset+5]&0xff))<<16)+
 			       		 (((long)(data[streamPointer.offset+6]&0xff))<< 8)+
-			       		  ((long)(data[streamPointer.offset+7]&0xff));
+			       		  ((data[streamPointer.offset+7]&0xff));
     		streamPointer.offset += 8;
     		return value;
     	}
-    	
+
     	/**
     	 * Encrypt a string
-    	 * @throws UnsupportedEncodingException 
+    	 * @throws UnsupportedEncodingException
     	 */
-    	
+
     	private String getString(final byte[] data) throws UnsupportedEncodingException {
     		int size = getInt(data);
     		String string = new String(data, streamPointer.offset, size, "UTF-8");
     		streamPointer.offset += size;
     		return string;
     	}
-    	
+
     	/**
     	 * Backup the categories
-    	 * 
+    	 *
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void restoreCategories() 
+
+    	private void restoreCategories()
     		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Restoring categories....");
     		restoreIDNameTable(DBHelper.CATEGORIES_TABLE_NAME);
     	}
-    	
+
     	/**
     	 * Backup the payees
-    	 * 
+    	 *
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void restorePayees() 
+
+    	private void restorePayees()
     		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Restoring payees....");
     		restoreIDNameTable(DBHelper.PAYEE_TABLE_NAME);
     	}
-    	
+
     	/**
     	 * Backup a table with an id and name in it.
-    	 * 
+    	 *
     	 * @param table The table to backup.
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void restoreIDNameTable(final String table) 
+
+    	private void restoreIDNameTable(final String table)
 		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		byte[] data = readBlock();
     		int count = getInt(data);
@@ -394,20 +395,20 @@ public class RestoreActivity extends Activity {
     			db.insert(table, null, cv);
     		}
     	}
-    	
+
     	/**
     	 * Backup a table with an id and name in it.
-    	 * 
+    	 *
     	 * @param table The table to backup.
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void restoreSettings() 
+
+    	private void restoreSettings()
 		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Restoring settings....");
     		byte[] data = readBlock();
@@ -420,20 +421,20 @@ public class RestoreActivity extends Activity {
     			db.insert(DBHelper.SETTINGS_TABLE_NAME, null, cv);
     		}
     	}
-    	
+
     	/**
     	 * Backup a table with an id and name in it.
-    	 * 
+    	 *
     	 * @param table The table to backup.
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void restoreAccounts() 
+
+    	private void restoreAccounts()
 		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Restoring accounts....");
     		byte[] data = readBlock();
@@ -449,20 +450,20 @@ public class RestoreActivity extends Activity {
     			db.insert(DBHelper.ACCOUNTS_TABLE_NAME, null, cv);
     		}
     	}
-    	
+
     	/**
     	 * Backup a table with an id and name in it.
-    	 * 
+    	 *
     	 * @param table The table to backup.
     	 * @param cipher The encryption cipher in use.
     	 * @param os The output stream to write to.
-    	 * 
-    	 * @throws IOException 
-    	 * @throws BadPaddingException 
-    	 * @throws IllegalBlockSizeException 
+    	 *
+    	 * @throws IOException
+    	 * @throws BadPaddingException
+    	 * @throws IllegalBlockSizeException
     	 */
-    	
-    	private void restoreEntries() 
+
+    	private void restoreEntries()
 		throws IllegalBlockSizeException, BadPaddingException, IOException {
     		updateStatus("Restoring entries....");
     		byte[] data = readBlock();
@@ -481,30 +482,30 @@ public class RestoreActivity extends Activity {
     			db.insert(DBHelper.ENTRIES_TABLE_NAME, null, cv);
     		}
     	}
-    	
+
     	private class SteamPointer {
     		int offset = 0;
     	}
     }
-    
-    
+
+
     /**
      * Status updater runnable.
      */
-    
+
     private class StatusUpdater implements Runnable {
     	/**
     	 * The update.
     	 */
-    	
-    	private String statusUpdate;
-    	
+
+    	private final String statusUpdate;
+
     	StatusUpdater(final String statusUpdate) {
-    		this.statusUpdate = statusUpdate; 
+    		this.statusUpdate = statusUpdate;
     	}
-    	
+
     	public void run() {
-    		status.setText(statusUpdate);	
+    		status.setText(statusUpdate);
     	}
     }
 }

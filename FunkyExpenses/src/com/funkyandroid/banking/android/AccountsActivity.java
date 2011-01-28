@@ -33,7 +33,7 @@ import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
-import com.funkyandroid.banking.android.expenses.adfree.R;
+import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.BalanceFormatter;
 import com.funkyandroid.banking.android.utils.Crypto;
@@ -128,9 +128,11 @@ public class AccountsActivity extends ListActivity
         	Toast.makeText(AccountsActivity.this, "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
         }
 
-        String deviceId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
-        licenseChecker = new LicenseChecker(this, new ServerManagedPolicy(this,new AESObfuscator(BS, getPackageName(), deviceId)),BPK);
-		licenseCallback = new MyLicenseCheckerCallback();
+		if(!"com.funkyandroid.banking.android.expenses.demo".equals(super.getApplicationContext().getPackageName())) {
+	        String deviceId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+	        licenseChecker = new LicenseChecker(this, new ServerManagedPolicy(this,new AESObfuscator(BS, getPackageName(), deviceId)),BPK);
+			licenseCallback = new MyLicenseCheckerCallback();
+		}
     }
 
     /**
@@ -225,13 +227,15 @@ public class AccountsActivity extends ListActivity
     @Override
 	public void onResume() {
 		super.onResume();
-		if(licenseCheckStatus == LICENSE_STATE_UNCHECKED) {
-			licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECKING;
-			licenseChecker.checkAccess(licenseCallback);
-		} else if (licenseCheckStatus == LICENSE_STATE_CHECK_FAILED) {
-	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
-	    	startActivity(myIntent);
-	    	finish();
+		if(!"com.funkyandroid.banking.android.expenses.demo".equals(super.getApplicationContext().getPackageName())) {
+			if(licenseCheckStatus == LICENSE_STATE_UNCHECKED) {
+				licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECKING;
+				licenseChecker.checkAccess(licenseCallback);
+			} else if (licenseCheckStatus == LICENSE_STATE_CHECK_FAILED) {
+		    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
+		    	startActivity(myIntent);
+		    	finish();
+			}
 		}
     }
 

@@ -28,44 +28,44 @@ import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.PayeeManager;
 import com.funkyandroid.banking.android.data.Transaction;
 import com.funkyandroid.banking.android.data.TransactionManager;
-import com.funkyandroid.banking.android.expenses.adfree.R;
+import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
 import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.StringUtils;
 
 public class EditEntryActivity extends Activity {
-	
+
 	/**
 	 * The transaction being edited.
 	 */
-	
+
 	private Transaction transaction;
-	
+
 	/**
 	 * Whether or not the transaction was fetched from the database.
 	 */
-	
+
 	private boolean fetched = false;
 
 	/**
 	 * The Database connection
 	 */
-	
+
 	private SQLiteDatabase db;
 
 	/**
 	 * The category suggestor.
 	 */
-	
-	private CategorySuggestionsAdapter categorySuggester;	
+
+	private CategorySuggestionsAdapter categorySuggester;
 
 	/**
 	 * The category suggestor.
 	 */
-	
-	private PayeeSuggestionsAdapter payeeSuggester;	
-	
+
+	private PayeeSuggestionsAdapter payeeSuggester;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,16 +79,16 @@ public class EditEntryActivity extends Activity {
         				public void onClick(final View view) {
         		        	Calendar cal = Calendar.getInstance();
         		        	cal.setTime(new Date(EditEntryActivity.this.transaction.getTimestamp()));
-        		        	
+
         		            new DatePickerDialog(
-        		            		EditEntryActivity.this, 
-        		            		new DateListener(), 
+        		            		EditEntryActivity.this,
+        		            		new DateListener(),
         		            		cal.get(Calendar.YEAR),
-        		                    cal.get(Calendar.MONTH), 
+        		                    cal.get(Calendar.MONTH),
         		                    cal.get(Calendar.DAY_OF_MONTH)).show();
         				}
         		});
-        
+
 		button = (Button) findViewById(R.id.okButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
@@ -96,15 +96,15 @@ public class EditEntryActivity extends Activity {
         					storeEntryDetails();
         				}
         		});
-        
+
 		button = (Button) findViewById(R.id.cancelButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
         				public void onClick(final View view) {
-        					if( fetched ) {        				    	
+        					if( fetched ) {
         				    	SQLiteDatabase db = (new DBHelper(EditEntryActivity.this)).getWritableDatabase();
-        						try {    	
-       					    		TransactionManager.delete(db, transaction, false);	    		
+        						try {
+       					    		TransactionManager.delete(db, transaction, false);
         						} finally {
         							db.close();
         						}
@@ -112,37 +112,37 @@ public class EditEntryActivity extends Activity {
         					EditEntryActivity.this.finish();
         				}
         		});
-        
+
         EditText editText = (EditText) findViewById(R.id.amountMinor);
-        MinorAmountEventListener minorAmountEventListener = 
+        MinorAmountEventListener minorAmountEventListener =
         	new MinorAmountEventListener(editText.getOnFocusChangeListener());
         editText.addTextChangedListener(minorAmountEventListener);
         editText.setOnFocusChangeListener(minorAmountEventListener);
-        
+
         editText = (EditText) findViewById(R.id.amountMajor);
-        MajorAmountEventListener majorAmountEventListener = 
+        MajorAmountEventListener majorAmountEventListener =
         	new MajorAmountEventListener(editText.getOnFocusChangeListener());
         editText.setOnFocusChangeListener(majorAmountEventListener);
-        
+
     	db = (new DBHelper(this)).getWritableDatabase();
-    	
-    	categorySuggester = 
+
+    	categorySuggester =
     		new CategorySuggestionsAdapter(
-					this, 
-					android.R.layout.simple_dropdown_item_1line, 
-					null, 
-					CategoryManager.NAME_COL, 
+					this,
+					android.R.layout.simple_dropdown_item_1line,
+					null,
+					CategoryManager.NAME_COL,
 					new int[] {android.R.id.text1},
 					db);
     	AutoCompleteTextView categoryEntry = (AutoCompleteTextView) findViewById(R.id.category);
     	categoryEntry.setAdapter(categorySuggester);
-    	
-    	payeeSuggester = 
+
+    	payeeSuggester =
     		new PayeeSuggestionsAdapter(
-					this, 
-					android.R.layout.simple_dropdown_item_1line, 
-					null, 
-					PayeeManager.NAME_COL, 
+					this,
+					android.R.layout.simple_dropdown_item_1line,
+					null,
+					PayeeManager.NAME_COL,
 					new int[] {android.R.id.text1},
 					db );
     	AutoCompleteTextView payeeEntry = (AutoCompleteTextView) findViewById(R.id.payee);
@@ -153,24 +153,25 @@ public class EditEntryActivity extends Activity {
     /**
      * Override onDestroy to close the database.
      */
-    
-    public void onDestroy() {
+
+    @Override
+	public void onDestroy() {
     	super.onDestroy();
     	if( db != null && db.isOpen() ) {
     		db.close();
     	}
     }
-    
+
     /**
-     * Get the account details when started. 
+     * Get the account details when started.
      */
-    
+
     @Override
     public void onStart() {
     	super.onStart();
     	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
-    	Intent startingIntent = getIntent();    	
-    	
+    	Intent startingIntent = getIntent();
+
 
     	String currencySymbol = startingIntent.getStringExtra(
     				"com.funkyandroid.banking.account_currency"
@@ -178,25 +179,25 @@ public class EditEntryActivity extends Activity {
     	TextView cSymb = (TextView) findViewById(R.id.currencySymbol);
     	cSymb.setText(currencySymbol);
     	int transactionId = startingIntent.getIntExtra("com.funkyandroid.banking.transaction_id", -1);
-    	
+
     	if( transactionId == -1 ) {
 	    	int accountId = startingIntent.getIntExtra("com.funkyandroid.banking.account_id", -1);
-	    	if( accountId == -1 ) {		    	
+	    	if( accountId == -1 ) {
 	    		finish();
 	    		return;
 	    	}
-	    	
+
 	    	createNew(accountId);
     	} else {
     		transaction = TransactionManager.getById(db, transactionId);
     		if( transaction == null ) {
     			finish();
-    			return;    		
+    			return;
     		}
-    		
+
     		populateWithTransaction();
     	}
-    	
+
     	updateDate();
     }
 
@@ -205,12 +206,12 @@ public class EditEntryActivity extends Activity {
     {
        super.onStop();
        FlurryAgent.onEndSession(this);
-    }    
+    }
 
     /**
      * Creates a new, empty transaction
      */
-    
+
     private void createNew(final int accountId) {
 		transaction = new Transaction();
 		transaction.setAccountId(accountId);
@@ -219,15 +220,15 @@ public class EditEntryActivity extends Activity {
 		RadioButton button = (RadioButton) findViewById(R.id.debitButton);
 		button.setSelected(true);
 
-		fetched = false;    	
+		fetched = false;
     }
-    
+
     /**
      * Fetches a transaction from the database an populates the screen.
-     * 
+     *
      */
-    
-    private void populateWithTransaction() {		
+
+    private void populateWithTransaction() {
 		switch(transaction.getType()) {
 			case	Transaction.TYPE_CREDIT:
 			{
@@ -242,18 +243,18 @@ public class EditEntryActivity extends Activity {
 				break;
 			}
 		}
-		
+
 		EditText editText = (EditText) findViewById(R.id.payee);
 		editText.setText(transaction.getPayee());
-		
+
 		long amount = transaction.getAmount();
 		if( amount < 0 ) {
 			amount = 0 - amount;
 		}
-		
+
     	editText = (EditText) findViewById(R.id.amountMajor);
     	editText.setText(Long.toString(amount/100));
-    	
+
     	editText = (EditText) findViewById(R.id.amountMinor);
     	long value = amount%100;
     	StringBuffer valueBuffer = new StringBuffer(2);
@@ -262,26 +263,26 @@ public class EditEntryActivity extends Activity {
     	}
     	valueBuffer.append(value);
     	editText.setText(valueBuffer.toString());
-    	
+
     	Button button = (Button) findViewById(R.id.okButton);
     	button.setText(R.string.updateButtonText);
     	button = (Button) findViewById(R.id.cancelButton);
-    	button.setText(R.string.deleteButtonText);	 	    	
+    	button.setText(R.string.deleteButtonText);
 
-    	String category = CategoryManager.getById(db, transaction.getCategoryId()); 
+    	String category = CategoryManager.getById(db, transaction.getCategoryId());
     	if(CategoryManager.UNCAT_CAT.equals(category)) {
     		category = "";
     	}
-    	TextView categoryEntry = (TextView) findViewById(R.id.category);    	
-    	categoryEntry.setText(category);    	
+    	TextView categoryEntry = (TextView) findViewById(R.id.category);
+    	categoryEntry.setText(category);
 
     	fetched = true;
     }
-    
+
     /**
      * Check to see if the . key has been pressed, if so move to the minor currency area
      */
-    
+
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
     	if( event.getKeyCode() == KeyEvent.KEYCODE_PERIOD ) {
@@ -294,22 +295,22 @@ public class EditEntryActivity extends Activity {
     	}
     	return super.onKeyDown(keyCode, event);
     }
-    
+
     /**
      * Set up the menu for the application
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-			     
+
 		MenuUtil.buildMenu(this, menu);
-		
+
 		return true;
 	}
-    
+
 
     /**
-     * Update the date button with the latest value. 
+     * Update the date button with the latest value.
      */
 
     private void updateDate() {
@@ -333,14 +334,14 @@ public class EditEntryActivity extends Activity {
     /**
      * Store the account details into the database.
      */
-    
+
     public void storeEntryDetails() {
     	try {
 	    	EditText editText = (EditText) findViewById(R.id.payee);
 	    	transaction.setPayee(editText.getText().toString());
-	
+
 	    	RadioGroup transactionType = (RadioGroup) findViewById(R.id.type);
-	    	
+
 	    	int type;
 	    	switch (transactionType.getCheckedRadioButtonId()) {
 	    		case R.id.debitButton:
@@ -353,7 +354,7 @@ public class EditEntryActivity extends Activity {
 					throw new RuntimeException("Unknown button ID"+transactionType.getCheckedRadioButtonId());
 	    	}
 	    	transaction.setType(type);
-	
+
 	    	long oldAmount = transaction.getAmount();
 	    	long amount = 0;
 	    	editText = (EditText) findViewById(R.id.amountMajor);
@@ -361,7 +362,7 @@ public class EditEntryActivity extends Activity {
 	    	if(amountString != null && amountString.length() > 0) {
 	    		amount += Long.parseLong(amountString) * 100;
 	    	}
-	    	
+
 	    	editText = (EditText) findViewById(R.id.amountMinor);
 	    	amountString = editText.getText().toString();
 	    	if(amountString != null && amountString.length() > 0) {
@@ -372,21 +373,21 @@ public class EditEntryActivity extends Activity {
 	    		amount = 0 - amount;
 	    	}
 	    	transaction.setAmount(amount);
-	    	
+
 	    	AutoCompleteTextView categoryEntry =
 	    		(AutoCompleteTextView) findViewById(R.id.category);
 	    	String category = categoryEntry.getText().toString();
-	    	
+
 	    	if(StringUtils.isEmpty(category)) {
 	    		category = CategoryManager.UNCAT_CAT;
 	    	}
-			int categoryId = CategoryManager.getByName(db, category);			
+			int categoryId = CategoryManager.getByName(db, category);
 			transaction.setCategoryId(categoryId);
-			
+
 		   	if( fetched ) {
 		   		TransactionManager.update(db, transaction, oldAmount);
 	    	} else {
-	    		TransactionManager.create(db, transaction);	    		
+	    		TransactionManager.create(db, transaction);
 	    	}
 			finish();
     	} catch( NumberFormatException ex ) {

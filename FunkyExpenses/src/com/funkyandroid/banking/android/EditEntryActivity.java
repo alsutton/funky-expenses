@@ -11,7 +11,6 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -29,10 +28,10 @@ import com.funkyandroid.banking.android.data.PayeeManager;
 import com.funkyandroid.banking.android.data.Transaction;
 import com.funkyandroid.banking.android.data.TransactionManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
-import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
-import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
+import com.funkyandroid.banking.android.ui.AmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.StringUtils;
+import com.funkyandroid.banking.android.utils.ValueUtils;
 
 public class EditEntryActivity extends Activity {
 
@@ -113,16 +112,10 @@ public class EditEntryActivity extends Activity {
         				}
         		});
 
-        EditText editText = (EditText) findViewById(R.id.amountMinor);
-        MinorAmountEventListener minorAmountEventListener =
-        	new MinorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.addTextChangedListener(minorAmountEventListener);
-        editText.setOnFocusChangeListener(minorAmountEventListener);
-
-        editText = (EditText) findViewById(R.id.amountMajor);
-        MajorAmountEventListener majorAmountEventListener =
-        	new MajorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.setOnFocusChangeListener(majorAmountEventListener);
+        EditText editText = (EditText) findViewById(R.id.amount);
+        AmountEventListener amountEventListener =
+        	new AmountEventListener(editText.getOnFocusChangeListener());
+        editText.setOnFocusChangeListener(amountEventListener);
 
     	db = (new DBHelper(this)).getWritableDatabase();
 
@@ -252,17 +245,8 @@ public class EditEntryActivity extends Activity {
 			amount = 0 - amount;
 		}
 
-    	editText = (EditText) findViewById(R.id.amountMajor);
-    	editText.setText(Long.toString(amount/100));
-
-    	editText = (EditText) findViewById(R.id.amountMinor);
-    	long value = amount%100;
-    	StringBuffer valueBuffer = new StringBuffer(2);
-    	if( value < 10 ) {
-    		valueBuffer.append('0');
-    	}
-    	valueBuffer.append(value);
-    	editText.setText(valueBuffer.toString());
+    	editText = (EditText) findViewById(R.id.amount);
+    	editText.setText(ValueUtils.toString(amount, false));
 
     	Button button = (Button) findViewById(R.id.okButton);
     	button.setText(R.string.updateButtonText);
@@ -277,23 +261,6 @@ public class EditEntryActivity extends Activity {
     	categoryEntry.setText(category);
 
     	fetched = true;
-    }
-
-    /**
-     * Check to see if the . key has been pressed, if so move to the minor currency area
-     */
-
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-    	if( event.getKeyCode() == KeyEvent.KEYCODE_PERIOD ) {
-    		EditText minor = ((EditText)findViewById(R.id.amountMinor));
-    		if(Integer.parseInt(minor.getText().toString()) == 0) {
-    			minor.setText("");
-    		}
-    		minor.requestFocus();
-    		return true;
-    	}
-    	return super.onKeyDown(keyCode, event);
     }
 
     /**
@@ -356,19 +323,10 @@ public class EditEntryActivity extends Activity {
 	    	transaction.setType(type);
 
 	    	long oldAmount = transaction.getAmount();
-	    	long amount = 0;
-	    	editText = (EditText) findViewById(R.id.amountMajor);
-	    	String amountString = editText.getText().toString();
-	    	if(amountString != null && amountString.length() > 0) {
-	    		amount += Long.parseLong(amountString) * 100;
-	    	}
 
-	    	editText = (EditText) findViewById(R.id.amountMinor);
-	    	amountString = editText.getText().toString();
-	    	if(amountString != null && amountString.length() > 0) {
-	    		amountString = editText.getText().toString();
-	        	amount += Long.parseLong(amountString);
-	    	}
+	    	editText = (EditText) findViewById(R.id.amount);
+	    	final String amountString = editText.getText().toString();
+	    	long amount = ValueUtils.toLong(amountString);
 	    	if( type == Transaction.TYPE_DEBIT ) {
 	    		amount = 0 - amount;
 	    	}

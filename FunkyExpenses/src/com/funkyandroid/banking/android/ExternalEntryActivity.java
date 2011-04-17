@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,10 +36,10 @@ import com.funkyandroid.banking.android.data.PayeeManager;
 import com.funkyandroid.banking.android.data.Transaction;
 import com.funkyandroid.banking.android.data.TransactionManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
-import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
-import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
+import com.funkyandroid.banking.android.ui.AmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.StringUtils;
+import com.funkyandroid.banking.android.utils.ValueUtils;
 
 public class ExternalEntryActivity extends Activity {
 
@@ -55,6 +54,12 @@ public class ExternalEntryActivity extends Activity {
 	 */
 
 	private Transaction transaction;
+
+	/**
+	 * The account the transaction is related to
+	 */
+
+	private Account account;
 
 	/**
 	 * The Database connection
@@ -120,16 +125,10 @@ public class ExternalEntryActivity extends Activity {
         				}
         		});
 
-        EditText editText = (EditText) findViewById(R.id.amountMinor);
-        MinorAmountEventListener minorAmountEventListener =
-        	new MinorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.addTextChangedListener(minorAmountEventListener);
-        editText.setOnFocusChangeListener(minorAmountEventListener);
-
-        editText = (EditText) findViewById(R.id.amountMajor);
-        MajorAmountEventListener majorAmountEventListener =
-        	new MajorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.setOnFocusChangeListener(majorAmountEventListener);
+        EditText editText = (EditText) findViewById(R.id.amount);
+        AmountEventListener amountEventListener =
+        	new AmountEventListener(editText.getOnFocusChangeListener());
+        editText.setOnFocusChangeListener(amountEventListener);
 
     	db = (new DBHelper(this)).getWritableDatabase();
 
@@ -207,19 +206,12 @@ public class ExternalEntryActivity extends Activity {
 
 		}
 
-		((TextView)findViewById(R.id.amountMajor)).setText("0");
-		((TextView)findViewById(R.id.amountMinor)).setText("00");
 		String amount = startingIntent.getStringExtra("com.funkyandroid.AMOUNT");
+		TextView amountField = (TextView)findViewById(R.id.amount);
 		if( amount != null && amount.length() > 0 ) {
-			int sepIdx = amount.indexOf('.');
-			if(sepIdx == -1) {
-				((TextView)findViewById(R.id.amountMajor)).setText(amount);
-			} else {
-				((TextView)findViewById(R.id.amountMajor)).setText(amount.substring(0, sepIdx));
-				if(sepIdx < amount.length()) {
-					((TextView)findViewById(R.id.amountMinor)).setText(amount.substring(sepIdx+1));
-				}
-			}
+			amountField.setText(amount);
+		} else {
+			amountField.setText(ValueUtils.getZeroValueString());
 		}
 
 		RadioButton button = (RadioButton) findViewById(R.id.debitButton);
@@ -240,10 +232,10 @@ public class ExternalEntryActivity extends Activity {
 			public void onItemSelected(final AdapterView<?> adapterView, final View view,
 					final int position, final long id) {
 				int realId = (int)(id & 0xffffffff);
-				Account theAccount = AccountManager.getById(db, realId);
-				if( theAccount != null ) {
+				account = AccountManager.getById(db, realId);
+				if( account != null ) {
 					ExternalEntryActivity.this.transaction.setAccountId(realId);
-					String currencySymbol = CurrencyManager.getSymbol(db, theAccount.currency);
+					String currencySymbol = CurrencyManager.getSymbol(db, account.currency);
 			    	((TextView) findViewById(R.id.currencySymbol)).setText(currencySymbol);
 				}
 			}
@@ -262,23 +254,6 @@ public class ExternalEntryActivity extends Activity {
     {
        super.onStop();
        FlurryAgent.onEndSession(this);
-    }
-
-    /**
-     * Check to see if the . key has been pressed, if so move to the minor currency area
-     */
-
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-    	if( event.getKeyCode() == KeyEvent.KEYCODE_PERIOD ) {
-    		EditText minor = ((EditText)findViewById(R.id.amountMinor));
-    		if(Integer.parseInt(minor.getText().toString()) == 0) {
-    			minor.setText("");
-    		}
-    		minor.requestFocus();
-    		return true;
-    	}
-    	return super.onKeyDown(keyCode, event);
     }
 
     /**
@@ -340,18 +315,9 @@ public class ExternalEntryActivity extends Activity {
     	}
     	transaction.setType(type);
 
-    	long amount = 0;
-    	editText = (EditText) findViewById(R.id.amountMajor);
-    	String amountString = editText.getText().toString();
-    	if(amountString != null && amountString.length() > 0) {
-    		amount += Long.parseLong(amountString) * 100;
-    	}
-
-    	editText = (EditText) findViewById(R.id.amountMinor);
-    	if(amountString != null && amountString.length() > 0) {
-    		amountString = editText.getText().toString();
-        	amount += Long.parseLong(amountString);
-    	}
+    	editText = (EditText) findViewById(R.id.amount);
+    	final String amountString = editText.getText().toString();
+    	long amount = ValueUtils.toLong(amountString);
     	if( type == Transaction.TYPE_DEBIT ) {
     		amount = 0 - amount;
     	}

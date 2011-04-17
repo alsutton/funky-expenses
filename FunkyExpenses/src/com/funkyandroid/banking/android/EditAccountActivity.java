@@ -11,7 +11,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +24,9 @@ import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
-import com.funkyandroid.banking.android.ui.MajorAmountEventListener;
-import com.funkyandroid.banking.android.ui.MinorAmountEventListener;
+import com.funkyandroid.banking.android.ui.AmountEventListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
+import com.funkyandroid.banking.android.utils.ValueUtils;
 
 public class EditAccountActivity extends Activity {
 
@@ -87,16 +86,10 @@ public class EditAccountActivity extends Activity {
         				}
         		});
 
-        EditText editText = (EditText) findViewById(R.id.amountMinor);
-        MinorAmountEventListener minorAmountEventListener =
-        	new MinorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.addTextChangedListener(minorAmountEventListener);
-        editText.setOnFocusChangeListener(minorAmountEventListener);
-
-        editText = (EditText) findViewById(R.id.amountMajor);
-        MajorAmountEventListener majorAmountEventListener =
-        	new MajorAmountEventListener(editText.getOnFocusChangeListener());
-        editText.setOnFocusChangeListener(majorAmountEventListener);
+        EditText editText = (EditText) findViewById(R.id.amount);
+        AmountEventListener amountEventListener =
+        	new AmountEventListener(editText.getOnFocusChangeListener());
+        editText.setOnFocusChangeListener(amountEventListener);
     }
 
     /**
@@ -132,25 +125,15 @@ public class EditAccountActivity extends Activity {
 
     	if( account == null ) {
     		createEmptyAccount();
-    		EditText editText = (EditText) findViewById(R.id.amountMajor);
-	    	editText.setText("0");
-	    	editText = (EditText) findViewById(R.id.amountMinor);
-	    	editText.setText("00");
+    		EditText editText = (EditText) findViewById(R.id.amount);
+    		editText.setText(ValueUtils.getZeroValueString());
     		return;
     	} else {
 	    	fetched = true;
 	    	EditText editText = (EditText) findViewById(R.id.accountName);
 	    	editText.setText(account.name);
-	    	editText = (EditText) findViewById(R.id.amountMajor);
-	    	editText.setText(Long.toString(account.openingBalance/100));
-	    	editText = (EditText) findViewById(R.id.amountMinor);
-	    	StringBuilder value = new StringBuilder(2);
-	    	long amountMinor = account.openingBalance%100;
-	    	if(amountMinor < 10) {
-	    		value.append('0');
-	    	}
-	    	value.append(amountMinor);
-	    	editText.setText(value.toString());
+	    	editText = (EditText) findViewById(R.id.amount);
+	    	editText.setText(ValueUtils.toString(account.openingBalance, false));
 
 	    	Button button = (Button) findViewById(R.id.okButton);
  	    	button.setText(R.string.updateButtonText);
@@ -185,28 +168,6 @@ public class EditAccountActivity extends Activity {
     }
 
     /**
-     * Store the account details.
-     */
-
-
-    /**
-     * Check to see if the . key has been pressed, if so move to the minor currency area
-     */
-
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-    	if( event.getKeyCode() == KeyEvent.KEYCODE_PERIOD ) {
-    		EditText minor = ((EditText)findViewById(R.id.amountMinor));
-    		if(Integer.parseInt(minor.getText().toString()) == 0) {
-    			minor.setText("");
-    		}
-    		minor.requestFocus();
-    		return true;
-    	}
-    	return super.onKeyDown(keyCode, event);
-    }
-
-    /**
      * Set up the menu for the application
      */
     @Override
@@ -228,19 +189,8 @@ public class EditAccountActivity extends Activity {
 
     	long oldOpeningBalance = account.openingBalance;
 
-    	long openingBalance = 0;
-    	editText = (EditText) findViewById(R.id.amountMajor);
-    	String major = editText.getText().toString();
-    	if( major != null && major.length() > 0 ) {
-    		openingBalance += Long.parseLong(major) * 100;
-    	}
-
-    	editText = (EditText) findViewById(R.id.amountMinor);
-    	String minor = editText.getText().toString();
-    	if( minor != null && minor.length() > 0 ) {
-        	openingBalance += Long.parseLong(minor);
-    	}
-
+    	editText = (EditText) findViewById(R.id.amount);
+    	final long openingBalance = ValueUtils.toLong(editText.getText().toString());
     	account.openingBalance = openingBalance;
 
     	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();

@@ -128,7 +128,7 @@
 		        android:autoText="false"
 		        android:completionThreshold="2"
 		        android:gravity="fill_horizontal"
-				android:nextFocusDown="@+id/amountMajor"/>
+				android:nextFocusDown="@+id/amount"/>
 		        
 		    <TextView 
 		        android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
 			        android:textColor="#000"
 			        />
 			    <EditText
-			        android:id="@+id/amountMajor"
+			        android:id="@id/amount"
 			        android:layout_height="wrap_content"
 			        android:layout_width="wrap_content"
 					android:singleLine="true"
@@ -170,30 +170,7 @@
 			        android:maxLength="10" 
 			        android:width="150sp"
 			        android:text="0"
-			        android:nextFocusDown="@+id/amountMinor"/>
-			        
-			    <TextView 
-			        android:layout_height="wrap_content"
-			        android:layout_width="wrap_content"
-			        android:text="."
-			        android:textSize="18sp"
-					android:textStyle="bold"
-			        android:gravity="center" 
-			        android:textColor="#000"
-			        />
-			    <EditText
-			        android:id="@+id/amountMinor"
-			        android:layout_height="wrap_content"
-			        android:layout_width="wrap_content"
-					android:singleLine="true"
-			        android:scrollHorizontally="true"
-			        android:autoText="false"
-			        android:gravity="right" 
-			        android:numeric="integer" 
-			        android:maxLength="3"
-			        android:text="00"
-			        android:minWidth="50sp"
-					android:nextFocusDown="@+id/okButton"/>
+			        android:nextFocusDown="@+id/okButton"/>
 			</LinearLayout>		
 		</LinearLayout>
 	</ScrollView>

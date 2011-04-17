@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.admob.android.ads.AdManager;
 import com.funkyandroid.banking.android.AccountsActivity;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
@@ -37,7 +36,6 @@ public class Launcher extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-    	AdManager.setTestDevices( new String[] { AdManager.TEST_EMULATOR } );
     	try {
 	    	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
 	    	try {

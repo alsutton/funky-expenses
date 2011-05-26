@@ -27,11 +27,11 @@ public class AmountEventListener implements OnFocusChangeListener {
 		EditText thisView = (EditText)v;
 		String text = thisView.getText().toString();
 		if( hasFocus ) {
-			if( text != null && text.length() > 0 && Integer.parseInt(text) == 0) {
+			if( text != null && text.length() > 0 && Double.parseDouble(text) == 0) {
 				thisView.setText("");
 			}
 		} else {
-			if( text == null || text.length() == 0) {
+			if( text == null || text.length() == 0 || Double.parseDouble(text) == 0) {
 				final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.getDefault());
 				thisView.setText("0"+dfs.getDecimalSeparator()+"00");
 			}

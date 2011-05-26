@@ -37,6 +37,7 @@ import com.funkyandroid.banking.android.data.Transaction;
 import com.funkyandroid.banking.android.data.TransactionManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.AmountEventListener;
+import com.funkyandroid.banking.android.utils.CurrencyTextKeyListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.StringUtils;
 import com.funkyandroid.banking.android.utils.ValueUtils;
@@ -126,6 +127,7 @@ public class ExternalEntryActivity extends Activity {
         		});
 
         EditText editText = (EditText) findViewById(R.id.amount);
+        editText.setKeyListener(new CurrencyTextKeyListener());
         AmountEventListener amountEventListener =
         	new AmountEventListener(editText.getOnFocusChangeListener());
         editText.setOnFocusChangeListener(amountEventListener);

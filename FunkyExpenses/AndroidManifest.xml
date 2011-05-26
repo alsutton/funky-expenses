@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest	xmlns:android="http://schemas.android.com/apk/res/android"
-      		android:versionName="1.3.6" 
-      		android:versionCode="1306" 
-      		package="com.funkyandroid.banking.android.expenses.demo">
+      		android:versionName="1.3.8" 
+      		android:versionCode="1308" 
+      		package="com.funkyandroid.banking.android.expenses.adfree">
       
 	<uses-sdk 			android:minSdkVersion="4"
 						android:targetSdkVersion="11" />
@@ -35,17 +35,11 @@
             </intent-filter>
         </activity>
         <activity android:name="com.funkyandroid.banking.android.RestoreActivity"/>
-        
-        <activity android:name="com.admob.android.ads.AdMobActivity" 
-              android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-              android:configChanges="orientation|keyboard|keyboardHidden"
-              />
-
-        <meta-data	android:value="a14a223253a67f4" android:name="ADMOB_PUBLISHER_ID" /> 
-        <meta-data	android:value="false" android:name="ADMOB_ALLOW_LOCATION_FOR_ADS" />       
     </application>
 
 	<uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
+    
+    <uses-feature android:name="android.hardware.touchscreen" required="false"/>
 </manifest> 

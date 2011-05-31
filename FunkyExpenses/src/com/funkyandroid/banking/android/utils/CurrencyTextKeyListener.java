@@ -1,8 +1,9 @@
 package com.funkyandroid.banking.android.utils;
 
+import java.text.DecimalFormatSymbols;
+
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.method.DigitsKeyListener;
 
 /**
  * EditText KeyListener which ensures the data is formatted as expected for a
@@ -24,6 +25,7 @@ public class CurrencyTextKeyListener extends DigitsKeyListener {
 	@Override
 	public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
 		CharSequence out = super.filter(source, start, end, dest, dstart, dend);
+		final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
 
 		// if changed, replace the source
 		if (out != null) {
@@ -44,7 +46,7 @@ public class CurrencyTextKeyListener extends DigitsKeyListener {
 
 		// Find the position of the decimal .
 		for (int i = 0; i < dstart; i++) {
-			if (dest.charAt(i) == '.') {
+			if (dest.charAt(i) == dfs.getDecimalSeparator()) {
 				// being here means, that a number has
 				// been inserted after the dot
 				// check if the amount of digits is right
@@ -54,7 +56,7 @@ public class CurrencyTextKeyListener extends DigitsKeyListener {
 		}
 
 		for (int i = start; i < end; ++i) {
-			if (source.charAt(i) == '.') {
+			if (source.charAt(i) == dfs.getDecimalSeparator()) {
 				// being here means, dot has been inserted
 				// check if the amount of digits is right
 				if ((dlen - dend) + (end - (i + 1)) > digits)

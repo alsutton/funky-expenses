@@ -211,6 +211,7 @@
 			        android:scrollHorizontally="false"
 			        android:autoText="false"
 			        android:gravity="right" 
+			        android:inputType="numberDecimal"
 			        android:numeric="decimal" 
 			        android:maxLength="15" 
 			        android:width="150sp"

@@ -1,17 +1,19 @@
 package com.funkyandroid.banking.android.utils;
 
+import java.text.DecimalFormatSymbols;
+
 public class BalanceFormatter {
-	
+
 	/**
 	 * The currency symbol when none is available.
 	 */
-	
+
 	public static final String UNKNOWN_CURRENCY_SYMBOL = "";
 
 	public static String format(long balance) {
 		return BalanceFormatter.format(balance, null);
 	}
-	
+
 	public static String format(long balance, final String currencySymbol) {
 		final StringBuilder builder = new StringBuilder(8);
 		format(builder, balance, currencySymbol);
@@ -23,14 +25,14 @@ public class BalanceFormatter {
 			builder.append('-');
 			balance = 0-balance;
 		}
-		
+
 		if(currencySymbol != null) {
 			builder.append(currencySymbol);
 			builder.append(' ');
 		}
-		
+
 		builder.append(balance/100);
-		builder.append('.');
+		builder.append(new DecimalFormatSymbols().getDecimalSeparator());
 		long minorCurrency = balance%100;
 		if( minorCurrency < 0 ) {
 			minorCurrency = 0 - minorCurrency;

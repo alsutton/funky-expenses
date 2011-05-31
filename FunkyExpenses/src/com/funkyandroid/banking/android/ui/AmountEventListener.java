@@ -23,15 +23,16 @@ public class AmountEventListener implements OnFocusChangeListener {
 		this.oldListener = oldListener;
 	}
 
+	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		EditText thisView = (EditText)v;
 		String text = thisView.getText().toString();
 		if( hasFocus ) {
-			if( text != null && text.length() > 0 && Double.parseDouble(text) == 0) {
+			if( text != null && text.length() > 0 && onlyContainsZeros(text)) {
 				thisView.setText("");
 			}
 		} else {
-			if( text == null || text.length() == 0 || Double.parseDouble(text) == 0) {
+			if( text == null || text.length() == 0 || onlyContainsZeros(text)) {
 				final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.getDefault());
 				thisView.setText("0"+dfs.getDecimalSeparator()+"00");
 			}
@@ -40,5 +41,19 @@ public class AmountEventListener implements OnFocusChangeListener {
 		if(oldListener != null) {
 			oldListener.onFocusChange(v, hasFocus);
 		}
+	}
+
+	/**
+	 * Method to see if a string only contains zeros
+	 */
+
+	private boolean onlyContainsZeros(final String string) {
+		for(char c : string.toCharArray()) {
+			if(Character.isDigit(c) && c != '0') {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

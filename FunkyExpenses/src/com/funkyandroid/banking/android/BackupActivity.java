@@ -36,7 +36,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BackupUtils;
@@ -92,6 +91,7 @@ public class BackupActivity extends Activity {
         setContentView(R.layout.backup);
 
         ((Button) findViewById(R.id.cancelButton)).setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(final View view) {
 				BackupActivity.this.finish();
 			}
@@ -105,6 +105,7 @@ public class BackupActivity extends Activity {
             		.setMessage("A memory card is required to perform a backup")
             		.setIcon(android.R.drawable.ic_dialog_alert)
             		.setPositiveButton("OK", new OnClickListener() {
+						@Override
 						public void onClick(final DialogInterface dialog, final int which) {
 							BackupActivity.this.finish();
 						}
@@ -116,6 +117,7 @@ public class BackupActivity extends Activity {
         }
 
         okButton.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(final View view) {
 				startBackup();
 			}
@@ -135,19 +137,6 @@ public class BackupActivity extends Activity {
     	}
     }
 
-    @Override
-    public void onStart() {
-    	super.onStart();
-    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
-    }
-
-    @Override
-    public void onStop()
-    {
-       super.onStop();
-       FlurryAgent.onEndSession(this);
-    }
-
     /**
      * Set up the menu for the application
      */
@@ -159,6 +148,7 @@ public class BackupActivity extends Activity {
 		.setIcon(android.R.drawable.ic_menu_revert)
 		.setOnMenuItemClickListener(
 			new OnMenuItemClickListener() {
+				@Override
 				public boolean onMenuItemClick(final MenuItem item) {
 					Intent intent = new Intent(BackupActivity.this, AccountsActivity.class);
 					BackupActivity.this.startActivity(intent);
@@ -213,6 +203,7 @@ public class BackupActivity extends Activity {
 	    		.setMessage("The backup can't be started : "+ex.getMessage())
 	    		.setIcon(android.R.drawable.ic_dialog_alert)
 	    		.setPositiveButton("OK", new OnClickListener() {
+					@Override
 					public void onClick(final DialogInterface dialog, final int which) {
 						BackupActivity.this.finish();
 					}
@@ -250,6 +241,7 @@ public class BackupActivity extends Activity {
 		.setMessage("A backup with that name already exists. Do you want to overwrite it?")
 		.setIcon(android.R.drawable.ic_dialog_alert)
 		.setPositiveButton("Yes", new OnClickListener() {
+			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
 		    	startBackupThread();
 			}
@@ -272,6 +264,7 @@ public class BackupActivity extends Activity {
 	    		.setMessage("The backup can't be started : "+ex.getMessage())
 	    		.setIcon(android.R.drawable.ic_dialog_alert)
 	    		.setPositiveButton("OK", new OnClickListener() {
+					@Override
 					public void onClick(final DialogInterface dialog, final int which) {
 						BackupActivity.this.finish();
 					}
@@ -290,6 +283,7 @@ public class BackupActivity extends Activity {
 		.setMessage("The backup could not be created. Please check your memory card for problems.")
 		.setIcon(android.R.drawable.ic_dialog_alert)
 		.setPositiveButton("OK", new OnClickListener() {
+			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
 				BackupActivity.this.finish();
 			}
@@ -335,7 +329,8 @@ public class BackupActivity extends Activity {
     	 * Perform the backup.
     	 */
 
-    	public void run() {
+    	@Override
+		public void run() {
     		updateStatus("Backup Started");
     		try {
     			final File file = new File(path);
@@ -616,7 +611,8 @@ public class BackupActivity extends Activity {
     		this.statusUpdate = statusUpdate;
     	}
 
-    	public void run() {
+    	@Override
+		public void run() {
     		status.setText(statusUpdate);
     	}
     }

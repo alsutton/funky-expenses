@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
@@ -59,7 +58,8 @@ public class EditAccountActivity extends Activity {
 		Button button = (Button) findViewById(R.id.cancelButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         					if( fetched ) {
         				    	SQLiteDatabase db = (new DBHelper(EditAccountActivity.this)).getWritableDatabase();
         						try {
@@ -74,7 +74,8 @@ public class EditAccountActivity extends Activity {
 		button = (Button) findViewById(R.id.okButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         					storeAccountDetails();
         					EditAccountActivity.this.finish();
         				}
@@ -82,7 +83,8 @@ public class EditAccountActivity extends Activity {
 		button = (Button) findViewById(R.id.currency);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         					editCurrency();
         				}
         		});
@@ -100,7 +102,6 @@ public class EditAccountActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
-    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
 
     	fetched = false;
 
@@ -143,13 +144,6 @@ public class EditAccountActivity extends Activity {
     	}
 
     	setCurrency(account.currency);
-    }
-
-    @Override
-    public void onStop()
-    {
-       super.onStop();
-       FlurryAgent.onEndSession(this);
     }
 
     /**
@@ -215,7 +209,8 @@ public class EditAccountActivity extends Activity {
         new AlertDialog.Builder(this)
 			.setTitle("Choose a Currency")
 			.setItems(currencies, new DialogInterface.OnClickListener() {
-	            public void onClick(DialogInterface dialog, int which) {
+	            @Override
+				public void onClick(DialogInterface dialog, int which) {
 	            	if( which == 0 ) {
 	            		addNewCurrency();
 	            	} else {
@@ -241,6 +236,7 @@ public class EditAccountActivity extends Activity {
         new AlertDialog.Builder(this)
 			.setView(entryView)
 	        .setPositiveButton("OK", new OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					EditText codeView = (EditText) entryView.findViewById(R.id.code);
 					String code = codeView.getText().toString();

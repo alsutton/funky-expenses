@@ -21,7 +21,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.CategoryManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.PayeeManager;
@@ -76,7 +75,8 @@ public class EditEntryActivity extends Activity {
 		Button button = (Button) findViewById(R.id.newEntryDateButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         		        	Calendar cal = Calendar.getInstance();
         		        	cal.setTime(new Date(EditEntryActivity.this.transaction.getTimestamp()));
 
@@ -92,7 +92,8 @@ public class EditEntryActivity extends Activity {
 		button = (Button) findViewById(R.id.okButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         					storeEntryDetails();
         				}
         		});
@@ -100,7 +101,8 @@ public class EditEntryActivity extends Activity {
 		button = (Button) findViewById(R.id.cancelButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         					if( fetched ) {
         				    	SQLiteDatabase db = (new DBHelper(EditEntryActivity.this)).getWritableDatabase();
         						try {
@@ -164,7 +166,6 @@ public class EditEntryActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
-    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     	Intent startingIntent = getIntent();
 
 
@@ -194,13 +195,6 @@ public class EditEntryActivity extends Activity {
     	}
 
     	updateDate();
-    }
-
-    @Override
-    public void onStop()
-    {
-       super.onStop();
-       FlurryAgent.onEndSession(this);
     }
 
     /**
@@ -292,7 +286,8 @@ public class EditEntryActivity extends Activity {
      * Listener for when the user finishes setting the date.
      */
     private class DateListener implements OnDateSetListener {
-        public void onDateSet(DatePicker view, int year, int month, int day) {
+        @Override
+		public void onDateSet(DatePicker view, int year, int month, int day) {
         	Calendar cal = Calendar.getInstance();
         	cal.set(year, month, day);
         	EditEntryActivity.this.transaction.setTimestamp(cal.getTime().getTime());
@@ -311,16 +306,14 @@ public class EditEntryActivity extends Activity {
 
 	    	RadioGroup transactionType = (RadioGroup) findViewById(R.id.type);
 
+	    	int selected = transactionType.getCheckedRadioButtonId();
 	    	int type;
-	    	switch (transactionType.getCheckedRadioButtonId()) {
-	    		case R.id.debitButton:
-	    			type = Transaction.TYPE_DEBIT;
-	    			break;
-	    		case R.id.creditButton:
-					type = Transaction.TYPE_CREDIT;
-					break;
-				default:
-					throw new RuntimeException("Unknown button ID"+transactionType.getCheckedRadioButtonId());
+	    	if( selected == R.id.debitButton) {
+	    		type = Transaction.TYPE_DEBIT;
+	    	} else if ( selected == R.id.creditButton) {
+				type = Transaction.TYPE_CREDIT;
+	    	} else {
+				throw new RuntimeException("Unknown button ID"+transactionType.getCheckedRadioButtonId());
 	    	}
 	    	transaction.setType(type);
 

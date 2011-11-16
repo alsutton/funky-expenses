@@ -26,7 +26,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CategoryManager;
@@ -96,7 +95,8 @@ public class ExternalEntryActivity extends Activity {
 		Button button = (Button) findViewById(R.id.newEntryDateButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         		        	Calendar cal = Calendar.getInstance();
         		        	cal.setTime(new Date(ExternalEntryActivity.this.transaction.getTimestamp()));
 
@@ -112,7 +112,8 @@ public class ExternalEntryActivity extends Activity {
 		button = (Button) findViewById(R.id.okButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         					storeEntryDetails();
         					ExternalEntryActivity.this.finish();
         				}
@@ -121,7 +122,8 @@ public class ExternalEntryActivity extends Activity {
 		button = (Button) findViewById(R.id.cancelButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         					ExternalEntryActivity.this.finish();
         				}
         		});
@@ -177,7 +179,6 @@ public class ExternalEntryActivity extends Activity {
     @Override
     public void onStart() {
     	super.onStart();
-    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     	Intent startingIntent = getIntent();
 
     	((TextView) findViewById(R.id.currencySymbol)).setText("");
@@ -231,6 +232,7 @@ public class ExternalEntryActivity extends Activity {
     	accountsSpinner = (Spinner)findViewById(R.id.accountSpinner);
     	accountsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
+			@Override
 			public void onItemSelected(final AdapterView<?> adapterView, final View view,
 					final int position, final long id) {
 				int realId = (int)(id & 0xffffffff);
@@ -242,6 +244,7 @@ public class ExternalEntryActivity extends Activity {
 				}
 			}
 
+			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
 				// TODO Auto-generated method stub
 
@@ -249,13 +252,6 @@ public class ExternalEntryActivity extends Activity {
 
     	});
     	accountsSpinner.setAdapter(adapter);
-    }
-
-    @Override
-    public void onStop()
-    {
-       super.onStop();
-       FlurryAgent.onEndSession(this);
     }
 
     /**
@@ -286,7 +282,8 @@ public class ExternalEntryActivity extends Activity {
      * Listener for when the user finishes setting the date.
      */
     private class DateListener implements OnDateSetListener {
-        public void onDateSet(DatePicker view, int year, int month, int day) {
+        @Override
+		public void onDateSet(DatePicker view, int year, int month, int day) {
         	Calendar cal = Calendar.getInstance();
         	cal.set(year, month, day);
         	ExternalEntryActivity.this.transaction.setTimestamp(cal.getTime().getTime());
@@ -305,15 +302,13 @@ public class ExternalEntryActivity extends Activity {
     	RadioGroup transactionType = (RadioGroup) findViewById(R.id.type);
 
     	int type;
-    	switch (transactionType.getCheckedRadioButtonId()) {
-    		case R.id.debitButton:
-    			type = Transaction.TYPE_DEBIT;
-    			break;
-    		case R.id.creditButton:
-				type = Transaction.TYPE_CREDIT;
-				break;
-			default:
-				throw new RuntimeException("Unknown button ID"+transactionType.getCheckedRadioButtonId());
+    	int selected = transactionType.getCheckedRadioButtonId();
+    	if			( selected == R.id.debitButton ) {
+    		type = Transaction.TYPE_DEBIT;
+    	} else if	( selected ==  R.id.creditButton ) {
+			type = Transaction.TYPE_CREDIT;
+    	} else {
+			throw new RuntimeException("Unknown button ID"+transactionType.getCheckedRadioButtonId());
     	}
     	transaction.setType(type);
 

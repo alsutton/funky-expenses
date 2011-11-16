@@ -21,7 +21,6 @@ import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
-import com.flurry.android.FlurryAgent;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
@@ -98,7 +97,8 @@ public class CategoryReportActivity extends ListActivity {
 		Button button = (Button) findViewById(R.id.entries_button);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         					startEntries();
         				}
         		});
@@ -111,16 +111,8 @@ public class CategoryReportActivity extends ListActivity {
     @Override
     public void onStart() {
     	super.onStart();
-    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
     	updateBalance(AccountManager.getBalanceById(database, accountId));
 		((ResourceCursorAdapter)getListAdapter()).notifyDataSetChanged();
-    }
-
-    @Override
-    public void onStop()
-    {
-       super.onStop();
-       FlurryAgent.onEndSession(this);
     }
 
     /**
@@ -146,6 +138,7 @@ public class CategoryReportActivity extends ListActivity {
 			.setIcon(android.R.drawable.ic_menu_revert)
 			.setOnMenuItemClickListener(
 				new OnMenuItemClickListener() {
+					@Override
 					public boolean onMenuItemClick(final MenuItem item) {
 						startEntries();
 			            return true;

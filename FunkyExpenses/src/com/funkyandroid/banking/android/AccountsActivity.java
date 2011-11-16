@@ -1,47 +1,26 @@
 package com.funkyandroid.banking.android;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings.Secure;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
-import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.ResourceCursorAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
+import android.view.MenuInflater;
 
-import com.android.vending.licensing.AESObfuscator;
-import com.android.vending.licensing.LicenseChecker;
-import com.android.vending.licensing.LicenseCheckerCallback;
-import com.android.vending.licensing.ServerManagedPolicy;
-import com.flurry.android.FlurryAgent;
-import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
-import com.funkyandroid.banking.android.utils.BalanceFormatter;
 import com.funkyandroid.banking.android.utils.Crypto;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
-public class AccountsActivity extends ListActivity
-	implements KeypadHandler.OnOKListener, OnItemLongClickListener {
-
+public class AccountsActivity extends FragmentActivity
+	implements KeypadHandler.OnOKListener, DatabaseReadingActivity {
+/* TODO
 	private static final String BPK =
 		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlzlqwamobzt8MKV8R2GnKuK+"+
 		"9Cj7tNXRlbCZmy4I1GBh3ig6HOT6lGHpfFtx72L1pfm2DP+Pn2PGwBIUHYmBnsidvYkbBR+"+
@@ -53,15 +32,22 @@ public class AccountsActivity extends ListActivity
     private static final byte[] BS = new byte[] {
         -42, 35, 31, -28, -13, -54, 74, -62, 50, 88, -105, -45, 27, -17, -36, -13, -111, 32, -64, 9
     };
-
+*/
     /**
 	 * The license checking states
 	 */
-
+/* TODO
 	private static final int LICENSE_STATE_CHECK_FAILED = -2,
 							 LICENSE_STATE_CHECKING = -1,
 	 						 LICENSE_STATE_UNCHECKED = 0,
 							 LICENSE_STATE_CHECKED = 1;
+*/
+
+	/**
+	 * The database connection
+	 */
+
+	private SQLiteDatabase db;
 
 	/**
 	 * The handler for showing keypads.
@@ -79,60 +65,37 @@ public class AccountsActivity extends ListActivity
 	 * Whether or not the license has been checked
 	 */
 
-	private int licenseCheckStatus = LICENSE_STATE_UNCHECKED;
-
-	/**
-	 * The database connection
-	 */
-
-	private SQLiteDatabase db;
+// TODO	private final int licenseCheckStatus = LICENSE_STATE_UNCHECKED;
 
 	/**
 	 * The license checker
 	 */
-    private LicenseChecker licenseChecker;
+// TODO    private LicenseChecker licenseChecker;
 
     /**
      * License checker callback.
      */
-    private MyLicenseCheckerCallback licenseCallback;
+// TODO    private MyLicenseCheckerCallback licenseCallback;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.accounts);
+        super.setContentView(R.layout.fragment_layout);
 
-        db = (new DBHelper(this)).getWritableDatabase();
-        final Cursor accounts = AccountManager.getAll(db);
-        startManagingCursor(accounts);
-        final MyListAdapter adapter = new MyListAdapter(accounts);
+        db = (new DBHelper(this)).getReadableDatabase();
 
-		setListAdapter(adapter);
-		final ListView list = getListView();
-        list.setOnItemLongClickListener(this);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_holder, new AccountsFragment())
+                .commit();
 
-        Button button = (Button) findViewById(R.id.add);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				public void onClick(final View view) {
-        					Intent viewIntent = new Intent(AccountsActivity.this, EditAccountActivity.class);
-        					AccountsActivity.this.startActivity(viewIntent);
-        				}
-        		});
-
-        if( adapter.isEmpty() ) {
-        	Toast.makeText(AccountsActivity.this, "Press the + to add an account", Toast.LENGTH_LONG).show();
-        } else {
-        	Toast.makeText(AccountsActivity.this, "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
-        }
-
+/* TODO : Re-enable
 		if(!"com.funkyandroid.banking.android.expenses.demo".equals(super.getApplicationContext().getPackageName())) {
 	        String deviceId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
 	        licenseChecker = new LicenseChecker(this, new ServerManagedPolicy(this,new AESObfuscator(BS, getPackageName(), deviceId)),BPK);
 			licenseCallback = new MyLicenseCheckerCallback();
 		}
+*/
     }
 
     /**
@@ -145,12 +108,12 @@ public class AccountsActivity extends ListActivity
     	db.close();
     }
 
+    /**
+     * Do a debug check when starting.
+     */
     @Override
     public void onStart() {
     	super.onStart();
-    	FlurryAgent.onStartSession(this, "8SVYESRG63PTLMNLZPPU");
-		((MyListAdapter)getListAdapter()).notifyDataSetChanged();
-
 		if(0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE )) {
 	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
 	    	startActivity(myIntent);
@@ -158,75 +121,14 @@ public class AccountsActivity extends ListActivity
 		}
     }
 
-    @Override
-    public void onStop()
-    {
-       super.onStop();
-       FlurryAgent.onEndSession(this);
-    }
-
     /**
-     * Set up the menu for the application
+     * Do a license check on each resume.
      */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-
-		menu.add(R.string.newAccount)
-			.setIcon(android.R.drawable.ic_menu_add)
-			.setOnMenuItemClickListener(
-				new OnMenuItemClickListener() {
-					public boolean onMenuItemClick(final MenuItem item) {
-    					Intent viewIntent = new Intent(AccountsActivity.this, EditAccountActivity.class);
-    					AccountsActivity.this.startActivity(viewIntent);
-			            return true;
-					}
-				}
-			);
-
-		menu.add(R.string.menuChangePassword)
-			.setIcon(android.R.drawable.ic_menu_view)
-			.setOnMenuItemClickListener(
-				new OnMenuItemClickListener() {
-					public boolean onMenuItemClick(final MenuItem item) {
-						showSetPassword();
-			            return true;
-					}
-				}
-			);
-
-		menu.add(R.string.menuExport)
-		.setIcon(android.R.drawable.ic_menu_save)
-		.setOnMenuItemClickListener(
-			new OnMenuItemClickListener() {
-				public boolean onMenuItemClick(final MenuItem item) {
-					Intent viewIntent = new Intent(AccountsActivity.this, BackupActivity.class);
-					AccountsActivity.this.startActivity(viewIntent);
-		            return true;
-				}
-			}
-		);
-
-		menu.add(R.string.menuRestore)
-		.setIcon(android.R.drawable.ic_menu_upload)
-		.setOnMenuItemClickListener(
-			new OnMenuItemClickListener() {
-				public boolean onMenuItemClick(final MenuItem item) {
-					Intent viewIntent = new Intent(AccountsActivity.this, RestoreActivity.class);
-					AccountsActivity.this.startActivity(viewIntent);
-		            return true;
-				}
-			}
-		);
-
-		MenuUtil.buildMenu(this, menu);
-
-		return true;
-	}
 
     @Override
 	public void onResume() {
 		super.onResume();
+/* TODO: Reenable
 		if(!"com.funkyandroid.banking.android.expenses.demo".equals(super.getApplicationContext().getPackageName())) {
 			if(licenseCheckStatus == LICENSE_STATE_UNCHECKED) {
 				licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECKING;
@@ -237,27 +139,66 @@ public class AccountsActivity extends ListActivity
 		    	finish();
 			}
 		}
+*/
+    }
+
+    /**
+     * Set up the menu for the application
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.accounts_menu, menu);
+
+		MenuUtil.buildMenu(this, menu);
+
+		return super.onCreateOptionsMenu(menu);
+	}
+
+    /**
+     * Handle the selection of an option.
+     */
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+
+    	case R.id.menu_new_account:
+    	{
+			Intent viewIntent = new Intent(AccountsActivity.this, EditAccountActivity.class);
+			AccountsActivity.this.startActivity(viewIntent);
+            return true;
+    	}
+    	case R.id.menu_change_password:
+    	{
+			showSetPassword();
+            return true;
+    	}
+    	case R.id.menu_export:
+    	{
+			Intent viewIntent = new Intent(AccountsActivity.this, BackupActivity.class);
+			AccountsActivity.this.startActivity(viewIntent);
+            return true;
+    	}
+    	case R.id.menu_restore:
+    	{
+			Intent viewIntent = new Intent(AccountsActivity.this, RestoreActivity.class);
+			AccountsActivity.this.startActivity(viewIntent);
+            return true;
+    	}
+
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
     }
 
 	/**
-	 * Handle clicks by opening a browser window for the app.
+	 * Get the readable database
 	 */
-    @Override
-	public void onListItemClick(final ListView list, final View view, int position, long id) {
-		Intent viewIntent = new Intent(this, EntriesActivity.class);
-		viewIntent.putExtra("com.funkyandroid.banking.account_id", ((int)id & 0xffff));
-		startActivity(viewIntent);
-	}
 
-	/**
-	 * A long click takes the user to the edit page.
-	 */
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		Intent viewIntent = new Intent(this, EditAccountActivity.class);
-		viewIntent.putExtra("com.funkyandroid.banking.account_id", ((int)id & 0xffff));
-		startActivity(viewIntent);
-		return true;
+	@Override
+	public SQLiteDatabase getReadableDatabaseConnection() {
+		return db;
 	}
 
 	/**
@@ -277,7 +218,8 @@ public class AccountsActivity extends ListActivity
      * Handle a password change.
      */
 
-    public void onOK(final int id, final String password) {
+    @Override
+	public void onOK(final int id, final String password) {
     	if( id == 1 ) {
     		password1 = password;
         	keypadHandler.display(2, R.string.newPasswordConfirm, "", this, false);
@@ -331,51 +273,11 @@ public class AccountsActivity extends ListActivity
     }
 
     /**
-     * The adapter showing the list of server statuses
-     */
-
-    public final class MyListAdapter
-    	extends ResourceCursorAdapter {
-
-    	/**
-    	 * Constructor.
-    	 */
-    	public MyListAdapter(final Cursor cursor) {
-    		super(AccountsActivity.this, R.layout.account_list_item, cursor);
-    	}
-
-    	/**
-    	 * Populate an account view with the data from a cursor.
-    	 */
-
-    	@Override
-    	public void bindView(final View view, final Context context, final Cursor cursor) {
-    		((TextView)view.findViewById(R.id.name)).setText(cursor.getString(1));
-
-    		final long balance = cursor.getLong(3);
-    		View sideBar = view.findViewById(R.id.sidebar);
-    		if			( balance < 0 ) {
-    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0x00, 0x00));
-    		} else if	( balance > 0 ) {
-    			sideBar.setBackgroundColor(Color.rgb(0x00, 0xc0, 0x00));
-    		} else {
-    			sideBar.setBackgroundColor(Color.rgb(0xc0, 0xc0, 0xc0));
-    		}
-
-    		final TextView value = (TextView)view.findViewById(R.id.value);
-    		final StringBuilder valueString = new StringBuilder(32);
-    		valueString.append("Balance : ");
-    		BalanceFormatter.format(valueString, balance, cursor.getString(4));
-    		valueString.append(' ');
-    		value.setText(valueString.toString());
-    	}
-    }
-
-    /**
      * License checker callback.
      *
      * @author Al Sutton
      */
+/* TODO: Reenable
     private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
         public void allow() {
         	licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECKED;
@@ -398,4 +300,5 @@ public class AccountsActivity extends ListActivity
             return;
         }
     }
+*/
 }

@@ -21,6 +21,12 @@ public class Launcher extends Activity
 	implements KeypadHandler.OnOKListener {
 
 	/**
+	 * The tag used for logging
+	 */
+
+	public static final String LOGTAG = "FunkyExpenses";
+
+	/**
 	 * The shared preferences.
 	 */
 
@@ -57,7 +63,8 @@ public class Launcher extends Activity
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setMessage("Please report the following to support@funkyandroid.com : "+ex.getMessage())
             .setPositiveButton("OK", new OnClickListener() {
-    			public void onClick(DialogInterface dialog, int which) {
+    			@Override
+				public void onClick(DialogInterface dialog, int which) {
     		    	Launcher.this.finish();
     			}
             })
@@ -74,7 +81,8 @@ public class Launcher extends Activity
      * Check the entered password
      */
 
-    public void onOK(final int id, final String password) {
+    @Override
+	public void onOK(final int id, final String password) {
     	if( password != null && password.length() > 0 ) {
 	    	boolean passwordOK = false;
 	    	try {
@@ -91,6 +99,7 @@ public class Launcher extends Activity
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setMessage("The password you entered was not correct.")
         .setPositiveButton("OK", new OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int which) {
 		    	keypadHandler.display(1, R.string.enterPassword, "", Launcher.this, true);
 			}

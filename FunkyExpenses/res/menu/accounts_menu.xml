@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/menu_new_account"
+          android:icon="@android:drawable/ic_menu_add"
+          android:title="@string/newAccount"
+          android:showAsAction="ifRoom|withText" />
+    
+    <item android:id="@+id/menu_change_password"
+          android:icon="@android:drawable/ic_menu_view"
+          android:title="@string/menuChangePassword"
+          android:showAsAction="withText" />
+    
+    <item android:id="@+id/menu_export"
+          android:icon="@android:drawable/ic_menu_save"
+          android:title="@string/menuExport"
+          android:showAsAction="withText" />
+        
+    <item android:id="@+id/menu_restore"
+          android:icon="@android:drawable/ic_menu_upload"
+          android:title="@string/menuRestore"
+          android:showAsAction="withText" />
+</menu>

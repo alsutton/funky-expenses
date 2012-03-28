@@ -1,10 +1,10 @@
 package com.funkyandroid.banking.android.utils;
 
 import android.content.Context;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.funkyandroid.banking.android.expenses.demo.R;
 
 public class MenuUtil {
@@ -26,6 +26,7 @@ public class MenuUtil {
 			.setIcon(android.R.drawable.ic_menu_info_details)
 			.setOnMenuItemClickListener(
 				new OnMenuItemClickListener() {
+					@Override
 					public boolean onMenuItemClick(final MenuItem item) {
 			    		AboutUtil.showDialog(context);
 			            return true;

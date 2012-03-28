@@ -6,11 +6,11 @@ import android.content.pm.ApplicationInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.view.MenuInflater;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
@@ -18,7 +18,7 @@ import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.Crypto;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
-public class AccountsActivity extends FragmentActivity
+public class AccountsActivity extends SherlockFragmentActivity
 	implements KeypadHandler.OnOKListener, DatabaseReadingActivity {
 /* TODO
 	private static final String BPK =
@@ -147,7 +147,7 @@ public class AccountsActivity extends FragmentActivity
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.accounts_menu, menu);
 
 		MenuUtil.buildMenu(this, menu);

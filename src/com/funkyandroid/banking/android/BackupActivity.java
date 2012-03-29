@@ -27,7 +27,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -87,8 +86,9 @@ public class BackupActivity extends SherlockActivity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        super.setTitle(R.string.titleBackup);
         setContentView(R.layout.backup);
+        super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ((Button) findViewById(R.id.cancelButton)).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -209,6 +209,23 @@ public class BackupActivity extends SherlockActivity {
 					}
 	    		})
 	    		.show();
+    	}
+    }
+
+    /**
+     * Handle the selection of an option.
+     */
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+	    	case android.R.id.home:
+	    	{
+				finish();
+				return true;
+	    	}
+	    	default:
+	    		return super.onOptionsItemSelected(item);
     	}
     }
 

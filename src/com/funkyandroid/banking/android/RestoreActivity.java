@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.MenuUtil;
@@ -42,6 +43,7 @@ public class RestoreActivity extends SherlockActivity {
         super.onCreate(savedInstanceState);
         super.setTitle(R.string.titleRestore);
         setContentView(R.layout.restore);
+        super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ((Button) findViewById(R.id.cancelButton)).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -87,6 +89,23 @@ public class RestoreActivity extends SherlockActivity {
     	super.onDestroy();
     	if( db != null && db.isOpen() ) {
     		db.close();
+    	}
+    }
+
+    /**
+     * Handle the selection of an option.
+     */
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+	    	case android.R.id.home:
+	    	{
+				finish();
+				return true;
+	    	}
+	    	default:
+	    		return super.onOptionsItemSelected(item);
     	}
     }
 

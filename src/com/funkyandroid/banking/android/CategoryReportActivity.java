@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
@@ -58,7 +57,6 @@ public class CategoryReportActivity extends SherlockListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.categories);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

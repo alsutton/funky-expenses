@@ -1,12 +1,10 @@
 package com.funkyandroid.banking.android;
 
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
@@ -33,6 +31,7 @@ public class CategoriesReportActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_layout);
+        super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     	database = (new DBHelper(this)).getWritableDatabase();
 
@@ -72,9 +71,6 @@ public class CategoriesReportActivity
     public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-        MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.menu.categories_menu, menu);
-
 		MenuUtil.buildMenu(this, menu);
 
 		return true;
@@ -87,25 +83,14 @@ public class CategoriesReportActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
-	    	case R.id.menu_entries:
+	    	case android.R.id.home:
 	    	{
-				startEntries();
+				finish();
 				return true;
 	    	}
 	    	default:
 	    		return super.onOptionsItemSelected(item);
     	}
-    }
-
-    /**
-     * Start the entries activity
-     */
-
-    private void startEntries() {
-		Intent intent = new Intent(this, EntriesActivity.class);
-		intent.putExtra("com.funkyandroid.banking.account_id", categoriesReportFragment.account.id);
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivity(intent);
     }
 
     /**

@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
@@ -61,6 +60,7 @@ public class CategoryReportActivity extends SherlockListActivity {
         super.onCreate(savedInstanceState);
         super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.categories);
+        super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     	Intent startingIntent = getIntent();
     	accountId = startingIntent.getIntExtra("com.funkyandroid.banking.account_id", -1);
@@ -120,32 +120,27 @@ public class CategoryReportActivity extends SherlockListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-		menu.add(R.string.menuEntries)
-			.setIcon(android.R.drawable.ic_menu_revert)
-			.setOnMenuItemClickListener(
-				new OnMenuItemClickListener() {
-					@Override
-					public boolean onMenuItemClick(final MenuItem item) {
-						startEntries();
-			            return true;
-					}
-				}
-			);
-
 		MenuUtil.buildMenu(this, menu);
 
 		return true;
 	}
 
+
     /**
-     * Start the entries activity
+     * Handle the selection of an option.
      */
 
-    private void startEntries() {
-		Intent intent = new Intent(this, EntriesActivity.class);
-		intent.putExtra("com.funkyandroid.banking.account_id", accountId);
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivity(intent);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+	    	case android.R.id.home:
+	    	{
+				finish();
+				return true;
+	    	}
+	    	default:
+	    		return super.onOptionsItemSelected(item);
+    	}
     }
 
 	/**

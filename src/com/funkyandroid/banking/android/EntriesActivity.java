@@ -47,6 +47,7 @@ public class EntriesActivity extends SherlockFragmentActivity implements Databas
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_layout);
+        super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     	db = (new DBHelper(this)).getReadableDatabase();
 
@@ -66,6 +67,7 @@ public class EntriesActivity extends SherlockFragmentActivity implements Databas
     	super.onStart();
     	entries.account = AccountManager.getById(db, entries.account.id);
     	updateBalance(entries.account.balance);
+    	getSupportActionBar().setTitle(entries.account.name);
     }
 
     /**
@@ -98,6 +100,11 @@ public class EntriesActivity extends SherlockFragmentActivity implements Databas
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
+	    	case android.R.id.home:
+	    	{
+				finish();
+				return true;
+	    	}
 	    	case R.id.menu_new_entry:
 	    	{
 				Intent intent = new Intent(this, EditEntryActivity.class);

@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
@@ -86,22 +85,9 @@ public class CategoryReportActivity extends SherlockListActivity {
 
     	currencySymbol = CurrencyManager.getSymbol(database, account.currency);
 
-		TextView titleView = (TextView) findViewById(R.id.title);
-		titleView.setText(account.name);
-
 		Cursor cursor = TransactionManager.getCursorForCategoryAndAccount(database, accountId, categoryId);
 		startManagingCursor(cursor);
     	setListAdapter( new MyAdapter(cursor) );
-
-
-		Button button = (Button) findViewById(R.id.entries_button);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				@Override
-						public void onClick(final View view) {
-        					startEntries();
-        				}
-        		});
     }
 
     /**

@@ -15,6 +15,12 @@ public class CategoriesReportActivity
 	implements DatabaseReadingActivity {
 
 	/**
+	 * The parameter used to pass the intent extras between instances.
+	 */
+
+	private static final String INTENT_EXTRAS_STRING = "I_EXTRAS";
+
+	/**
 	 * The connection to the database.
 	 */
 
@@ -35,11 +41,27 @@ public class CategoriesReportActivity
 
     	database = (new DBHelper(this)).getWritableDatabase();
 
+    	Bundle extras = getIntent().getExtras();
+    	if(extras == null) {
+    		extras = savedInstanceState.getBundle(INTENT_EXTRAS_STRING);
+    	}
+
     	categoriesReportFragment = new CategoriesReportFragment();
-    	categoriesReportFragment.setArguments(getIntent().getExtras());
+    	categoriesReportFragment.setArguments(extras);
         getSupportFragmentManager().beginTransaction()
 		        .add(R.id.fragment_holder, categoriesReportFragment)
 		        .commit();
+    }
+
+    /**
+     * Save the intent extras if needed.
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    	Bundle extras = getIntent().getExtras();
+    	if(extras != null) {
+    		outState.putBundle(INTENT_EXTRAS_STRING, extras);
+    	}
     }
 
     /**

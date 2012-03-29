@@ -18,12 +18,10 @@
 		<TextView	android:id="@+id/name"
 					android:layout_height="wrap_content"
 					android:layout_width="fill_parent"
-					android:textColor="#000"
 					android:textSize="18sp"/>
 		<TextView	android:id="@+id/value"
 					android:layout_height="wrap_content"
 					android:layout_width="fill_parent"
-					android:textColor="#000"
 					android:textStyle="bold"/>				
 	</LinearLayout>
 	<RelativeLayout

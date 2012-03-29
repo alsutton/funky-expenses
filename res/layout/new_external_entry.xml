@@ -2,34 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent" 
-			android:orientation="vertical"
-			android:background="#fff">
-	<LinearLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-		android:layout_weight="0"
-		android:background="#69c"
-	    android:gravity="center"
-	    android:orientation="horizontal">
-		<TextView  
-			android:text="@string/app_name"
-			android:gravity="center_vertical"
-		    android:layout_height="wrap_content" 
-		    android:layout_width="wrap_content" 
-		    android:layout_weight="1"
-			android:paddingLeft="5dip"
-		    android:textColor="#fff"
-			android:textSize="18sp"
-		    android:textStyle="bold"/>
-	    <Button
-	    	android:id="@+id/entries_button"
-		    android:layout_width="wrap_content"
-	    	android:layout_height="wrap_content"
-		    android:layout_weight="0"
-	    	android:background="@drawable/ic_title_entries"
-	    	android:visibility="invisible"
-	    	/>
-	</LinearLayout>
+			android:orientation="vertical">
 	<ScrollView android:layout_width="fill_parent"
 				android:layout_height="wrap_content" 
 				android:scrollbarAlwaysDrawHorizontalTrack="false" 
@@ -48,7 +21,6 @@
 		        android:layout_marginLeft="20dip"
 		        android:layout_marginRight="20dip"
 		        android:text="@string/accountText"
-				android:textColor="#000"
 		        android:textSize="18sp"
 				android:textStyle="bold"
 		        android:gravity="left"/>
@@ -75,7 +47,6 @@
 			        android:layout_marginLeft="20dip"
 			        android:layout_marginRight="20dip"
 			        android:text="@string/entryDateText"
-					android:textColor="#000"
 			        android:textSize="18sp"
 					android:textStyle="bold"
 			        android:gravity="left"/>
@@ -97,7 +68,6 @@
 			        android:layout_marginTop="10dip"
 			        android:layout_marginLeft="20dip"
 			        android:layout_marginRight="20dip"
-					android:textColor="#000"
 			        android:text="@string/entryTypeText"
 			        android:textSize="18sp"
 					android:textStyle="bold"
@@ -115,7 +85,6 @@
 			    	<RadioButton	android:id="@+id/creditButton" 
 			    					android:layout_width="wrap_content"
 			    					android:layout_height="wrap_content"
-									android:textColor="#000"
 							        android:textSize="18sp"
 			    					android:text="Credit"/>
 					<RadioButton	android:id="@+id/debitButton"
@@ -123,7 +92,6 @@
 									android:layout_width="wrap_content"
 									android:layout_height="wrap_content"
 									android:layout_marginLeft="10dip"
-									android:textColor="#000"
 									android:text="Debit"/>
 				</RadioGroup>
 			</LinearLayout>		
@@ -133,7 +101,6 @@
 		        android:layout_marginLeft="20dip"
 		        android:layout_marginRight="20dip"
 		        android:text="@string/entryPayeeText"
-				android:textColor="#000"
 		        android:textSize="18sp"
 				android:textStyle="bold"
 		        android:gravity="left"/>
@@ -157,7 +124,6 @@
 		        android:layout_marginLeft="20dip"
 		        android:layout_marginRight="20dip"
 		        android:text="@string/entryCategoryText"
-				android:textColor="#000"
 		        android:textSize="18sp"
 				android:textStyle="bold"
 		        android:gravity="left"/>
@@ -182,7 +148,6 @@
 		        android:layout_marginLeft="20dip"
 		        android:layout_marginRight="20dip"
 		        android:text="@string/entryAmountText"
-				android:textColor="#000"
 		        android:textSize="18sp"
 				android:textStyle="bold"
 		        android:gravity="left" 
@@ -199,7 +164,6 @@
 			    	android:id="@+id/currencySymbol"
 			        android:layout_height="wrap_content"
 			        android:layout_width="wrap_content"
-					android:textColor="#000"
 			        android:textSize="18sp"
 					android:textStyle="bold"
 			        />

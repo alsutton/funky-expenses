@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent" 
-			android:background="#fff"
 			android:orientation="vertical">
 	<ScrollView android:layout_width="fill_parent"
 				android:layout_height="wrap_content" 
@@ -12,7 +11,7 @@
 				android:layout_weight="1">
 		<LinearLayout
 		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
+		    android:layout_height="wrap_content"
 		    android:orientation="vertical"
 		    android:paddingTop="5dip"
 		    >		
@@ -30,7 +29,6 @@
 			        android:text="@string/entryDateText"
 			        android:textSize="18sp"
 					android:textStyle="bold"
-			        android:textColor="#000"
 			        android:gravity="left"/>
 			        
 				<Button android:id="@+id/newEntryDateButton"
@@ -53,7 +51,6 @@
 			        android:text="@string/entryTypeText"
 			        android:textSize="18sp"
 					android:textStyle="bold"
-			        android:textColor="#000"
 			        android:gravity="left"/>
 			
 				
@@ -68,16 +65,14 @@
 			    	<RadioButton	android:id="@+id/creditButton" 
 			    					android:layout_width="wrap_content"
 			    					android:layout_height="wrap_content"
-									android:textColor="#000"
 							        android:textSize="18sp"
-			    					android:text="Credit"/>
+			    					android:text="@string/entryCreditLabel"/>
 					<RadioButton	android:id="@+id/debitButton"
 							        android:textSize="18sp"
 									android:layout_width="wrap_content"
 									android:layout_height="wrap_content"
 									android:layout_marginLeft="10dip"
-									android:textColor="#000"
-									android:text="Debit"/>
+									android:text="@string/entryDebitLabel"/>
 				</RadioGroup>
 			</LinearLayout>		
 		    <TextView 
@@ -89,7 +84,6 @@
 		        android:text="@string/entryPayeeText"
 		        android:textSize="18sp"
 				android:textStyle="bold"
-		        android:textColor="#000"
 		        android:gravity="left"/>
 		
 		    <AutoCompleteTextView
@@ -114,7 +108,6 @@
 		        android:text="@string/entryCategoryText"
 		        android:textSize="18sp"
 				android:textStyle="bold"
-		        android:textColor="#000"
 		        android:gravity="left"/>
 		
 		    <AutoCompleteTextView 
@@ -139,11 +132,10 @@
 		        android:text="@string/entryAmountText"
 		        android:textSize="18sp"
 				android:textStyle="bold"
-		        android:textColor="#000"
 		        android:gravity="left" 
 		        />
 		
-			<LinearLayout	orientation="horizontal"
+			<LinearLayout	android:orientation="horizontal"
 					        android:gravity="right" 
 					        android:layout_height="wrap_content"
 					        android:layout_width="fill_parent"
@@ -156,7 +148,6 @@
 			        android:layout_width="wrap_content"
 			        android:textSize="18sp"
 					android:textStyle="bold"
-			        android:textColor="#000"
 			        />
 			    <EditText
 			        android:id="@id/amount"
@@ -175,7 +166,7 @@
 			</LinearLayout>		
 		</LinearLayout>
 	</ScrollView>
-	<LinearLayout	orientation="horizontal"
+	<LinearLayout	android:orientation="horizontal"
 			        android:layout_height="wrap_content"
 			        android:layout_width="fill_parent"
 					android:paddingTop="5dip"

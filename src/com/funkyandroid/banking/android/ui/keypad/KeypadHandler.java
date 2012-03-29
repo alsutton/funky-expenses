@@ -78,7 +78,7 @@ public class KeypadHandler {
     	dialog.show();
 
     	WindowManager.LayoutParams layout = dialog.getWindow().getAttributes();
-    	layout.width = WindowManager.LayoutParams.FILL_PARENT;
+    	layout.width = WindowManager.LayoutParams.MATCH_PARENT;
     	dialog.getWindow().setAttributes(layout);
 
     	TextView titleView = (TextView) keypadView.findViewById(R.id.title);
@@ -90,7 +90,8 @@ public class KeypadHandler {
 		Button button = (Button)keypadView.findViewById(R.id.okButton);
         button.setOnClickListener(
         		new View.OnClickListener() {
-        				public void onClick(final View view) {
+        				@Override
+						public void onClick(final View view) {
         					dismiss();
         					notifyListener();
         				}

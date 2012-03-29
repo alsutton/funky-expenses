@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
@@ -54,6 +55,7 @@ public class EditAccountActivity extends SherlockActivity {
         super.onCreate(savedInstanceState);
         super.setTitle(R.string.accountTitleText);
         setContentView(R.layout.edit_account);
+        super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Button button = (Button) findViewById(R.id.cancelButton);
         button.setOnClickListener(
@@ -173,6 +175,23 @@ public class EditAccountActivity extends SherlockActivity {
 
 		return true;
 	}
+
+    /**
+     * Handle the selection of an option.
+     */
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+	    	case android.R.id.home:
+	    	{
+				finish();
+				return true;
+	    	}
+	    	default:
+	    		return super.onOptionsItemSelected(item);
+    	}
+    }
 
     /**
      * Store the account details into the database.

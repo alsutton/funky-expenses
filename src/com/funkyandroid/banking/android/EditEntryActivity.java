@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.funkyandroid.banking.android.data.CategoryManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.PayeeManager;
@@ -71,6 +72,7 @@ public class EditEntryActivity extends SherlockActivity {
         super.onCreate(savedInstanceState);
         super.setTitle(R.string.entryTitleText);
         setContentView(R.layout.edit_entry);
+        super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Button button = (Button) findViewById(R.id.newEntryDateButton);
         button.setOnClickListener(
@@ -195,6 +197,23 @@ public class EditEntryActivity extends SherlockActivity {
     	}
 
     	updateDate();
+    }
+
+    /**
+     * Handle the selection of an option.
+     */
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+	    	case android.R.id.home:
+	    	{
+				finish();
+				return true;
+	    	}
+	    	default:
+	    		return super.onOptionsItemSelected(item);
+    	}
     }
 
     /**

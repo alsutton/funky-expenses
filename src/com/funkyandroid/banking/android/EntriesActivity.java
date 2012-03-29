@@ -31,6 +31,12 @@ import com.funkyandroid.banking.android.utils.MenuUtil;
 public class EntriesActivity extends SherlockFragmentActivity implements DatabaseReadingActivity {
 
 	/**
+	 * The parameter used to pass the intent extras between instances.
+	 */
+
+	private static final String INTENT_EXTRAS_STRING = "I_EXTRAS";
+
+	/**
 	 * The fragment showing the account entries.
 	 */
 
@@ -51,12 +57,29 @@ public class EntriesActivity extends SherlockFragmentActivity implements Databas
 
     	db = (new DBHelper(this)).getReadableDatabase();
 
+    	Bundle extras = getIntent().getExtras();
+    	if(extras == null) {
+    		extras = savedInstanceState.getBundle(INTENT_EXTRAS_STRING);
+    	}
+
     	entries = new EntriesFragment();
-    	entries.setArguments(getIntent().getExtras());
+    	entries.setArguments(extras);
         getSupportFragmentManager().beginTransaction()
 	        .add(R.id.fragment_holder, entries)
 	        .commit();
     }
+
+    /**
+     * Save the intent extras if needed.
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    	Bundle extras = getIntent().getExtras();
+    	if(extras != null) {
+    		outState.putBundle(INTENT_EXTRAS_STRING, extras);
+    	}
+    }
+
 
     /**
      * Called whenever the activity becomes visible.

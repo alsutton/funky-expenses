@@ -5,9 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -70,11 +68,11 @@ public class Launcher extends Activity
             })
             .show();
     	}
-		if(0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE )) {
+/* TODO: Reenable    	if(0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE )) {
 	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
 	    	startActivity(myIntent);
 	    	finish();
-		}
+		} */
     }
 
     /**

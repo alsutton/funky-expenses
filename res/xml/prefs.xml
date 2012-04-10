@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+	<CheckBoxPreference
+	        android:key="hidetips"
+	        android:title="@string/title_hidetips_preference"
+	        android:summary="@string/summary_hidetips_preference" />
+</PreferenceScreen>

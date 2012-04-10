@@ -31,7 +31,8 @@
     <string name="titleCharts">Charts</string>
     <string name="titleRecurring">Repeating Transactions</string>
     <string name="titleRestore">Restore</string>
-
+    <string name="titlePreferences">Settings</string>
+    
     <string name="accountAddButtonText">Add new account</string>
     <string name="newAccount">Add Account</string>
     <string name="newEntry">Add Entry</string>
@@ -66,4 +67,7 @@
     <string name="add_instructions">Please enter the three letter currency code and symbol for the currency you wish to add.</string>     
     <string name="add_currency_prompt">Code :</string>     
     <string name="add_symbol_prompt">Symbol :</string>     
+    
+    <string name="title_hidetips_preference">Hide Tips</string>
+    <string name="summary_hidetips_preference">Hide the pop-up tips shown in the application</string>
 </resources>

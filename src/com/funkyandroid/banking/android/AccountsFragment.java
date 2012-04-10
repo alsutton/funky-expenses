@@ -2,10 +2,12 @@ package com.funkyandroid.banking.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,11 +40,14 @@ public class AccountsFragment extends ListFragment
 		setListAdapter(adapter);
 		getListView().setOnItemLongClickListener(this);
 
-        if( adapter.isEmpty() ) {
-        	Toast.makeText(getActivity(), "Press the + to add an account", Toast.LENGTH_LONG).show();
-        } else {
-        	Toast.makeText(getActivity(), "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
-        }
+		final SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+		if(!prefs.getBoolean("hidetips", false)) {
+	        if( adapter.isEmpty() ) {
+	        	Toast.makeText(getActivity(), "Press the + to add an account", Toast.LENGTH_LONG).show();
+	        } else {
+	        	Toast.makeText(getActivity(), "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
+	        }
+		}
 	}
 
 	/**

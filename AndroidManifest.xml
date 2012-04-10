@@ -39,6 +39,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name="com.funkyandroid.banking.android.Preferences"/>
         <activity android:name="com.funkyandroid.banking.android.RestoreActivity"/>
     </application>
 </manifest> 

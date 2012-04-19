@@ -61,8 +61,8 @@ public class RestoreService extends IntentService {
 	 *
 	 * @param name The name of the service;
 	 */
-	public RestoreService(final String name) {
-		super(name);
+	public RestoreService() {
+		super("FunkyExpenses Restore Servlet");
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class RestoreService extends IntentService {
 		int size;
 		synchronized(fourByteBuffer) {
 			fis.read(fourByteBuffer);
-			size = getInt(streamPointer, fourByteBuffer);
+			size = getInt(fourByteBuffer);
 		}
 
 		byte[] data = new byte[size];
@@ -199,6 +199,18 @@ public class RestoreService extends IntentService {
 		       		(((data[streamPointer.offset+2]&0xff))<< 8)+
 		       		 ((data[streamPointer.offset+3]&0xff));
 		streamPointer.offset += 4;
+		return value;
+	}
+
+	/**
+	 * Decode an int from a buffer
+	 */
+
+	private int getInt(final byte[] data) {
+		int value = (((data[0]&0xff))  <<24)+
+		       		(((data[1]&0xff))<<16)+
+		       		(((data[2]&0xff))<< 8)+
+		       		 ((data[3]&0xff));
 		return value;
 	}
 

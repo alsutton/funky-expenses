@@ -41,5 +41,7 @@
         </activity>
         <activity android:name="com.funkyandroid.banking.android.Preferences"/>
         <activity android:name="com.funkyandroid.banking.android.RestoreActivity"/>
-    </application>
+
+        <service android:name="com.funkyandroid.banking.android.RestoreService"/>
+   	</application>
 </manifest> 

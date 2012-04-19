@@ -5,9 +5,12 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.NoSuchPaddingException;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,6 +39,35 @@ public class RestoreActivity extends SherlockActivity {
 	 */
 
 	private SQLiteDatabase db;
+
+	/**
+	 * The broadcaster receiver for progress updates.
+	 */
+
+	private final BroadcastReceiver updateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			RestoreActivity.this.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					int percentage = intent.getIntExtra("progress", 0);
+					if(percentage < 100) {
+						StringBuilder string = new StringBuilder();
+						string.append(RestoreActivity.this.getText(R.string.restoreIs));
+						string.append(' ');
+						string.append(percentage);
+						string.append('%');
+						string.append(RestoreActivity.this.getText(R.string.restoreComplete));
+						((TextView)RestoreActivity.this.findViewById(R.id.status)).setText(string.toString());
+					} else {
+						((TextView)RestoreActivity.this.findViewById(R.id.status)).setText(RestoreActivity.this.getString(R.string.restoreCompleted));
+					}
+				}
+			});
+		}
+
+	};
 
     /** Called when the activity is first created. */
     @Override
@@ -78,6 +110,26 @@ public class RestoreActivity extends SherlockActivity {
 			}
         });
     	db = (new DBHelper(this)).getWritableDatabase();
+    }
+
+    /**
+     * Setup the broadcast receiver in onResume
+     */
+
+    @Override
+    public void onResume() {
+    	super.onResume();
+    	registerReceiver(updateReceiver, new IntentFilter(RestoreService.PROGRESS_UPDATE_BROADCAST));
+    }
+
+    /**
+     * Stop the broadcast receiver onPause.
+     */
+
+    @Override
+    public void onPause() {
+    	super.unregisterReceiver(updateReceiver);
+    	super.onPause();
     }
 
     /**

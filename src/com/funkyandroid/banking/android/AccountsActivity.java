@@ -18,28 +18,6 @@ import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class AccountsActivity extends SherlockFragmentActivity
 	implements KeypadHandler.OnOKListener, DatabaseReadingActivity {
-/* TODO
-	private static final String BPK =
-		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlzlqwamobzt8MKV8R2GnKuK+"+
-		"9Cj7tNXRlbCZmy4I1GBh3ig6HOT6lGHpfFtx72L1pfm2DP+Pn2PGwBIUHYmBnsidvYkbBR+"+
-		"XGqXxaO+R/ug8NeXOoIDpJYANE6MY1tWyMuBIHQ3GS2LHA1rbE8sXAhGKT+oy9+"+
-		"sRoWYXVibDVfy4wgHnF4L1na+BUv7/zPr9R9Tsvxl4DEq8zqRcanPGwWTrjtxGbt9XSnuUdqlAk"+
-		"oOkih4VJEHuUoS9KawbePetzzzjbq18vuQK03bSnajSgsG08mXsMTpadBEdX5/P/sNkzh6ZvvPR"+
-		"OE7YYB4eDztzRtdSGBNTZpXXgsVcAG25gwIDAQAB";
-
-    private static final byte[] BS = new byte[] {
-        -42, 35, 31, -28, -13, -54, 74, -62, 50, 88, -105, -45, 27, -17, -36, -13, -111, 32, -64, 9
-    };
-*/
-    /**
-	 * The license checking states
-	 */
-/* TODO
-	private static final int LICENSE_STATE_CHECK_FAILED = -2,
-							 LICENSE_STATE_CHECKING = -1,
-	 						 LICENSE_STATE_UNCHECKED = 0,
-							 LICENSE_STATE_CHECKED = 1;
-*/
 
 	/**
 	 * The database connection
@@ -59,22 +37,6 @@ public class AccountsActivity extends SherlockFragmentActivity
 
 	private String password1;
 
-	/**
-	 * Whether or not the license has been checked
-	 */
-
-// TODO	private final int licenseCheckStatus = LICENSE_STATE_UNCHECKED;
-
-	/**
-	 * The license checker
-	 */
-// TODO    private LicenseChecker licenseChecker;
-
-    /**
-     * License checker callback.
-     */
-// TODO    private MyLicenseCheckerCallback licenseCallback;
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,14 +48,6 @@ public class AccountsActivity extends SherlockFragmentActivity
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_holder, new AccountsFragment())
                 .commit();
-
-/* TODO : Re-enable
-		if(!"com.funkyandroid.banking.android.expenses.demo".equals(super.getApplicationContext().getPackageName())) {
-	        String deviceId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
-	        licenseChecker = new LicenseChecker(this, new ServerManagedPolicy(this,new AESObfuscator(BS, getPackageName(), deviceId)),BPK);
-			licenseCallback = new MyLicenseCheckerCallback();
-		}
-*/
     }
 
     /**
@@ -112,11 +66,6 @@ public class AccountsActivity extends SherlockFragmentActivity
     @Override
     public void onStart() {
     	super.onStart();
-/* TODO: Reenable    	if(0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE )) {
-	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
-	    	startActivity(myIntent);
-	    	finish();
-		} */
     }
 
     /**
@@ -126,18 +75,6 @@ public class AccountsActivity extends SherlockFragmentActivity
     @Override
 	public void onResume() {
 		super.onResume();
-/* TODO: Reenable
-		if(!"com.funkyandroid.banking.android.expenses.demo".equals(super.getApplicationContext().getPackageName())) {
-			if(licenseCheckStatus == LICENSE_STATE_UNCHECKED) {
-				licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECKING;
-				licenseChecker.checkAccess(licenseCallback);
-			} else if (licenseCheckStatus == LICENSE_STATE_CHECK_FAILED) {
-		    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
-		    	startActivity(myIntent);
-		    	finish();
-			}
-		}
-*/
     }
 
     /**

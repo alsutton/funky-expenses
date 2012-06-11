@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -17,12 +19,28 @@ import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.funkyandroid.banking.android.data.AccountManager;
+import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BalanceFormatter;
+import com.funkyandroid.banking.android.utils.DatabaseRawQueryCursorLoader;
 
 public class AccountsFragment extends ListFragment
-	implements OnItemLongClickListener {
+	implements OnItemLongClickListener, LoaderManager.LoaderCallbacks<Cursor>  {
+
+	/**
+	 * The query to get information about all of the accounts
+	 */
+
+	private static final String GET_ALL_ACCOUNTS_QUERY =
+			"SELECT a._id, a.name, a.opening_balance, a.balance, c.symbol "+
+			"  FROM "+DBHelper.ACCOUNTS_TABLE_NAME+" a, "+DBHelper.CURRENCIES_TABLE_NAME+" c "+
+			" WHERE a.currency = c.short_code ORDER BY name ASC";
+
+	/**
+	 * The adapter for the list.
+	 */
+
+	private ResourceCursorAdapter mAdapter;
 
 	/**
 	 * Constructor. Requires a connection to the database.
@@ -32,33 +50,50 @@ public class AccountsFragment extends ListFragment
 	public void onActivityCreated(final Bundle savedState) {
         super.onActivityCreated(savedState);
 
-        final SQLiteDatabase db = ((DatabaseReadingActivity)getActivity()).getReadableDatabaseConnection();
-        final Cursor accounts = AccountManager.getAll(db);
-        getActivity().startManagingCursor(accounts);
-        final MyListAdapter adapter = new MyListAdapter(accounts);
+        mAdapter = new MyListAdapter();
+		setListAdapter(mAdapter);
 
-		setListAdapter(adapter);
+        getLoaderManager().initLoader(0, null, this);
+
 		getListView().setOnItemLongClickListener(this);
+
+		setEmptyText(super.getText(R.string.accounts_emptyText));
 
 		final SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		if(!prefs.getBoolean("hidetips", false)) {
-	        if( adapter.isEmpty() ) {
-	        	Toast.makeText(getActivity(), "Press the + to add an account", Toast.LENGTH_LONG).show();
-	        } else {
-	        	Toast.makeText(getActivity(), "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
-	        }
+        	Toast.makeText(getActivity(), "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
 		}
 	}
 
 	/**
-	 * On a resume refresh the list.
+	 * Create the loader for the cursor.
+	 *
+	 * @param id The ID of the loader.
+	 * @param args The arguments for the query.
+	 *
+	 * @return The loader.
 	 */
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		((MyListAdapter)getListAdapter()).notifyDataSetChanged();
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		final SQLiteDatabase db = ((DatabaseReadingActivity)getActivity()).getReadableDatabaseConnection();
+		return new DatabaseRawQueryCursorLoader(getActivity(), db, GET_ALL_ACCOUNTS_QUERY, null);
 	}
+
+    @Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.swapCursor(data);
+        if (isResumed()) {
+            setListShown(true);
+        } else {
+            setListShownNoAnimation(true);
+        }
+    }
+
+    @Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
+    }
 
 	/**
 	 * Handle clicks by opening a browser window for the app.
@@ -93,8 +128,8 @@ public class AccountsFragment extends ListFragment
     	/**
     	 * Constructor.
     	 */
-    	public MyListAdapter(final Cursor cursor) {
-    		super(getActivity(), R.layout.account_list_item, cursor);
+    	public MyListAdapter() {
+    		super(getActivity(), R.layout.account_list_item, null, 0);
     	}
 
     	/**

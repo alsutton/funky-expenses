@@ -8,6 +8,7 @@
     <string name="accountOpeningBalanceText">Opening Balance</string>
     <string name="accountTitleText">Account Details</string>
     <string name="accountCurrencyText">Currency</string>
+    <string name="accounts_emptyText">Press the + to add an account</string>
     <string name="backupName">Backup Name</string>
     <string name="backupPassword">Password</string>
     <string name="backupOKButton">Backup</string>

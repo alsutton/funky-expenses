@@ -11,11 +11,11 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.ResourceCursorAdapter;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +63,16 @@ public class AccountsFragment extends ListFragment
 		if(!prefs.getBoolean("hidetips", false)) {
         	Toast.makeText(getActivity(), "Tap an account to view or add entries.\nPress and hold to edit account details.", Toast.LENGTH_LONG).show();
 		}
+	}
+
+	/**
+	 * Restart the loader if we're resumed.
+	 */
+
+	@Override
+	public void onResume() {
+		super.onResume();
+        getLoaderManager().restartLoader(0, null, this);
 	}
 
 	/**

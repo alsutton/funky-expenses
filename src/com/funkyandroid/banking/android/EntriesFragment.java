@@ -10,9 +10,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.view.LayoutInflater;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
@@ -20,11 +20,25 @@ import android.widget.TextView;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
-import com.funkyandroid.banking.android.data.TransactionManager;
+import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BalanceFormatter;
+import com.funkyandroid.banking.android.utils.DatabaseRawQueryCursorLoader;
 
-public class EntriesFragment extends ListFragment {
+public class EntriesFragment extends ListFragment
+	implements LoaderManager.LoaderCallbacks<Cursor>  {
+
+	/**
+	 * The SQL to select the transactions for an account.
+	 */
+
+	private static final String TRANSACTIONS_FOR_ACCOUNT_SQL =
+		"SELECT t._id as _id, p.name, t.amount, t.timestamp FROM "
+		+ DBHelper.ENTRIES_TABLE_NAME
+		+ " t, "
+		+ DBHelper.PAYEE_TABLE_NAME
+		+ " p WHERE t.account_id = ? AND p._id = t.payee_id ORDER BY timestamp DESC";
+
 
 	/**
 	 * The ID of the account being viewed.
@@ -37,6 +51,12 @@ public class EntriesFragment extends ListFragment {
 	 */
 
 	public String currencySymbol;
+
+	/**
+	 * The list adapter
+	 */
+
+	private MyListAdapter mAdapter;
 
     /** Called when the activity is first created. */
     @Override
@@ -58,18 +78,10 @@ public class EntriesFragment extends ListFragment {
 
 		currencySymbol = CurrencyManager.getSymbol(db, account.currency);
 
-        final Cursor entryCursor = TransactionManager.getForAccount(db, accountId);
-    	getActivity().startManagingCursor(entryCursor);
-    	setListAdapter(new MyListAdapter(entryCursor));
-    }
+        mAdapter = new MyListAdapter();
+		setListAdapter(mAdapter);
 
-    /**
-     * Creates the view for this fragment
-     */
-
-    @Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	return inflater.inflate(R.layout.entries, container, false);
+        getLoaderManager().initLoader(0, null, this);
     }
 
 	/**
@@ -81,9 +93,17 @@ public class EntriesFragment extends ListFragment {
     	super.onStart();
     	final SQLiteDatabase db = ((DatabaseReadingActivity)getActivity()).getReadableDatabaseConnection();
     	account = AccountManager.getById(db, account.id);
-    	updateBalance(account.balance);
-		((MyListAdapter)getListAdapter()).notifyDataSetChanged();
     }
+
+	/**
+	 * Restart the loader if we're resumed.
+	 */
+
+	@Override
+	public void onResume() {
+		super.onResume();
+        getLoaderManager().restartLoader(0, null, this);
+	}
 
 	/**
 	 * Handle clicks by opening a the entry editor
@@ -97,16 +117,33 @@ public class EntriesFragment extends ListFragment {
 	}
 
     /**
-     * Update the current account balance
-     */
+	 * Create the loader for the cursor.
+	 *
+	 * @param id The ID of the loader.
+	 * @param args The arguments for the query.
+	 *
+	 * @return The loader.
+	 */
 
-    public void updateBalance(long newBalance) {
-    	StringBuilder balanceText = new StringBuilder(32);
-    	balanceText.append("Current balance : ");
-		BalanceFormatter.format(balanceText, newBalance, currencySymbol);
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		final SQLiteDatabase db = ((DatabaseReadingActivity)getActivity()).getReadableDatabaseConnection();
+		return new DatabaseRawQueryCursorLoader(getActivity(), db, TRANSACTIONS_FOR_ACCOUNT_SQL, new String[] { Integer.toString(account.id) } );
+	}
 
-    	TextView textView = (TextView) getView().findViewById(R.id.balance);
-    	textView.setText(balanceText.toString());
+    @Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.swapCursor(data);
+        if (isResumed()) {
+            setListShown(true);
+        } else {
+            setListShownNoAnimation(true);
+        }
+    }
+
+    @Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
     }
 
     /**
@@ -125,8 +162,8 @@ public class EntriesFragment extends ListFragment {
     	 * @param context The context in which the adapter is operating
     	 * @param cursor The cursor being used.
     	 */
-    	public MyListAdapter(final Cursor c) {
-    		super(getActivity(), R.layout.entry_list_item, c);
+    	public MyListAdapter() {
+    		super(getActivity(), R.layout.entry_list_item, null, 0);
     	}
 
     	/**

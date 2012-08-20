@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -89,7 +88,6 @@ public class EntriesActivity extends SherlockFragmentActivity implements Databas
     public void onStart() {
     	super.onStart();
     	entries.account = AccountManager.getById(db, entries.account.id);
-    	updateBalance(entries.account.balance);
     	getSupportActionBar().setTitle(entries.account.name);
     }
 
@@ -178,19 +176,6 @@ public class EntriesActivity extends SherlockFragmentActivity implements Databas
 		intent.putExtra("com.funkyandroid.banking.account_id", entries.account.id);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
-    }
-
-    /**
-     * Update the current account balance
-     */
-
-    public void updateBalance(long newBalance) {
-    	StringBuilder balanceText = new StringBuilder(32);
-    	balanceText.append("Current balance : ");
-		BalanceFormatter.format(balanceText, newBalance, entries.currencySymbol);
-
-    	TextView textView = (TextView) findViewById(R.id.balance);
-    	textView.setText(balanceText.toString());
     }
 
     /**

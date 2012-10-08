@@ -36,12 +36,6 @@ public class CategoryReportActivity extends SherlockListActivity {
 	private int accountId;
 
 	/**
-	 * The category the report is for
-	 */
-
-	private int categoryId;
-
-	/**
 	 * The connection to the database.
 	 */
 
@@ -67,7 +61,7 @@ public class CategoryReportActivity extends SherlockListActivity {
     		return;
     	}
 
-    	categoryId = startingIntent.getIntExtra("com.funkyandroid.banking.category_id", -1);
+    	int categoryId = startingIntent.getIntExtra("com.funkyandroid.banking.category_id", -1);
     	if( categoryId == -1 ) {
     		finish();
     		return;
@@ -147,11 +141,8 @@ public class CategoryReportActivity extends SherlockListActivity {
 	 *
 	 * @param parent The list view clicked on.
 	 * @param view The view clicked upon.
-	 * @param groupPosition The position of the group in the ExpandableListView
-	 * @param childPosition The position of the child in the group
+     * @param position The position of the selected item.
 	 * @param id The ID of the item clicked on.
-	 *
-	 * @return Always true to indicate activity was started.
 	 */
 
     @Override
@@ -184,7 +175,7 @@ public class CategoryReportActivity extends SherlockListActivity {
 		extends ResourceCursorAdapter {
 
 		public MyAdapter(final Cursor cursor) {
-			super(CategoryReportActivity.this, R.layout.entry_list_item, cursor );
+			super(CategoryReportActivity.this, R.layout.entry_list_item, cursor, 0 );
 		}
 
 		@Override

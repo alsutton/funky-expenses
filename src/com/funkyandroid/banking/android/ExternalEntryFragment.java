@@ -110,6 +110,8 @@ public class ExternalEntryFragment extends Fragment
         AmountEventListener amountEventListener =
         	new AmountEventListener(editText.getOnFocusChangeListener());
         editText.setOnFocusChangeListener(amountEventListener);
+
+        getLoaderManager().initLoader(0, null, this);
     }
 
     /**

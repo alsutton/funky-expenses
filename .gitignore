@@ -1,5 +1,6 @@
 bin
 gen
+classes
 .idea
 *.iml
 .DS_Store

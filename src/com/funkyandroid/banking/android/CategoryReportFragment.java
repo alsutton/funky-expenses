@@ -82,7 +82,9 @@ public class CategoryReportFragment
     	}
 
     	currencySymbol = CurrencyManager.getSymbol(db, account.currency);
-        getActivity().getActionBar().setTitle(CategoryManager.getById(db, categoryId));
+        getActivity().getActionBar().setTitle(
+                getResources().getString(R.string.titleCategoryReport)+CategoryManager.getById(db, categoryId)
+        );
 
         getLoaderManager().initLoader(0, null, this);
     }

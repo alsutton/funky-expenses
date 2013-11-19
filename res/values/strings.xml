@@ -121,4 +121,6 @@
 
     <string name="title_hidetips_preference">Hide Tips</string>
     <string name="summary_hidetips_preference">Hide the pop-up tips shown in the application</string>
+
+    <string name="titleCategoryReport">Category : </string>
 </resources>

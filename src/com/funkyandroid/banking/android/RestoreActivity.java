@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
-import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class RestoreActivity extends ActionBarActivity {
 
@@ -68,10 +67,10 @@ public class RestoreActivity extends ActionBarActivity {
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View view) {
-				RestoreActivity.this.finish();
-			}
+            @Override
+            public void onClick(final View view) {
+                RestoreActivity.this.finish();
+            }
         });
 
         Button okButton = (Button) findViewById(R.id.okButton);
@@ -150,15 +149,6 @@ public class RestoreActivity extends ActionBarActivity {
 	    		return super.onOptionsItemSelected(item);
     	}
     }
-
-    /**
-     * Set up the menu for the application
-     */
-    @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
-		MenuUtil.buildMenu(this, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
 
     /**
      * Start the backup

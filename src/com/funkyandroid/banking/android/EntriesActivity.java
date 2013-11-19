@@ -25,7 +25,6 @@ import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.TransactionManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BalanceFormatter;
-import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class EntriesActivity extends ActionBarActivity implements DatabaseReadingActivity {
 
@@ -111,11 +110,7 @@ public class EntriesActivity extends ActionBarActivity implements DatabaseReadin
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.entries_menu, menu);
-
-		MenuUtil.buildMenu(this, menu);
-
+        getMenuInflater().inflate(R.menu.entries_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 

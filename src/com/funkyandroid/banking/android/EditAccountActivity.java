@@ -26,7 +26,6 @@ import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.AmountEventListener;
 import com.funkyandroid.banking.android.utils.CurrencyTextKeyListener;
-import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.ValueUtils;
 
 public class EditAccountActivity extends ActionBarActivity {
@@ -163,18 +162,6 @@ public class EditAccountActivity extends ActionBarActivity {
 		}
     	setCurrency(account.currency);
     }
-
-    /**
-     * Set up the menu for the application
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-
-		MenuUtil.buildMenu(this, menu);
-
-		return true;
-	}
 
     /**
      * Handle the selection of an option.

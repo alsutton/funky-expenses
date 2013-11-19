@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
-import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class CategoriesReportActivity
 	extends ActionBarActivity
@@ -51,6 +50,8 @@ public class CategoriesReportActivity
         getSupportFragmentManager().beginTransaction()
 		        .add(R.id.fragment_holder, categoriesReportFragment)
 		        .commit();
+
+        getSupportActionBar().setTitle(R.string.titleCategoriesActivity);
     }
 
     /**
@@ -65,16 +66,6 @@ public class CategoriesReportActivity
     }
 
     /**
-     * When resuming check the title bar shows the category name
-     */
-
-    @Override
-    public void onResume() {
-    	super.onResume();
-    	getSupportActionBar().setTitle(categoriesReportFragment.account.name);
-    }
-
-    /**
      * Close database connection onDestroy.
      */
 
@@ -85,18 +76,6 @@ public class CategoriesReportActivity
     	}
     	super.onDestroy();
     }
-
-    /**
-     * Set up the menu for the application
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-
-		MenuUtil.buildMenu(this, menu);
-
-		return true;
-	}
 
     /**
      * Handle the selection of an option.

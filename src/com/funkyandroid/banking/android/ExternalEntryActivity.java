@@ -6,7 +6,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
-import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class ExternalEntryActivity
        extends ActionBarActivity
@@ -67,22 +66,6 @@ public class ExternalEntryActivity
     		db.close();
     	}
     }
-
-    /**
-     * Get the account details when started.
-     */
-
-    /**
-     * Set up the menu for the application
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-
-		MenuUtil.buildMenu(this, menu);
-
-		return true;
-	}
 
     @Override
     public SQLiteDatabase getReadableDatabaseConnection() {

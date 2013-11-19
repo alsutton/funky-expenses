@@ -37,7 +37,6 @@ import android.widget.TextView;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BackupUtils;
-import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class BackupActivity extends ActionBarActivity {
 
@@ -90,10 +89,10 @@ public class BackupActivity extends ActionBarActivity {
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View view) {
-				BackupActivity.this.finish();
-			}
+            @Override
+            public void onClick(final View view) {
+                BackupActivity.this.finish();
+            }
         });
 
         Button okButton = (Button) findViewById(R.id.okButton);
@@ -156,8 +155,6 @@ public class BackupActivity extends ActionBarActivity {
 				}
 			}
 		);
-
-		MenuUtil.buildMenu(this, menu);
 
 		return true;
 	}

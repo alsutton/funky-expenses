@@ -197,6 +197,7 @@ public class EditEntryActivity extends ActionBarActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
     /**
      * Override onDestroy to close the database.
      */

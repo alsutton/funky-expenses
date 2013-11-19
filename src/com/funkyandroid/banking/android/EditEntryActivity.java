@@ -12,10 +12,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -102,30 +102,6 @@ public class EditEntryActivity extends ActionBarActivity {
                     }
                 });
 
-		findViewById(R.id.okButton).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View view) {
-                        storeEntryDetails();
-                    }
-                });
-
-        findViewById(R.id.cancelButton).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View view) {
-                        if (fetched) {
-                            SQLiteDatabase db = (new DBHelper(EditEntryActivity.this)).getWritableDatabase();
-                            try {
-                                TransactionManager.delete(db, transaction, false);
-                            } finally {
-                                db.close();
-                            }
-                        }
-                        EditEntryActivity.this.finish();
-                    }
-                });
-
         EditText editText = (EditText) findViewById(R.id.amount);
         editText.setKeyListener(new CurrencyTextKeyListener());
         AmountEventListener amountEventListener =
@@ -158,6 +134,69 @@ public class EditEntryActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * Set up the save/cancel/delete menu
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.edit_entry_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * Set up the save/cancel/delete menu
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        int okTextResource, cancelTextResource, cancelIconResource;
+        if(fetched) {
+            okTextResource = R.string.updateButtonText;
+            cancelTextResource = R.string.deleteButtonText;
+            cancelIconResource = R.drawable.ic_1_navigation_cancel;
+        } else {
+            okTextResource = R.string.okButtonText;
+            cancelTextResource = R.string.cancelButtonText;
+            cancelIconResource = R.drawable.ic_5_content_discard;
+        }
+
+        menu.findItem(R.id.menu_done).setTitle(okTextResource);
+
+        MenuItem cancelItem = menu.findItem(R.id.menu_cancel);
+        cancelItem.setTitle(cancelTextResource);
+        cancelItem.setIcon(cancelIconResource);
+
+        return true;
+    }
+
+    /**
+     * Handle the selection of an option.
+     */
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_done:
+                storeEntryDetails();
+                finish();
+                return true;
+
+            case R.id.menu_cancel:
+                if (fetched) {
+                    SQLiteDatabase db = (new DBHelper(EditEntryActivity.this)).getWritableDatabase();
+                    try {
+                        TransactionManager.delete(db, transaction, false);
+                    } finally {
+                        db.close();
+                    }
+                }
+            case android.R.id.home:
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     /**
      * Override onDestroy to close the database.
      */
@@ -209,23 +248,6 @@ public class EditEntryActivity extends ActionBarActivity {
     }
 
     /**
-     * Handle the selection of an option.
-     */
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	switch(item.getItemId()) {
-	    	case android.R.id.home:
-	    	{
-				finish();
-				return true;
-	    	}
-	    	default:
-	    		return super.onOptionsItemSelected(item);
-    	}
-    }
-
-    /**
      * Creates a new, empty transaction
      */
 
@@ -237,6 +259,7 @@ public class EditEntryActivity extends ActionBarActivity {
         selectDebitButton();
 
 		fetched = false;
+        invalidateOptionsMenu();
     }
 
     /**
@@ -289,11 +312,6 @@ public class EditEntryActivity extends ActionBarActivity {
     	editText = (EditText) findViewById(R.id.amount);
     	editText.setText(ValueUtils.toString(amount, false));
 
-    	Button button = (Button) findViewById(R.id.okButton);
-    	button.setText(R.string.updateButtonText);
-    	button = (Button) findViewById(R.id.cancelButton);
-    	button.setText(R.string.deleteButtonText);
-
     	String category = CategoryManager.getById(db, transaction.getCategoryId());
     	if(CategoryManager.UNCAT_CAT.equals(category)) {
     		category = "";
@@ -302,6 +320,7 @@ public class EditEntryActivity extends ActionBarActivity {
     	categoryEntry.setText(category);
 
     	fetched = true;
+        invalidateOptionsMenu();
     }
 
     /**
@@ -368,7 +387,6 @@ public class EditEntryActivity extends ActionBarActivity {
 	    	} else {
 	    		TransactionManager.create(db, transaction);
 	    	}
-			finish();
     	} catch( NumberFormatException ex ) {
     		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
     									.setTitle("Your entry could not be stored")

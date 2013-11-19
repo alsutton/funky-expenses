@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:funkyexpenses="http://schemas.android.com/apk/res-auto" >
+    <item android:id="@+id/menu_done"
+          android:icon="@drawable/ic_1_navigation_accept"
+          android:title="@string/okButtonText"
+          funkyexpenses:showAsAction="always|withText" />
+    
+    <item android:id="@+id/menu_cancel"
+          android:icon="@drawable/ic_1_navigation_cancel"
+          android:title="@string/cancelButtonText"
+          funkyexpenses:showAsAction="ifRoom|withText" />
+    
+</menu>

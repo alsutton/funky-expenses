@@ -153,21 +153,4 @@
 			</LinearLayout>		
 		</LinearLayout>
 	</ScrollView>
-	<LinearLayout	style="?android:attr/buttonBarStyle"
-			        android:layout_height="wrap_content"
-			        android:layout_width="match_parent"
-					android:orientation="horizontal">
-		<Button style="?android:attr/buttonBarButtonStyle"
-                android:id="@+id/cancelButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-				android:text="@string/cancelButtonText"/>
-        <Button style="?android:attr/buttonBarButtonStyle"
-                android:id="@+id/okButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/okButtonText"/>
-	</LinearLayout>
 </LinearLayout>

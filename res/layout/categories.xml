@@ -4,15 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center">
-	<TextView  
-		android:id="@+id/balance"
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content" 
-	    android:background="#369"
-	    android:textColor="#fff"
-		android:layout_weight="0"
-	    android:gravity="center"/>
-	<ListView  
+	<ListView
 		android:id="@id/android:list"
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent"

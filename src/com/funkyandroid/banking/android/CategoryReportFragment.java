@@ -88,21 +88,19 @@ public class CategoryReportFragment
     	}
 
     	currencySymbol = CurrencyManager.getSymbol(db, account.currency);
+        getActivity().getActionBar().setTitle(CategoryManager.getById(db, categoryId));
 
         getLoaderManager().initLoader(0, null, this);
     }
 
     /**
-     * Called whenever the activity becomes visible.
+     * Restart the loader on a resume to ensure the data is fresh.
      */
 
     @Override
-    public void onStart() {
-    	super.onStart();
-    	updateBalance(AccountManager.getBalanceById(
-                ((DatabaseReadingActivity)getActivity()).getReadableDatabaseConnection(),
-                accountId));
-		((ResourceCursorAdapter)getListAdapter()).notifyDataSetChanged();
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(0, null, this);
     }
 
 	/**
@@ -143,19 +141,6 @@ public class CategoryReportFragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         setListAdapter(null);
-    }
-
-    /**
-     * Update the current account balance
-     */
-
-    public void updateBalance(long newBalance) {
-    	StringBuilder balanceText = new StringBuilder(32);
-    	balanceText.append("Current balance : ");
-		BalanceFormatter.format(balanceText, newBalance, currencySymbol);
-
-    	TextView textView = (TextView) getView().findViewById(R.id.balance);
-    	textView.setText(balanceText.toString());
     }
 
 	/**

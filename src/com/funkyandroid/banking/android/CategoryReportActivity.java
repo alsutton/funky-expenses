@@ -2,7 +2,6 @@ package com.funkyandroid.banking.android;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import android.support.v7.app.ActionBarActivity;
@@ -42,7 +41,7 @@ public class CategoryReportActivity
         CategoryReportFragment fragment = new CategoryReportFragment();
         fragment.setArguments(extras);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_holder, new AccountsFragment())
+                .add(R.id.fragment_holder, fragment)
                 .commit();
     }
 

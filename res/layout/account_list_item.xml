@@ -18,19 +18,9 @@
 					android:layout_height="wrap_content"
 					android:layout_width="fill_parent"
 					android:textStyle="bold"
-					android:textSize="18sp"/>
+                    android:textSize="24sp"/>
 		<TextView	android:id="@+id/value"
 					android:layout_height="wrap_content"
-					android:layout_width="fill_parent"
-					android:textSize="16sp"/>		
+					android:layout_width="fill_parent"/>
 	</LinearLayout>
-	<RelativeLayout	android:layout_width="wrap_content"
-				  	android:layout_height="fill_parent"
-				  	android:paddingRight="5dip">
-	  <ImageView	android:layout_width="wrap_content"
-	  				android:layout_height="wrap_content"
-		 	 		android:layout_centerInParent="true"
-		 	 		android:src="@android:drawable/ic_media_play"/>
-	
-	</RelativeLayout>
 </LinearLayout>

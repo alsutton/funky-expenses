@@ -12,29 +12,21 @@ import android.util.Log;
 import com.funkyandroid.banking.android.AccountsActivity;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
-import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.Crypto;
 
-public class Launcher extends Activity
-	implements KeypadHandler.OnOKListener {
+public class Launcher extends Activity {
 
 	/**
 	 * The tag used for logging
 	 */
 
-	public static final String LOGTAG = "FunkyExpenses";
+	public static final String LOG_TAG = "FunkyExpenses";
 
 	/**
 	 * The shared preferences.
 	 */
 
 	private String passwordHash;
-
-	/**
-	 * The handler for showing keypads.
-	 */
-
-	private KeypadHandler keypadHandler;
 
     /** Called when the activity is first created. */
     @Override
@@ -54,8 +46,6 @@ public class Launcher extends Activity
 	    	}
 
 	    	setContentView(R.layout.password_background);
-	    	keypadHandler = new KeypadHandler(this);
-	    	keypadHandler.display(1, R.string.enterPassword, "", this, true);
     	} catch( Exception ex ) {
             new AlertDialog.Builder(this).setTitle("Problem during startup")
             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -63,30 +53,24 @@ public class Launcher extends Activity
             .setPositiveButton("OK", new OnClickListener() {
     			@Override
 				public void onClick(DialogInterface dialog, int which) {
-    		    	Launcher.this.finish();
+    		    	finish();
     			}
             })
             .show();
     	}
-/* TODO: Reenable    	if(0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE )) {
-	    	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
-	    	startActivity(myIntent);
-	    	finish();
-		} */
     }
 
     /**
      * Check the entered password
      */
 
-    @Override
 	public void onOK(final int id, final String password) {
     	if( password != null && password.length() > 0 ) {
 	    	boolean passwordOK = false;
 	    	try {
 	    		passwordOK = Crypto.getHash(password).equals(passwordHash);
 	    	} catch(Exception ex) {
-	    		Log.e("Password Check", "Problem generating hash.", ex);
+	    		Log.e(LOG_TAG, "Problem generating hash.", ex);
 	    	}
 	    	if( passwordOK ) {
 	    		startAccountsActivity();
@@ -96,14 +80,8 @@ public class Launcher extends Activity
         new AlertDialog.Builder(this).setTitle("Password Incorrect")
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setMessage("The password you entered was not correct.")
-        .setPositiveButton("OK", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-		    	keypadHandler.display(1, R.string.enterPassword, "", Launcher.this, true);
-			}
-        })
+        .setPositiveButton("OK", null)
         .show();
-        return;
     }
 
     /**

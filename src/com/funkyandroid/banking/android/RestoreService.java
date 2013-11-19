@@ -17,10 +17,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.funkyandroid.banking.android.data.DBHelper;
-import com.funkyandroid.banking.android.expenses.demo.Launcher;
 import com.funkyandroid.banking.android.utils.BackupUtils;
 
 public class RestoreService extends IntentService {
+
+    /**
+     * The tag for logs.
+     */
+
+    private static final String LOG_TAG = "FE-Restore";
+
 	/**
 	 * The bundle parameter for the backup name
 	 */
@@ -46,23 +52,15 @@ public class RestoreService extends IntentService {
 	public final static String PROGRESS_COMPLETE_BROADCAST = "com.funkyandroid.banking.RESTORE_PROGRESS_COMPLETE";
 
 	/**
-	 * The broadcast indicating there was an error.
-	 */
-
-	public final static String PROGRESS_ERROR_BROADCAST = "com.funkyandroid.banking.RESTORE_PROGRESS_ERROR";
-
-	/**
 	 * Four byte buffer used to read data block sizes
 	 */
 	private final byte[] fourByteBuffer = new byte[4];
 
 	/**
 	 * Pass-through constructor
-	 *
-	 * @param name The name of the service;
 	 */
 	public RestoreService() {
-		super("FunkyExpenses Restore Servlet");
+		super("FunkyExpenses Restore Service");
 	}
 
 	/**
@@ -160,7 +158,7 @@ public class RestoreService extends IntentService {
 		Intent progressIntent = new Intent(RestoreService.PROGRESS_UPDATE_BROADCAST);
 		progressIntent.putExtra("error", ex.getMessage());
 		sendBroadcast(progressIntent);
-        Log.e(Launcher.LOGTAG, "Error during restore.", ex);
+        Log.e(LOG_TAG, "Error during restore.", ex);
 	}
 
 	/**
@@ -207,11 +205,10 @@ public class RestoreService extends IntentService {
 	 */
 
 	private int getInt(final byte[] data) {
-		int value = (((data[0]&0xff))  <<24)+
-		       		(((data[1]&0xff))<<16)+
-		       		(((data[2]&0xff))<< 8)+
-		       		 ((data[3]&0xff));
-		return value;
+		return (((data[0]&0xff))  <<24)+
+                (((data[1]&0xff))<<16)+
+                (((data[2]&0xff))<< 8)+
+                ((data[3]&0xff));
 	}
 
 	/**
@@ -244,10 +241,12 @@ public class RestoreService extends IntentService {
 	}
 
 	/**
-	 * Backup the categories
+	 * Restore the categories
 	 *
+     * @param fis The Input stream being restored from.
+     * @param streamPointer Information about the stream being restored from.
 	 * @param cipher The encryption cipher in use.
-	 * @param os The output stream to write to.
+     * @param db The database connection to restore to.
 	 *
 	 * @throws IOException
 	 * @throws BadPaddingException
@@ -263,8 +262,10 @@ public class RestoreService extends IntentService {
 	/**
 	 * Backup the payees
 	 *
-	 * @param cipher The encryption cipher in use.
-	 * @param os The output stream to write to.
+     * @param fis The Input stream being restored from.
+     * @param streamPointer Information about the stream being restored from.
+     * @param cipher The encryption cipher in use.
+     * @param db The database connection to restore to.
 	 *
 	 * @throws IOException
 	 * @throws BadPaddingException
@@ -280,9 +281,10 @@ public class RestoreService extends IntentService {
 	/**
 	 * Backup a table with an id and name in it.
 	 *
-	 * @param table The table to backup.
-	 * @param cipher The encryption cipher in use.
-	 * @param os The output stream to write to.
+     * @param fis The Input stream being restored from.
+     * @param streamPointer Information about the stream being restored from.
+     * @param cipher The encryption cipher in use.
+     * @param db The database connection to restore to.
 	 *
 	 * @throws IOException
 	 * @throws BadPaddingException
@@ -306,9 +308,10 @@ public class RestoreService extends IntentService {
 	/**
 	 * Backup a table with an id and name in it.
 	 *
-	 * @param table The table to backup.
-	 * @param cipher The encryption cipher in use.
-	 * @param os The output stream to write to.
+     * @param fis The Input stream being restored from.
+     * @param streamPointer Information about the stream being restored from.
+     * @param cipher The encryption cipher in use.
+     * @param db The database connection to restore to.
 	 *
 	 * @throws IOException
 	 * @throws BadPaddingException
@@ -332,9 +335,10 @@ public class RestoreService extends IntentService {
 	/**
 	 * Backup a table with an id and name in it.
 	 *
-	 * @param table The table to backup.
-	 * @param cipher The encryption cipher in use.
-	 * @param os The output stream to write to.
+     * @param fis The Input stream being restored from.
+     * @param streamPointer Information about the stream being restored from.
+     * @param cipher The encryption cipher in use.
+     * @param db The database connection to restore to.
 	 *
 	 * @throws IOException
 	 * @throws BadPaddingException
@@ -361,9 +365,10 @@ public class RestoreService extends IntentService {
 	/**
 	 * Backup a table with an id and name in it.
 	 *
-	 * @param table The table to backup.
-	 * @param cipher The encryption cipher in use.
-	 * @param os The output stream to write to.
+     * @param fis The Input stream being restored from.
+     * @param streamPointer Information about the stream being restored from.
+     * @param cipher The encryption cipher in use.
+     * @param db The database connection to restore to.
 	 *
 	 * @throws IOException
 	 * @throws BadPaddingException

@@ -8,29 +8,21 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
-import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
 import com.funkyandroid.banking.android.utils.AboutUtil;
 import com.funkyandroid.banking.android.utils.Crypto;
 
 public class AccountsActivity extends ActionBarActivity
-	implements KeypadHandler.OnOKListener, DatabaseReadingActivity {
+	implements DatabaseReadingActivity {
 
 	/**
 	 * The database connection
 	 */
 
 	private SQLiteDatabase db;
-
-	/**
-	 * The handler for showing keypads.
-	 */
-
-	private KeypadHandler keypadHandler = null;
 
 	/**
 	 * The first password entered in the change password box.
@@ -120,26 +112,14 @@ public class AccountsActivity extends ActionBarActivity
      */
 
     private void showSetPassword() {
-    	synchronized(this) {
-	    	if( keypadHandler == null ) {
-		    	keypadHandler = new KeypadHandler(this);
-	    	}
-    	}
-	    keypadHandler.display(1, R.string.setPassword, "", this, false);
+        // TODO: Allow the user to set a password
     }
 
     /**
-     * Handle a password change.
+     * Store the users new password.
      */
 
-    @Override
 	public void onOK(final int id, final String password) {
-    	if( id == 1 ) {
-    		password1 = password;
-        	keypadHandler.display(2, R.string.newPasswordConfirm, "", this, false);
-        	return;
-    	}
-
 		boolean match;
         match = (password1 == null && password == null) || (password1 != null && password != null && password1.equals(password));
 

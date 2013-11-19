@@ -139,7 +139,7 @@ public class EditEntryActivity extends ActionBarActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.edit_entry_menu, menu);
+        getMenuInflater().inflate(R.menu.create_or_edit_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

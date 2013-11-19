@@ -3,9 +3,10 @@ package com.funkyandroid.banking.android.utils;
 import android.content.Context;
 import android.content.Intent;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
+
 import com.funkyandroid.banking.android.Preferences;
 import com.funkyandroid.banking.android.expenses.demo.R;
 
@@ -27,7 +28,7 @@ public class MenuUtil {
 		menu.add(R.string.titlePreferences)
 		.setIcon(android.R.drawable.ic_menu_preferences)
 		.setOnMenuItemClickListener(
-			new OnMenuItemClickListener() {
+			new MenuItem.OnMenuItemClickListener() {
 				@Override
 				public boolean onMenuItemClick(final MenuItem item) {
 					context.startActivity(new Intent(context, Preferences.class));

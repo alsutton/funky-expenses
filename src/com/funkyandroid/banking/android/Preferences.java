@@ -2,10 +2,10 @@ package com.funkyandroid.banking.android;
 
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import android.preference.PreferenceActivity;
 import com.funkyandroid.banking.android.expenses.demo.R;
 
-public class Preferences extends SherlockPreferenceActivity {
+public class Preferences extends PreferenceActivity {
     @SuppressWarnings("deprecation")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {

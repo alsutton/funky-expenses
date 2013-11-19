@@ -3,15 +3,15 @@ package com.funkyandroid.banking.android;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class CategoriesReportActivity
-	extends SherlockFragmentActivity
+	extends ActionBarActivity
 	implements DatabaseReadingActivity {
 
 	/**

@@ -14,12 +14,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.TransactionManager;
@@ -27,7 +27,12 @@ import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BalanceFormatter;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
-public class EntriesActivity extends SherlockFragmentActivity implements DatabaseReadingActivity {
+public class EntriesActivity extends ActionBarActivity implements DatabaseReadingActivity {
+
+    /**
+     * The tag for log output
+     */
+    private static final String LOG_TAG = "FE-Entries";
 
 	/**
 	 * The parameter used to pass the intent extras between instances.
@@ -35,7 +40,7 @@ public class EntriesActivity extends SherlockFragmentActivity implements Databas
 
 	private static final String INTENT_EXTRAS_STRING = "I_EXTRAS";
 
-	/**
+    /**
 	 * The fragment showing the account entries.
 	 */
 
@@ -106,7 +111,7 @@ public class EntriesActivity extends SherlockFragmentActivity implements Databas
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getSupportMenuInflater();
+        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.entries_menu, menu);
 
 		MenuUtil.buildMenu(this, menu);
@@ -193,9 +198,13 @@ public class EntriesActivity extends SherlockFragmentActivity implements Databas
 	    	try {
 				File exportFile = new File(Environment.getExternalStorageDirectory(), "export.csv");
 				if(exportFile.exists()) {
-					exportFile.delete();
+					if(!exportFile.delete()) {
+                        Log.w(LOG_TAG, "Unable to delete "+exportFile.getCanonicalPath());
+                    }
 				}
-				exportFile.createNewFile();
+				if(!exportFile.createNewFile()) {
+                    Log.w(LOG_TAG, "Creation of "+exportFile.getCanonicalPath()+" reported a failure.");
+                }
 				Cursor exportCursor = TransactionManager.getForExportForAccount(db, entries.account.id);
 		    	try {
 		    		PrintStream ps = new PrintStream(new FileOutputStream(exportFile));

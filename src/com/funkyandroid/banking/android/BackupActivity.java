@@ -25,22 +25,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.BackupUtils;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
-public class BackupActivity extends SherlockActivity {
+public class BackupActivity extends ActionBarActivity {
 
 	private final static String[] NAME_ID_COLS = { "_id", "name" };
 
@@ -90,7 +89,7 @@ public class BackupActivity extends SherlockActivity {
         setContentView(R.layout.backup);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ((Button) findViewById(R.id.cancelButton)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View view) {
 				BackupActivity.this.finish();
@@ -147,7 +146,7 @@ public class BackupActivity extends SherlockActivity {
 		menu.add(R.string.menuAccounts)
 		.setIcon(android.R.drawable.ic_menu_revert)
 		.setOnMenuItemClickListener(
-			new OnMenuItemClickListener() {
+			new MenuItem.OnMenuItemClickListener() {
 				@Override
 				public boolean onMenuItemClick(final MenuItem item) {
 					Intent intent = new Intent(BackupActivity.this, AccountsActivity.class);
@@ -173,8 +172,6 @@ public class BackupActivity extends SherlockActivity {
 
     /**
      * Start the backup
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
      */
 
     private void startBackup() {
@@ -439,9 +436,6 @@ public class BackupActivity extends SherlockActivity {
     	/**
     	 * Backup the categories
     	 *
-    	 * @param cipher The encryption cipher in use.
-    	 * @param os The output stream to write to.
-    	 *
     	 * @throws IOException
     	 * @throws BadPaddingException
     	 * @throws IllegalBlockSizeException
@@ -455,9 +449,6 @@ public class BackupActivity extends SherlockActivity {
 
     	/**
     	 * Backup the payees
-    	 *
-    	 * @param cipher The encryption cipher in use.
-    	 * @param os The output stream to write to.
     	 *
     	 * @throws IOException
     	 * @throws BadPaddingException
@@ -474,9 +465,7 @@ public class BackupActivity extends SherlockActivity {
     	 * Backup a table with an id and name in it.
     	 *
     	 * @param table The table to backup.
-    	 * @param cipher The encryption cipher in use.
-    	 * @param os The output stream to write to.
-    	 *
+         *
     	 * @throws IOException
     	 * @throws BadPaddingException
     	 * @throws IllegalBlockSizeException
@@ -507,10 +496,6 @@ public class BackupActivity extends SherlockActivity {
 
     	/**
     	 * Backup a table with an id and name in it.
-    	 *
-    	 * @param table The table to backup.
-    	 * @param cipher The encryption cipher in use.
-    	 * @param os The output stream to write to.
     	 *
     	 * @throws IOException
     	 * @throws BadPaddingException
@@ -543,10 +528,6 @@ public class BackupActivity extends SherlockActivity {
     	/**
     	 * Backup a table with an id and name in it.
     	 *
-    	 * @param table The table to backup.
-    	 * @param cipher The encryption cipher in use.
-    	 * @param os The output stream to write to.
-    	 *
     	 * @throws IOException
     	 * @throws BadPaddingException
     	 * @throws IllegalBlockSizeException
@@ -576,10 +557,6 @@ public class BackupActivity extends SherlockActivity {
 
     	/**
     	 * Backup a table with an id and name in it.
-    	 *
-    	 * @param table The table to backup.
-    	 * @param cipher The encryption cipher in use.
-    	 * @param os The output stream to write to.
     	 *
     	 * @throws IOException
     	 * @throws BadPaddingException

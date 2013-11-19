@@ -2,14 +2,14 @@ package com.funkyandroid.banking.android;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
 public class ExternalEntryActivity
-       extends SherlockFragmentActivity
+       extends ActionBarActivity
        implements DatabaseReadingActivity {
 
     /**
@@ -24,12 +24,6 @@ public class ExternalEntryActivity
 
 	private SQLiteDatabase db;
 
-	/**
-	 * The accounts spinner.
-	 */
-
-	private ExternalEntryFragment externalEntryFragment;
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,7 +37,7 @@ public class ExternalEntryActivity
             extras = savedInstanceState.getBundle(INTENT_EXTRAS_STRING);
         }
 
-        externalEntryFragment = new ExternalEntryFragment();
+        ExternalEntryFragment externalEntryFragment = new ExternalEntryFragment();
         externalEntryFragment.setArguments(extras);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_holder, externalEntryFragment)

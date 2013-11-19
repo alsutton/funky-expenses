@@ -10,15 +10,15 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.funkyandroid.banking.android.data.Account;
 import com.funkyandroid.banking.android.data.AccountManager;
 import com.funkyandroid.banking.android.data.CurrencyManager;
@@ -29,7 +29,7 @@ import com.funkyandroid.banking.android.utils.CurrencyTextKeyListener;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.ValueUtils;
 
-public class EditAccountActivity extends SherlockActivity {
+public class EditAccountActivity extends ActionBarActivity {
 
 	/**
 	 * The list of currencies available on this system.
@@ -204,8 +204,7 @@ public class EditAccountActivity extends SherlockActivity {
     	long oldOpeningBalance = account.openingBalance;
 
     	editText = (EditText) findViewById(R.id.amount);
-    	final long openingBalance = ValueUtils.toLong(editText.getText().toString());
-    	account.openingBalance = openingBalance;
+    	account.openingBalance = ValueUtils.toLong(editText.getText().toString());
 
     	SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
 		try {

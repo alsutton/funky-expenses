@@ -5,18 +5,19 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
+
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.keypad.KeypadHandler;
+import com.funkyandroid.banking.android.utils.AboutUtil;
 import com.funkyandroid.banking.android.utils.Crypto;
-import com.funkyandroid.banking.android.utils.MenuUtil;
 
-public class AccountsActivity extends SherlockFragmentActivity
+public class AccountsActivity extends ActionBarActivity
 	implements KeypadHandler.OnOKListener, DatabaseReadingActivity {
 
 	/**
@@ -56,25 +57,8 @@ public class AccountsActivity extends SherlockFragmentActivity
 
     @Override
     public void onDestroy() {
+        db.close();
     	super.onDestroy();
-    	db.close();
-    }
-
-    /**
-     * Do a debug check when starting.
-     */
-    @Override
-    public void onStart() {
-    	super.onStart();
-    }
-
-    /**
-     * Do a license check on each resume.
-     */
-
-    @Override
-	public void onResume() {
-		super.onResume();
     }
 
     /**
@@ -82,11 +66,7 @@ public class AccountsActivity extends SherlockFragmentActivity
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.menu.accounts_menu, menu);
-
-		MenuUtil.buildMenu(this, menu);
-
+        getMenuInflater().inflate(R.menu.accounts_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -97,30 +77,29 @@ public class AccountsActivity extends SherlockFragmentActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
+            case R.id.menu_new_account:
+                startActivity(new Intent(this, EditAccountActivity.class));
+                return true;
 
-    	case R.id.menu_new_account:
-    	{
-			Intent viewIntent = new Intent(AccountsActivity.this, EditAccountActivity.class);
-			AccountsActivity.this.startActivity(viewIntent);
-            return true;
-    	}
-    	case R.id.menu_change_password:
-    	{
-			showSetPassword();
-            return true;
-    	}
-    	case R.id.menu_export:
-    	{
-			Intent viewIntent = new Intent(AccountsActivity.this, BackupActivity.class);
-			AccountsActivity.this.startActivity(viewIntent);
-            return true;
-    	}
-    	case R.id.menu_restore:
-    	{
-			Intent viewIntent = new Intent(AccountsActivity.this, RestoreActivity.class);
-			AccountsActivity.this.startActivity(viewIntent);
-            return true;
-    	}
+            case R.id.menu_change_password:
+                showSetPassword();
+                return true;
+
+            case R.id.menu_export:
+                startActivity(new Intent(this, BackupActivity.class));
+                return true;
+
+            case R.id.menu_restore:
+                startActivity(new Intent(this, RestoreActivity.class));
+                return true;
+
+            case R.id.menu_preferences:
+                startActivity(new Intent(this, Preferences.class));
+                return true;
+
+            case R.id.menu_about:
+                AboutUtil.showDialog(this);
+                return true;
 
     	default:
     		return super.onOptionsItemSelected(item);
@@ -162,13 +141,7 @@ public class AccountsActivity extends SherlockFragmentActivity
     	}
 
 		boolean match;
-		if			( password1 == null && password == null) {
-			match = true;
-		} else if	( password1 == null || password == null ) {
-			match = false;
-		} else {
-			match = password1.equals(password);
-		}
+        match = (password1 == null && password == null) || (password1 != null && password != null && password1.equals(password));
 
 		if( !match ) {
 	        new AlertDialog.Builder(this).setTitle("Password NOT Updated")
@@ -206,34 +179,4 @@ public class AccountsActivity extends SherlockFragmentActivity
 	        .show();
     	}
     }
-
-    /**
-     * License checker callback.
-     *
-     * @author Al Sutton
-     */
-/* TODO: Reenable
-    private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
-        public void allow() {
-        	licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECKED;
-            return;
-        }
-
-        public void dontAllow() {
-        	licenseCheckStatus = AccountsActivity.LICENSE_STATE_CHECK_FAILED;
-            if (isFinishing()) {
-                return;
-            }
-            Log.e("FunkyExpenses", "License check failed");
-        	Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.funkyandroid.banking.android.expenses.adfree"));
-        	startActivity(myIntent);
-        	finish();
-        }
-
-        public void applicationError(ApplicationErrorCode errorCode) {
-        	licenseCheckStatus = AccountsActivity.LICENSE_STATE_UNCHECKED;
-            return;
-        }
-    }
-*/
 }

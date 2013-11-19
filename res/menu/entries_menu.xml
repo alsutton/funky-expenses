@@ -3,15 +3,15 @@
     <item android:id="@+id/menu_new_entry"
           android:icon="@android:drawable/ic_menu_add"
           android:title="@string/newEntry"
-          android:showAsAction="ifRoom|withText" />
+          android:showAsAction="always" />
     
     <item android:id="@+id/menu_categories"
           android:icon="@android:drawable/ic_menu_agenda"
           android:title="@string/menuReports"
-          android:showAsAction="ifRoom|withText" />
+          android:showAsAction="ifRoom" />
     
     <item android:id="@+id/menu_email_csv"
           android:icon="@android:drawable/ic_menu_send"
           android:title="@string/menuEmail"
-          android:showAsAction="withText" />
+          android:showAsAction="ifRoom" />
 </menu>

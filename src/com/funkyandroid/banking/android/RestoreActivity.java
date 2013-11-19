@@ -1,9 +1,5 @@
 package com.funkyandroid.banking.android;
 
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.NoSuchPaddingException;
-
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,25 +10,19 @@ import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.utils.MenuUtil;
 
-public class RestoreActivity extends SherlockActivity {
-
-	/**
-	 * The status box.
-	 */
-
-	private TextView status;
+public class RestoreActivity extends ActionBarActivity {
 
 	/**
 	 * The Database connection
@@ -77,7 +67,7 @@ public class RestoreActivity extends SherlockActivity {
         setContentView(R.layout.restore);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ((Button) findViewById(R.id.cancelButton)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View view) {
 				RestoreActivity.this.finish();
@@ -85,7 +75,7 @@ public class RestoreActivity extends SherlockActivity {
         });
 
         Button okButton = (Button) findViewById(R.id.okButton);
-        status = (TextView) findViewById(R.id.status);
+        final TextView status = (TextView) findViewById(R.id.status);
         if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             new AlertDialog.Builder(this)
             		.setTitle("Missing Memory Card")
@@ -172,8 +162,6 @@ public class RestoreActivity extends SherlockActivity {
 
     /**
      * Start the backup
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
      */
 
     private void startRestore() {

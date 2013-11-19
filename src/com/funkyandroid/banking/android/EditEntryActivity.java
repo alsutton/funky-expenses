@@ -10,6 +10,9 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -19,9 +22,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.funkyandroid.banking.android.data.CategoryManager;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.PayeeManager;
@@ -34,7 +34,7 @@ import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.StringUtils;
 import com.funkyandroid.banking.android.utils.ValueUtils;
 
-public class EditEntryActivity extends SherlockActivity {
+public class EditEntryActivity extends ActionBarActivity {
 
 	/**
 	 * The transaction being edited.
@@ -53,18 +53,6 @@ public class EditEntryActivity extends SherlockActivity {
 	 */
 
 	private SQLiteDatabase db;
-
-	/**
-	 * The category suggestor.
-	 */
-
-	private CategorySuggestionsAdapter categorySuggester;
-
-	/**
-	 * The category suggestor.
-	 */
-
-	private PayeeSuggestionsAdapter payeeSuggester;
 
     /** Called when the activity is first created. */
     @Override
@@ -125,7 +113,7 @@ public class EditEntryActivity extends SherlockActivity {
 
     	db = (new DBHelper(this)).getWritableDatabase();
 
-    	categorySuggester =
+        CategorySuggestionsAdapter categorySuggester =
     		new CategorySuggestionsAdapter(
 					this,
 					android.R.layout.simple_dropdown_item_1line,
@@ -136,7 +124,7 @@ public class EditEntryActivity extends SherlockActivity {
     	AutoCompleteTextView categoryEntry = (AutoCompleteTextView) findViewById(R.id.category);
     	categoryEntry.setAdapter(categorySuggester);
 
-    	payeeSuggester =
+        PayeeSuggestionsAdapter payeeSuggester =
     		new PayeeSuggestionsAdapter(
 					this,
 					android.R.layout.simple_dropdown_item_1line,

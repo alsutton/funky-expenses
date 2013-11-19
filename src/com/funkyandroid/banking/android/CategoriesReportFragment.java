@@ -12,7 +12,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.ResourceCursorAdapter;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -66,7 +65,7 @@ public class CategoriesReportFragment extends ListFragment
 			@Override
 			public boolean onItemLongClick(AdapterView<?> list, View view, int position, long id) {
 				editCategory(((int)id & 0xffffffff));
-				return false;
+				return true;
 			}
 		};
 
@@ -120,13 +119,7 @@ public class CategoriesReportFragment extends ListFragment
 	 * Handle the clicking of a child object by taking the user
 	 * to the list of apps in the category page.
 	 *
-	 * @param parent The list view clicked on.
-	 * @param view The view clicked upon.
-	 * @param groupPosition The position of the group in the ExpandableListView
-	 * @param childPosition The position of the child in the group
-	 * @param id The ID of the item clicked on.
-	 *
-	 * @return Always true to indicate activity was started.
+	 * @see ListFragment#onListItemClick(android.widget.ListView, android.view.View, int, long)
 	 */
     @Override
 	public void onListItemClick(final ListView parent,
@@ -145,32 +138,33 @@ public class CategoriesReportFragment extends ListFragment
      */
 
     private void editCategory(final int categoryId) {
-    	final SQLiteDatabase database = ((DatabaseReadingActivity)getActivity()).getReadableDatabaseConnection();
-    	String name = CategoryManager.getById(database, categoryId);
+    	String name = CategoryManager.getById(
+                    ((DatabaseReadingActivity)getActivity()).getReadableDatabaseConnection(),
+                    categoryId);
 
-    	LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE);
-    	final View editView = inflater.inflate(R.layout.edit_category, null);
-    	if(name != null && name.length() > 0) {
-    		((EditText)(editView.findViewById(R.id.categoryName))).setText(name);
-    	}
+        final EditText categoryInput = new EditText(getActivity());
+        if(name != null && name.length() > 0) {
+            categoryInput.setText(name);
+        }
+
 
     	new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.editCategory)
     			.setPositiveButton(R.string.okButtonText, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						EditText catName = (EditText) editView.findViewById(R.id.categoryName);
-						if(catName == null || catName.getText().length() == 0) {
-							return;
-						}
-						CategoryManager.updateCategory(database, categoryId, catName.getText().toString());
+                        final SQLiteDatabase writableDatabase = new DBHelper(getActivity()).getWritableDatabase();
+                        try {
+						    CategoryManager.updateCategory(writableDatabase, categoryId, categoryInput.getText().toString());
+                            getLoaderManager().restartLoader(0, null, CategoriesReportFragment.this);
+                        } finally {
+                            writableDatabase.close();
+                        }
 					}
-    			})
+                })
     			.setNegativeButton(R.string.cancelButtonText, null)
-    			.setView(editView)
-    			.setTitle(R.string.editCategory)
-    			.create()
+    			.setView(categoryInput)
     			.show();
-
     }
 
 	@Override

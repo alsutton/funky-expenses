@@ -22,7 +22,6 @@
 					android:textSize="24sp"/>
 		<TextView	android:id="@+id/value"
 					android:layout_height="wrap_content"
-					android:layout_width="fill_parent"
-					android:textStyle="bold"/>				
+					android:layout_width="fill_parent"/>
 	</LinearLayout>
 </LinearLayout>

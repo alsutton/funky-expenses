@@ -19,10 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.funkyandroid.banking.android.data.Account;
-import com.funkyandroid.banking.android.data.AccountManager;
-import com.funkyandroid.banking.android.data.CurrencyManager;
-import com.funkyandroid.banking.android.data.DBHelper;
+import com.funkyandroid.banking.android.data.*;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.AmountEventListener;
 import com.funkyandroid.banking.android.utils.CurrencyTextKeyListener;
@@ -56,33 +53,7 @@ public class EditAccountActivity extends ActionBarActivity {
         setContentView(R.layout.edit_account);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		Button button = (Button) findViewById(R.id.cancelButton);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				@Override
-						public void onClick(final View view) {
-        					if( fetched ) {
-        				    	SQLiteDatabase db = (new DBHelper(EditAccountActivity.this)).getWritableDatabase();
-        						try {
-       					    		AccountManager.delete(db, account);
-        						} finally {
-        							db.close();
-        						}
-        					}
-        					EditAccountActivity.this.finish();
-        				}
-        		});
-		button = (Button) findViewById(R.id.okButton);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				@Override
-						public void onClick(final View view) {
-        					storeAccountDetails();
-        					EditAccountActivity.this.finish();
-        				}
-        		});
-		button = (Button) findViewById(R.id.currency);
-        button.setOnClickListener(
+        findViewById(R.id.currency).setOnClickListener(
         		new View.OnClickListener() {
         				@Override
 						public void onClick(final View view) {
@@ -104,8 +75,6 @@ public class EditAccountActivity extends ActionBarActivity {
     public void onStart() {
     	super.onStart();
 
-    	fetched = false;
-
     	Intent startingIntent = getIntent();
 
     	SQLiteDatabase db = (new DBHelper(this)).getReadableDatabase();
@@ -117,34 +86,89 @@ public class EditAccountActivity extends ActionBarActivity {
 
 	        int accountId = startingIntent.getIntExtra("com.funkyandroid.banking.account_id", -1);
 	    	if( accountId == -1 ) {
-	    		createEmptyAccount();
-	    		return;
-	    	}
+                createEmptyAccount();
+                EditText editText = (EditText) findViewById(R.id.amount);
+                editText.setText(ValueUtils.getZeroValueString());
+                fetched = false;
+	    	} else {
+                account = AccountManager.getById(db, accountId);
+                EditText editText = (EditText) findViewById(R.id.accountName);
+                editText.setText(account.name);
+                editText = (EditText) findViewById(R.id.amount);
+                editText.setText(ValueUtils.toString(account.openingBalance, false));
+                fetched = true;
+            }
 
-			account = AccountManager.getById(db, accountId);
-		} finally {
+            setCurrency(account.currency);
+
+            invalidateOptionsMenu();
+        } finally {
 			db.close();
 		}
+    }
 
-    	if( account == null ) {
-    		createEmptyAccount();
-    		EditText editText = (EditText) findViewById(R.id.amount);
-    		editText.setText(ValueUtils.getZeroValueString());
-    		return;
-    	} else {
-	    	fetched = true;
-	    	EditText editText = (EditText) findViewById(R.id.accountName);
-	    	editText.setText(account.name);
-	    	editText = (EditText) findViewById(R.id.amount);
-	    	editText.setText(ValueUtils.toString(account.openingBalance, false));
+    /**
+     * Set up the save/cancel/delete menu
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.create_or_edit_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-	    	Button button = (Button) findViewById(R.id.okButton);
- 	    	button.setText(R.string.updateButtonText);
- 	    	button = (Button) findViewById(R.id.cancelButton);
- 	    	button.setText(R.string.deleteButtonText);
-    	}
+    /**
+     * Set up the save/cancel/delete menu
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        int okTextResource, cancelTextResource, cancelIconResource;
+        if(fetched) {
+            okTextResource = R.string.updateButtonText;
+            cancelTextResource = R.string.deleteButtonText;
+            cancelIconResource = R.drawable.ic_1_navigation_cancel;
+        } else {
+            okTextResource = R.string.okButtonText;
+            cancelTextResource = R.string.cancelButtonText;
+            cancelIconResource = R.drawable.ic_5_content_discard;
+        }
 
-    	setCurrency(account.currency);
+        menu.findItem(R.id.menu_done).setTitle(okTextResource);
+
+        MenuItem cancelItem = menu.findItem(R.id.menu_cancel);
+        cancelItem.setTitle(cancelTextResource);
+        cancelItem.setIcon(cancelIconResource);
+
+        return true;
+    }
+
+    /**
+     * Handle the selection of an option.
+     */
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_done:
+                storeAccountDetails();
+                finish();
+                return true;
+
+            case R.id.menu_cancel:
+                if( fetched ) {
+                    SQLiteDatabase db = (new DBHelper(EditAccountActivity.this)).getWritableDatabase();
+                    try {
+                        AccountManager.delete(db, account);
+                    } finally {
+                        db.close();
+                    }
+                }
+            case android.R.id.home:
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
@@ -161,23 +185,6 @@ public class EditAccountActivity extends ActionBarActivity {
 			account.currency = "EUR";
 		}
     	setCurrency(account.currency);
-    }
-
-    /**
-     * Handle the selection of an option.
-     */
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	switch(item.getItemId()) {
-	    	case android.R.id.home:
-	    	{
-				finish();
-				return true;
-	    	}
-	    	default:
-	    		return super.onOptionsItemSelected(item);
-    	}
     }
 
     /**
@@ -281,11 +288,8 @@ public class EditAccountActivity extends ActionBarActivity {
      */
 
     private void setCurrency(final String code, final String symbol) {
-    	Button currencyButton = (Button) findViewById(R.id.currency);
-    	currencyButton.setText(code);
-
-    	TextView textView = (TextView) findViewById(R.id.currencySymbol);
-    	textView.setText(symbol);
+        ((EditText) findViewById(R.id.currency)).setText(code);
+        ((TextView) findViewById(R.id.currencySymbol)).setText(symbol);
     }
 
 }

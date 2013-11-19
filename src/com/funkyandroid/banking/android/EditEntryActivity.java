@@ -9,17 +9,15 @@ import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.funkyandroid.banking.android.data.CategoryManager;
@@ -30,7 +28,6 @@ import com.funkyandroid.banking.android.data.TransactionManager;
 import com.funkyandroid.banking.android.expenses.demo.R;
 import com.funkyandroid.banking.android.ui.AmountEventListener;
 import com.funkyandroid.banking.android.utils.CurrencyTextKeyListener;
-import com.funkyandroid.banking.android.utils.MenuUtil;
 import com.funkyandroid.banking.android.utils.StringUtils;
 import com.funkyandroid.banking.android.utils.ValueUtils;
 
@@ -48,6 +45,18 @@ public class EditEntryActivity extends ActionBarActivity {
 
 	private boolean fetched = false;
 
+    /**
+     * The default drawable for an unselected button.
+     */
+
+    private Drawable mUnselectedBackground;
+
+    /**
+     * Which option is currently selected
+     */
+
+    private int mCurrentTransactionTypeSelection;
+
 	/**
 	 * The Database connection
 	 */
@@ -62,48 +71,60 @@ public class EditEntryActivity extends ActionBarActivity {
         setContentView(R.layout.edit_entry);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		Button button = (Button) findViewById(R.id.newEntryDateButton);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				@Override
-						public void onClick(final View view) {
-        		        	Calendar cal = Calendar.getInstance();
-        		        	cal.setTime(new Date(EditEntryActivity.this.transaction.getTimestamp()));
+        mUnselectedBackground = findViewById(R.id.creditButton).getBackground();
 
-        		            new DatePickerDialog(
-        		            		EditEntryActivity.this,
-        		            		new DateListener(),
-        		            		cal.get(Calendar.YEAR),
-        		                    cal.get(Calendar.MONTH),
-        		                    cal.get(Calendar.DAY_OF_MONTH)).show();
-        				}
-        		});
+        findViewById(R.id.creditButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectCreditButton();
+            }
+        });
+        findViewById(R.id.debitButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectDebitButton();
+            }
+        });
 
-		button = (Button) findViewById(R.id.okButton);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				@Override
-						public void onClick(final View view) {
-        					storeEntryDetails();
-        				}
-        		});
+        findViewById(R.id.newEntryDateButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(new Date(EditEntryActivity.this.transaction.getTimestamp()));
 
-		button = (Button) findViewById(R.id.cancelButton);
-        button.setOnClickListener(
-        		new View.OnClickListener() {
-        				@Override
-						public void onClick(final View view) {
-        					if( fetched ) {
-        				    	SQLiteDatabase db = (new DBHelper(EditEntryActivity.this)).getWritableDatabase();
-        						try {
-       					    		TransactionManager.delete(db, transaction, false);
-        						} finally {
-        							db.close();
-        						}
-        					}
-        					EditEntryActivity.this.finish();
-        				}
-        		});
+                        new DatePickerDialog(
+                                EditEntryActivity.this,
+                                new DateListener(),
+                                cal.get(Calendar.YEAR),
+                                cal.get(Calendar.MONTH),
+                                cal.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+		findViewById(R.id.okButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        storeEntryDetails();
+                    }
+                });
+
+        findViewById(R.id.cancelButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        if (fetched) {
+                            SQLiteDatabase db = (new DBHelper(EditEntryActivity.this)).getWritableDatabase();
+                            try {
+                                TransactionManager.delete(db, transaction, false);
+                            } finally {
+                                db.close();
+                            }
+                        }
+                        EditEntryActivity.this.finish();
+                    }
+                });
 
         EditText editText = (EditText) findViewById(R.id.amount);
         editText.setKeyListener(new CurrencyTextKeyListener());
@@ -213,10 +234,29 @@ public class EditEntryActivity extends ActionBarActivity {
 		transaction.setAccountId(accountId);
 		transaction.setTimestamp(System.currentTimeMillis());
 
-		RadioButton button = (RadioButton) findViewById(R.id.debitButton);
-		button.setSelected(true);
+        selectDebitButton();
 
 		fetched = false;
+    }
+
+    /**
+     * Mark the credit button as selected
+     */
+
+    private void selectCreditButton() {
+        findViewById(R.id.creditButton).setBackgroundResource(R.color.button_option_selected);
+        findViewById(R.id.debitButton).setBackground(mUnselectedBackground);
+        mCurrentTransactionTypeSelection = R.id.creditButton;
+    }
+
+    /**
+     * Mark the debit button as selected
+     */
+
+    private void selectDebitButton() {
+        findViewById(R.id.debitButton).setBackgroundResource(R.color.button_option_selected);
+        findViewById(R.id.creditButton).setBackground(mUnselectedBackground);
+        mCurrentTransactionTypeSelection = R.id.debitButton;
     }
 
     /**
@@ -228,14 +268,12 @@ public class EditEntryActivity extends ActionBarActivity {
 		switch(transaction.getType()) {
 			case	Transaction.TYPE_CREDIT:
 			{
-				RadioButton button = (RadioButton) findViewById(R.id.creditButton);
-				button.setChecked(true);
+				selectCreditButton();
 				break;
 			}
 			case	Transaction.TYPE_DEBIT:
 			{
-				RadioButton button = (RadioButton) findViewById(R.id.debitButton);
-				button.setChecked(true);
+				selectDebitButton();
 				break;
 			}
 		}
@@ -267,26 +305,12 @@ public class EditEntryActivity extends ActionBarActivity {
     }
 
     /**
-     * Set up the menu for the application
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-
-		MenuUtil.buildMenu(this, menu);
-
-		return true;
-	}
-
-
-    /**
      * Update the date button with the latest value.
      */
 
     private void updateDate() {
-    	Button button = (Button) findViewById(R.id.newEntryDateButton);
-    	SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM, yyyy");
-    	button.setText(sdf.format(new Date(transaction.getTimestamp())));
+    	SimpleDateFormat sdf = new SimpleDateFormat("EEEE, d MMMM, yyyy");
+        ((EditText) findViewById(R.id.newEntryDateButton)).setText(sdf.format(new Date(transaction.getTimestamp())));
     }
 
     /**
@@ -311,16 +335,11 @@ public class EditEntryActivity extends ActionBarActivity {
 	    	EditText editText = (EditText) findViewById(R.id.payee);
 	    	transaction.setPayee(editText.getText().toString());
 
-	    	RadioGroup transactionType = (RadioGroup) findViewById(R.id.type);
-
-	    	int selected = transactionType.getCheckedRadioButtonId();
 	    	int type;
-	    	if( selected == R.id.debitButton) {
-	    		type = Transaction.TYPE_DEBIT;
-	    	} else if ( selected == R.id.creditButton) {
-				type = Transaction.TYPE_CREDIT;
+	    	if( mCurrentTransactionTypeSelection == R.id.creditButton) {
+	    		type = Transaction.TYPE_CREDIT;
 	    	} else {
-				throw new RuntimeException("Unknown button ID"+transactionType.getCheckedRadioButtonId());
+				type = Transaction.TYPE_DEBIT;
 	    	}
 	    	transaction.setType(type);
 

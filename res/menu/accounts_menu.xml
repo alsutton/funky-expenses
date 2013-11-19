@@ -1,35 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:funkyexpenses="http://schemas.android.com/apk/res-auto" >
     <item android:id="@+id/menu_new_account"
-          android:icon="@android:drawable/ic_menu_add"
+          android:icon="@drawable/ic_5_content_new"
           android:title="@string/newAccount"
           android:orderInCategory="0"
-          android:showAsAction="ifRoom" />
+          funkyexpenses:showAsAction="always" />
     
     <item android:id="@+id/menu_change_password"
-          android:icon="@android:drawable/ic_menu_view"
+          android:icon="@drawable/ic_10_device_access_secure"
           android:title="@string/menuChangePassword"
           android:orderInCategory="1"
-          android:showAsAction="ifRoom" />
-    
+          funkyexpenses:showAsAction="ifRoom" />
+
     <item android:id="@+id/menu_export"
-          android:icon="@android:drawable/ic_menu_save"
           android:title="@string/menuExport"
-          android:showAsAction="ifRoom" />
-        
+          funkyexpenses:showAsAction="never" />
+
     <item android:id="@+id/menu_restore"
-          android:icon="@android:drawable/ic_menu_upload"
           android:title="@string/menuRestore"
-          android:showAsAction="ifRoom" />
+          funkyexpenses:showAsAction="never" />
 
     <item android:id="@+id/menu_preferences"
-          android:icon="@android:drawable/ic_menu_preferences"
+          android:icon="@drawable/ic_2_action_settings"
           android:title="@string/titlePreferences"
-          android:showAsAction="ifRoom" />
+          funkyexpenses:showAsAction="never" />
 
     <item android:id="@+id/menu_about"
-          android:icon="@android:drawable/ic_menu_info_details"
+          android:icon="@drawable/ic_2_action_about"
           android:title="@string/titleAbout"
-          android:showAsAction="ifRoom" />
+          funkyexpenses:showAsAction="never" />
 
 </menu>

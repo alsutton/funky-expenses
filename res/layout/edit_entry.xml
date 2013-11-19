@@ -166,26 +166,21 @@
 			</LinearLayout>		
 		</LinearLayout>
 	</ScrollView>
-	<LinearLayout	android:orientation="horizontal"
+	<LinearLayout	style="?android:attr/buttonBarStyle"
 			        android:layout_height="wrap_content"
-			        android:layout_width="fill_parent"
-					android:paddingTop="5dip"
-					android:paddingLeft="4dip"
-					android:paddingRight="4dip"
-					android:paddingBottom="1dip"
-		            android:layout_weight="0"
-					android:layout_alignParentBottom="true"
-					android:background="@android:drawable/bottom_bar">
-		<Button android:id="@+id/okButton"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-                	android:layout_weight="1"
-                	android:text="@string/okButtonText"/>
-				
-		<Button android:id="@+id/cancelButton"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-                	android:layout_weight="1"
+			        android:layout_width="match_parent"
+					android:orientation="horizontal">
+		<Button style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/cancelButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
 				android:text="@string/cancelButtonText"/>
+        <Button style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/okButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/okButtonText"/>
 	</LinearLayout>
 </LinearLayout>

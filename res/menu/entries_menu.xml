@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:funkyexpenses="http://schemas.android.com/apk/res-auto" >
     <item android:id="@+id/menu_new_entry"
-          android:icon="@android:drawable/ic_menu_add"
+          android:icon="@drawable/ic_5_content_new"
           android:title="@string/newEntry"
-          android:showAsAction="always" />
+          funkyexpenses:showAsAction="always" />
     
     <item android:id="@+id/menu_categories"
-          android:icon="@android:drawable/ic_menu_agenda"
+          android:icon="@drawable/ic_4_collections_collection"
           android:title="@string/menuReports"
-          android:showAsAction="ifRoom" />
+          funkyexpenses:showAsAction="ifRoom" />
     
     <item android:id="@+id/menu_email_csv"
-          android:icon="@android:drawable/ic_menu_send"
+          android:icon="@drawable/ic_5_content_new_email"
           android:title="@string/menuEmail"
-          android:showAsAction="ifRoom" />
+          funkyexpenses:showAsAction="ifRoom" />
 </menu>

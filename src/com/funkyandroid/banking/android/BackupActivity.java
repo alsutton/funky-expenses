@@ -80,6 +80,12 @@ public class BackupActivity extends ActionBarActivity {
 
 	private String password;
 
+    /**
+     * Whether or not external storage is enabled
+     */
+
+    private boolean mExternalStorageEnabled;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -88,16 +94,10 @@ public class BackupActivity extends ActionBarActivity {
         setContentView(R.layout.backup);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                BackupActivity.this.finish();
-            }
-        });
-
-        Button okButton = (Button) findViewById(R.id.okButton);
         status = (TextView) findViewById(R.id.status);
-        if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            mExternalStorageEnabled = true;
+        } else {
             new AlertDialog.Builder(this)
             		.setTitle("Missing Memory Card")
             		.setMessage("A memory card is required to perform a backup")
@@ -109,17 +109,11 @@ public class BackupActivity extends ActionBarActivity {
 						}
             		})
             		.show();
-            okButton.setEnabled(false);
+            mExternalStorageEnabled = false;
             status.setText("ERROR : No memory card found. Backup unavailable");
         	return;
         }
 
-        okButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View view) {
-				startBackup();
-			}
-        });
     	db = (new DBHelper(this)).getReadableDatabase();
     }
 
@@ -140,22 +134,9 @@ public class BackupActivity extends ActionBarActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.backup_menu, menu);
+        menu.findItem(R.id.menu_backup).setEnabled(mExternalStorageEnabled);
 		super.onCreateOptionsMenu(menu);
-
-		menu.add(R.string.menuAccounts)
-		.setIcon(android.R.drawable.ic_menu_revert)
-		.setOnMenuItemClickListener(
-			new MenuItem.OnMenuItemClickListener() {
-				@Override
-				public boolean onMenuItemClick(final MenuItem item) {
-					Intent intent = new Intent(BackupActivity.this, AccountsActivity.class);
-					BackupActivity.this.startActivity(intent);
-					finish();
-		            return true;
-				}
-			}
-		);
-
 		return true;
 	}
 
@@ -213,11 +194,14 @@ public class BackupActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
+            case R.id.menu_backup:
+                startBackup();
+                return true;
+
 	    	case android.R.id.home:
-	    	{
 				finish();
 				return true;
-	    	}
+
 	    	default:
 	    		return super.onOptionsItemSelected(item);
     	}

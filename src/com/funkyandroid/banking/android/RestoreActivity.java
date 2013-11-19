@@ -13,8 +13,6 @@ import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -29,6 +27,12 @@ public class RestoreActivity extends ActionBarActivity {
 
 	private SQLiteDatabase db;
 
+    /**
+     * Whether or not external storage is available.
+     */
+
+    private boolean mExternalStorageEnabled;
+
 	/**
 	 * The broadcaster receiver for progress updates.
 	 */
@@ -37,23 +41,36 @@ public class RestoreActivity extends ActionBarActivity {
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
-			RestoreActivity.this.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					int percentage = intent.getIntExtra("progress", 0);
-					if(percentage < 100) {
-						StringBuilder string = new StringBuilder();
-						string.append(RestoreActivity.this.getText(R.string.restoreIs));
-						string.append(' ');
-						string.append(percentage);
-						string.append('%');
-						string.append(RestoreActivity.this.getText(R.string.restoreComplete));
-						((TextView)RestoreActivity.this.findViewById(R.id.status)).setText(string.toString());
-					} else {
-						((TextView)RestoreActivity.this.findViewById(R.id.status)).setText(RestoreActivity.this.getString(R.string.restoreCompleted));
-					}
-				}
-			});
+            if(intent.hasExtra("error")) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append(getText(R.string.restoreAborted));
+                        stringBuilder.append("\n\n");
+                        stringBuilder.append(intent.getStringExtra("error"));
+                        ((TextView)findViewById(R.id.status)).setText(stringBuilder.toString());
+                    }
+                });
+            } else {
+			    runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int percentage = intent.getIntExtra("progress", 0);
+                        if (percentage < 100) {
+                            StringBuilder string = new StringBuilder();
+                            string.append(RestoreActivity.this.getText(R.string.restoreIs));
+                            string.append(' ');
+                            string.append(percentage);
+                            string.append('%');
+                            string.append(getText(R.string.restoreComplete));
+                            ((TextView) findViewById(R.id.status)).setText(string.toString());
+                        } else {
+                            ((TextView) findViewById(R.id.status)).setText(RestoreActivity.this.getString(R.string.restoreCompleted));
+                        }
+                    }
+                });
+            }
 		}
 
 	};
@@ -66,16 +83,10 @@ public class RestoreActivity extends ActionBarActivity {
         setContentView(R.layout.restore);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                RestoreActivity.this.finish();
-            }
-        });
-
-        Button okButton = (Button) findViewById(R.id.okButton);
         final TextView status = (TextView) findViewById(R.id.status);
-        if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            mExternalStorageEnabled = true;
+        } else {
             new AlertDialog.Builder(this)
             		.setTitle("Missing Memory Card")
             		.setMessage("A memory card is required to restore data from.")
@@ -87,17 +98,11 @@ public class RestoreActivity extends ActionBarActivity {
 						}
             		})
             		.show();
-            okButton.setEnabled(false);
+            mExternalStorageEnabled = false;
             status.setText("ERROR : No memory card found. Restore unavailable");
         	return;
         }
 
-        okButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View view) {
-				startRestore();
-			}
-        });
     	db = (new DBHelper(this)).getWritableDatabase();
     }
 
@@ -134,17 +139,31 @@ public class RestoreActivity extends ActionBarActivity {
     }
 
     /**
+     * Set up the menu for the application
+     */
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.restore_menu, menu);
+        menu.findItem(R.id.menu_restore).setEnabled(mExternalStorageEnabled);
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
+
+    /**
      * Handle the selection of an option.
      */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
+            case R.id.menu_restore:
+                startRestore();
+                return true;
+
 	    	case android.R.id.home:
-	    	{
 				finish();
 				return true;
-	    	}
+
 	    	default:
 	    		return super.onOptionsItemSelected(item);
     	}

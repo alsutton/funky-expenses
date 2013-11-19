@@ -56,7 +56,7 @@
     <string name="accounts_emptyText">Use the top right menu to add an account</string>
     <string name="backupName">Backup Name</string>
     <string name="backupPassword">Password</string>
-    <string name="backupOKButton">Backup</string>
+    <string name="backup">Backup</string>
     <string name="backupStatusTitle">Backup Status</string>
     <string name="editCategory">Edit Category Name</string>
     <string name="entryCreditLabel">Credit</string>
@@ -113,11 +113,12 @@
 
     <string name="restoreName">Backup Name</string>
     <string name="restorePassword">Password</string>
-    <string name="restoreOKButton">Restore</string>
+    <string name="restore">Restore</string>
     <string name="restoreStatusTitle">Restore Status</string>
     <string name="restoreIs">Restore is</string>
     <string name="restoreComplete">complete.</string>
     <string name="restoreCompleted">Restore Completed.</string>
+	<string name="restoreAborted">Restore aborted due to an error. Please check the password is correct.</string>
 
     <string name="title_hidetips_preference">Hide Tips</string>
     <string name="summary_hidetips_preference">Hide the pop-up tips shown in the application</string>

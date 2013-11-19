@@ -196,7 +196,7 @@ public class CategoriesReportFragment extends ListFragment
 		extends ResourceCursorAdapter {
 
 		public SpendingReportListAdapter() {
-			super(getActivity(), R.layout.category_list_item, null, 0);
+			super(getActivity(), R.layout.title_value_list_item, null, 0);
 		}
 
 		@Override

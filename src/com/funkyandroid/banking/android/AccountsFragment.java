@@ -139,7 +139,7 @@ public class AccountsFragment extends ListFragment
     	 * Constructor.
     	 */
     	public MyListAdapter() {
-    		super(getActivity(), R.layout.account_list_item, null, 0);
+    		super(getActivity(), R.layout.title_value_list_item, null, 0);
     	}
 
     	/**

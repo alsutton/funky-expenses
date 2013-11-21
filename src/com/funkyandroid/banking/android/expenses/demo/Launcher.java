@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.view.View;
+import android.widget.EditText;
 import com.funkyandroid.banking.android.AccountsActivity;
 import com.funkyandroid.banking.android.data.DBHelper;
 import com.funkyandroid.banking.android.data.SettingsManager;
@@ -28,6 +30,12 @@ public class Launcher extends Activity {
 
 	private String passwordHash;
 
+    /**
+     * The password field
+     */
+
+    private EditText passwordEntry;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +54,45 @@ public class Launcher extends Activity {
 	    	}
 
 	    	setContentView(R.layout.password_background);
+
+            View body = getLayoutInflater().inflate(R.layout.dialog_enter_password, null);
+            passwordEntry = (EditText) body.findViewById(R.id.password);
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.enterPasswordTitle)
+                    .setView(body)
+                    .setCancelable(false)
+                    .setPositiveButton(
+                        android.R.string.ok,
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String password = passwordEntry.getText().toString();
+                                if( password != null && password.length() > 0 ) {
+                                    boolean passwordOK = false;
+                                    try {
+                                        passwordOK = Crypto.getHash(password).equals(passwordHash);
+                                    } catch(Exception ex) {
+                                        Log.e(LOG_TAG, "Problem generating hash.", ex);
+                                    }
+                                    if( passwordOK ) {
+                                        startAccountsActivity();
+                                        return;
+                                    }
+                                }
+                                new AlertDialog.Builder(Launcher.this).setTitle("Password Incorrect")
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setMessage("The password you entered was not correct.")
+                                        .setPositiveButton("OK", new OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                finish();
+                                            }
+                                        })
+                                        .setCancelable(false)
+                                        .show();
+                            }
+                        }
+                    ).show();
     	} catch( Exception ex ) {
             new AlertDialog.Builder(this).setTitle("Problem during startup")
             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -58,30 +105,6 @@ public class Launcher extends Activity {
             })
             .show();
     	}
-    }
-
-    /**
-     * Check the entered password
-     */
-
-	public void onOK(final int id, final String password) {
-    	if( password != null && password.length() > 0 ) {
-	    	boolean passwordOK = false;
-	    	try {
-	    		passwordOK = Crypto.getHash(password).equals(passwordHash);
-	    	} catch(Exception ex) {
-	    		Log.e(LOG_TAG, "Problem generating hash.", ex);
-	    	}
-	    	if( passwordOK ) {
-	    		startAccountsActivity();
-	    		return;
-	    	}
-    	}
-        new AlertDialog.Builder(this).setTitle("Password Incorrect")
-        .setIcon(android.R.drawable.ic_dialog_alert)
-        .setMessage("The password you entered was not correct.")
-        .setPositiveButton("OK", null)
-        .show();
     }
 
     /**

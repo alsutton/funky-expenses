@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest	xmlns:android="http://schemas.android.com/apk/res/android"
-      		android:versionName="2.1"
-      		android:versionCode="2100"
+      		android:versionName="2.1.1"
+      		android:versionCode="2101"
       		package="com.funkyandroid.banking.android.expenses.demo">
       
 	<uses-sdk 			android:minSdkVersion="10"

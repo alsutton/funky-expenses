@@ -245,7 +245,7 @@ public class EditEntryActivity extends ActionBarActivity {
         selectDebitButton();
 
 		fetched = false;
-        invalidateOptionsMenu();
+        supportInvalidateOptionsMenu();
     }
 
     /**
@@ -306,7 +306,7 @@ public class EditEntryActivity extends ActionBarActivity {
     	categoryEntry.setText(category);
 
     	fetched = true;
-        invalidateOptionsMenu();
+        supportInvalidateOptionsMenu();
     }
 
     /**

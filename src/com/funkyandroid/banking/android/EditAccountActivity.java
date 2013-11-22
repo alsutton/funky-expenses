@@ -10,6 +10,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.view.MenuCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -101,7 +102,7 @@ public class EditAccountActivity extends ActionBarActivity {
 
             setCurrency(account.currency);
 
-            invalidateOptionsMenu();
+            supportInvalidateOptionsMenu();
         } finally {
 			db.close();
 		}

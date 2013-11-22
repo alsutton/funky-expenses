@@ -10,5 +10,10 @@
           android:icon="@drawable/ic_1_navigation_cancel"
           android:title="@string/cancelButtonText"
           funkyexpenses:showAsAction="ifRoom|withText" />
+
+	<item android:id="@+id/menu_delete"
+          android:icon="@drawable/ic_5_content_discard"
+          android:title="@string/deleteButtonText"
+          funkyexpenses:showAsAction="ifRoom|withText" />
     
 </menu>

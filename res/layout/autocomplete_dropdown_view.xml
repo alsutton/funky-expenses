@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/autocomplete_textview"
+              android:textSize="28sp"
+              android:textColor="@android:color/black"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingStart="10dip"
+              android:paddingEnd="10dip"
+              android:minHeight="48dip"
+	/>

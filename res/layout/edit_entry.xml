@@ -79,12 +79,12 @@
 		        android:layout_width="fill_parent"
 		        android:layout_marginLeft="20dip"
 		        android:layout_marginRight="20dip"
+		        android:textColor="@android:color/black"
 				android:singleLine="true"
 		        android:scrollHorizontally="true"
 		        android:autoText="false"
 		        android:completionThreshold="2"
-		        android:gravity="fill_horizontal"
-				android:nextFocusDown="@+id/okCategory"/>
+				android:nextFocusDown="@+id/category"/>
 		        
 		    <TextView 
 		        android:layout_height="wrap_content"
@@ -94,8 +94,7 @@
 		        android:layout_marginRight="20dip"
 		        android:text="@string/entryCategoryText"
 		        android:textSize="18sp"
-				android:textStyle="bold"
-		        android:gravity="left"/>
+				android:textStyle="bold"/>
 		
 		    <AutoCompleteTextView 
 		        android:id="@+id/category"
@@ -103,11 +102,11 @@
 		        android:layout_width="fill_parent"
 		        android:layout_marginLeft="20dip"
 		        android:layout_marginRight="20dip"
+		        android:textColor="@android:color/black"
 				android:singleLine="true"
 		        android:scrollHorizontally="true"
 		        android:autoText="false"
 		        android:completionThreshold="2"
-		        android:gravity="fill_horizontal"
 				android:nextFocusDown="@+id/amount"/>
 		        
 		    <TextView 
@@ -123,13 +122,13 @@
 		        />
 		
 			<LinearLayout	android:orientation="horizontal"
-					        android:gravity="right" 
+					        android:gravity="right"
 					        android:layout_height="wrap_content"
 					        android:layout_width="fill_parent"
 					        android:layout_marginLeft="20dip"
 					        android:layout_marginRight="20dip">
-			
-			    <TextView 
+
+			    <TextView
 			    	android:id="@+id/currencySymbol"
 			        android:layout_height="wrap_content"
 			        android:layout_width="wrap_content"
@@ -143,14 +142,13 @@
 					android:singleLine="true"
 			        android:scrollHorizontally="false"
 			        android:autoText="false"
-			        android:gravity="right" 
+			        android:gravity="right"
 			        android:inputType="numberDecimal"
-			        android:numeric="decimal" 
-			        android:maxLength="10" 
+			        android:numeric="decimal"
+			        android:maxLength="10"
 			        android:width="150sp"
-			        android:text="0"
-			        android:nextFocusDown="@+id/okButton"/>
-			</LinearLayout>		
+			        android:text="0"/>
+			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
 </LinearLayout>

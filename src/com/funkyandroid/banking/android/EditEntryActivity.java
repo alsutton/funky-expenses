@@ -104,10 +104,10 @@ public class EditEntryActivity extends ActionBarActivity {
         CategorySuggestionsAdapter categorySuggester =
     		new CategorySuggestionsAdapter(
 					this,
-					android.R.layout.simple_dropdown_item_1line,
+					R.layout.autocomplete_dropdown_view,
 					null,
 					CategoryManager.NAME_COL,
-					new int[] {android.R.id.text1},
+					new int[] {R.id.autocomplete_textview},
 					db);
     	AutoCompleteTextView categoryEntry = (AutoCompleteTextView) findViewById(R.id.category);
     	categoryEntry.setAdapter(categorySuggester);
@@ -115,10 +115,10 @@ public class EditEntryActivity extends ActionBarActivity {
         PayeeSuggestionsAdapter payeeSuggester =
     		new PayeeSuggestionsAdapter(
 					this,
-					android.R.layout.simple_dropdown_item_1line,
+                    R.layout.autocomplete_dropdown_view,
 					null,
 					PayeeManager.NAME_COL,
-					new int[] {android.R.id.text1},
+                    new int[] {R.id.autocomplete_textview},
 					db );
     	AutoCompleteTextView payeeEntry = (AutoCompleteTextView) findViewById(R.id.payee);
     	payeeEntry.setAdapter(payeeSuggester);
@@ -245,7 +245,12 @@ public class EditEntryActivity extends ActionBarActivity {
         selectDebitButton();
 
 		fetched = false;
-        supportInvalidateOptionsMenu();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                supportInvalidateOptionsMenu();
+            }
+        });
     }
 
     /**
@@ -287,26 +292,31 @@ public class EditEntryActivity extends ActionBarActivity {
 			}
 		}
 
-		EditText editText = (EditText) findViewById(R.id.payee);
-		editText.setText(transaction.getPayee());
+        AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.payee);
+        autoCompleteTextView.setText(transaction.getPayee());
+        autoCompleteTextView.dismissDropDown();
 
 		long amount = transaction.getAmount();
 		if( amount < 0 ) {
 			amount = 0 - amount;
 		}
 
-    	editText = (EditText) findViewById(R.id.amount);
-    	editText.setText(ValueUtils.toString(amount, false));
+        ((EditText) findViewById(R.id.amount)).setText(ValueUtils.toString(amount, false));
 
     	String category = CategoryManager.getById(db, transaction.getCategoryId());
     	if(CategoryManager.UNCAT_CAT.equals(category)) {
     		category = "";
     	}
-    	TextView categoryEntry = (TextView) findViewById(R.id.category);
+        AutoCompleteTextView categoryEntry = (AutoCompleteTextView) findViewById(R.id.category);
     	categoryEntry.setText(category);
 
     	fetched = true;
-        supportInvalidateOptionsMenu();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                supportInvalidateOptionsMenu();
+            }
+        });
     }
 
     /**

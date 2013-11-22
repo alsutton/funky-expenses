@@ -121,23 +121,18 @@ public class EditAccountActivity extends ActionBarActivity {
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        int okTextResource, cancelTextResource, cancelIconResource;
-        if(fetched) {
-            okTextResource = R.string.updateButtonText;
-            cancelTextResource = R.string.deleteButtonText;
-            cancelIconResource = R.drawable.ic_1_navigation_cancel;
-        } else {
-            okTextResource = R.string.okButtonText;
-            cancelTextResource = R.string.cancelButtonText;
-            cancelIconResource = R.drawable.ic_5_content_discard;
-        }
-
-        menu.findItem(R.id.menu_done).setTitle(okTextResource);
-
+        MenuItem doneItem = menu.findItem(R.id.menu_done);
         MenuItem cancelItem = menu.findItem(R.id.menu_cancel);
-        cancelItem.setTitle(cancelTextResource);
-        cancelItem.setIcon(cancelIconResource);
-
+        MenuItem deleteItem = menu.findItem(R.id.menu_delete);
+        if(fetched) {
+            doneItem.setTitle(R.string.updateButtonText);
+            cancelItem.setVisible(false);
+            deleteItem.setVisible(true);
+        } else {
+            doneItem.setTitle(R.string.okButtonText);
+            cancelItem.setVisible(true);
+            deleteItem.setVisible(false);
+        }
         return true;
     }
 
@@ -153,15 +148,14 @@ public class EditAccountActivity extends ActionBarActivity {
                 finish();
                 return true;
 
-            case R.id.menu_cancel:
-                if( fetched ) {
-                    SQLiteDatabase db = (new DBHelper(EditAccountActivity.this)).getWritableDatabase();
-                    try {
-                        AccountManager.delete(db, account);
-                    } finally {
-                        db.close();
-                    }
+            case R.id.menu_delete:
+                SQLiteDatabase db = (new DBHelper(EditAccountActivity.this)).getWritableDatabase();
+                try {
+                    AccountManager.delete(db, account);
+                } finally {
+                    db.close();
                 }
+            case R.id.menu_cancel:
             case android.R.id.home:
                 finish();
                 return true;

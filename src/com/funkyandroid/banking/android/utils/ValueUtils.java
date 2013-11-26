@@ -8,7 +8,7 @@ public class ValueUtils {
 	/**
 	 * Convert a xxx.yyy string into a long containing the value
 	 *
-	 * @param The String representation of the value
+	 * @param amountString The String representation of the value
 	 * @return The value as a long
 	 */
 
@@ -41,10 +41,15 @@ public class ValueUtils {
     	}
 
     	final String minorAmount = minorAmountBuilder.toString();
+        int minorMultiplier;
+        if(minorAmount.length() == 1) {
+            minorMultiplier = 10;
+        } else {
+            minorMultiplier = 1;
+        }
     	if(minorAmount.length() > 0) {
-        	amount += Long.parseLong(minorAmount);
+        	amount += (Integer.parseInt(minorAmount)*minorMultiplier);
     	}
-
     	return amount;
 	}
 
